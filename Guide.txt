@@ -1,0 +1,355 @@
+Chess with tkinter
+
+
+Chess is a strategic game for two players, it is played
+on a chequered board on which each piece moves according to its own precise rules.The aim is to put the opponent's king under a direct attack from which escape is
+impossible ( checkmate ).
+
+lets get started!
+
+We can use the modules in python to get graphics. We will be using tkinter for its useful grid() function we will use later on. 
+
+To start with open a window in witch we can place the graphics (the board and pieces)later on and import the module we want (tkinter)so that we can use its pre-programmed code. use import tkinter to do this.
+
+To create a window make a varible (I would recommend giving it a reasonable name like screen or window) then set it to tkinter.TK()
+ 
+This is how your code should look like so far. 
+
+import tkinter
+window = tkinter.Tk()
+
+lets place our code in a function that we can call later.
+to create a function we use:
+
+def play_chess():
+
+After that all code will have to be indented to show it is part of that function Play_chess() ( this is the name of the function, you can make it anything but it cannot contain spaces so use the _ sighn to replace them).
+
+Next indent the window = tkinter.TK() code and place it under our function. While we are there lets add:
+
+window.mainloop()
+window.title('chess')
+window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+Return window
+
+(This also needs to be indented)
+
+This is what it does:
+window.mainloop() starts the game.
+window.title('chess') gives the tittle of the window as the string ‘chess’.
+Return window means we can use it elsewhere.
+window.tk.call gives the window an icon (image). However we have not yet Set the variable path so we can find the image in the file system. An example is:
+
+path = 'D:/Digi@Local/MyCode/Python/4 - Green/Code/Chess_Resources/' 
+
+This must be stored outside outside the function 
+
+This is the code the code so far 
+
+Import tkinter 
+
+def play_chess():
+       window = tkinter.TK()
+       window.mainloop()
+       window.title('chess')
+       window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+       Return window 
+
+path = 'D:/Digi@Local/MyCode/Python/4 - Green/Code/Chess_Resources/'
+
+save and run your work
+
+What happens 
+
+the window dose not open as we have not called the function when we start the code.
+
+try this: 
+
+if __name__ =="__main__":
+    window = play_Chess()
+
+
+Now we have created our window let’s get down the main bit our code needs to function.
+
+Let’s create a class. A class is code template for an object. An object being somthing that has persific characteristics like a colour or size or behavor.
+
+to create a class use 
+
+class Game_object():
+
+class creates it and game object() is its name. 
+Like functions anything in a class is to be indented to show it belongs to it.
+
+once you have created your class we will start by adding it’s own characteristics through variables.
+
+inside our class lets create a function that contains our main varibles. We will call it __init__ and pass it self, piece, icon, colour, column, row. Now we need to create those varibles.
+as we are in a class we will have to put self. in front of them as the variables belong to this class. We will do this in the __init__ function
+
+Here are the variables with their values(remember the self. In front of them e.g self.icon = icon)
+
+icon = icon
+colour = colour
+piece = piece
+row = row
+column = column
+score = score
+
+Now we are ready to create the board.
+
+We will start with the logic side and then do the graphics later.
+
+To begin with we will create another function ( have this outside our class ) but this time call it create_board. we will also have to pass it a list called board. Place the list's name within the brackets to do this. 
+
+We have not yet created this list so lets do it now. Do this outside the function as we do not want to keep recreating it if we call our function multiple times . ( I would recommend keeping the varibles and lists in one place so it will be easy to find them.)  The following code will create our empty list.
+
+board = [] 
+
+We will need alot more varibles later in the game, alot of them will be needed in the new function we have created.
+Here is a list of all the variables and their value.
+please put them in the section of your code you have for them.
+
+piecetomove = 0
+squaresToClear = 0
+gameOver = False
+score = 0 
+onclick = 0
+window = None
+turn = 0
+
+There is also a few lists to make as well.
+
+
+icons = ['White_Rook.gif', 'White_Bishop.gif', 'White_Knight.gif', 'White_Queen.gif', 'White_King.gif', 'White_Knight.gif', 'White_Bishop.gif', 'White_Rook.gif', 'Black_Rook.gif', 'Black_Bishop.gif', 'Black_Knight.gif', 'Black_King.gif', 'Black_Queen.gif', 'Black_Knight.gif', 'Black_Bishop.gif', 'Black_Rook.gif']
+
+white_pieces = ['Rook', 'Bishop', 'Knight', 'Queen',  'King', 'Knight', 'Bishop', 'Rook'] 
+
+black_pieces = ['Rook', 'Bishop', 'Knight', 'King',  'Queen', 'Knight', 'Bishop', 'Rook']
+
+Now we have all our lists and variables lets start with the logic of our board.
+
+Let’s make the variable squaresToClear global:
+
+Global squaresToClear
+
+And now for the main bit 
+
+We are going to add items to our list board[] and then set the board to our list. Let’s begin.
+
+First use a for loop to set up 8 empty list ( the rows ).Then add another for loop to run over each list filling it with the correct piece or with a 0 meaning nothing is there.
+
+The code:
+
+for row in range(0,8):
+        rowlist = []
+        for column in range(0,8):
+            if row == 0:
+                rowlist.append(Game_Object(black_pieces[column], path+icons[column+8], 'black', column, row))
+            elif row == 7:
+                rowlist.append(Game_Object(white_pieces[column], path+icons[column], 'white', column, row))
+            elif row == 6:
+                rowlist.append(Game_Object('Pawn', path+'White_Pawn.gif', 'white', column, row))
+            elif row == 1:
+                rowlist.append(Game_Object('Pawn', path+'Black_Pawn.gif', 'black', column, row))
+            else:
+                rowlist.append(0)
+        board.append(rowlist)
+
+Understanding the code:
+
+for row in range(0,8):
+        rowlist = [] 
+
+This simply says repeat creating a list called ‘rowlist’ 8 times 
+
+board.append(rowlist)
+
+append means add whatever is in the brackets to the list( behind the dot )
+
+elif row == 7:
+
+This check if we are on the seventh time of making the list ‘rowlist’ if we are it will probably add the pieces ( pawns (♟) ) to this list.
+
+else:
+        rowlist.append(0)
+
+If we are not on any row that should have pieces ( we have preprogrammed them in ) say their is nothing there.
+
+Now we have made our empty list board[] a dictionary witch has the positions of all the pieces we can easily make this graphical.
+
+run and save your work 
+
+Before we start with the graphics let’s first make sure we can see everything in our list board[].
+All you have to do is call our function create_board(board) in our other function: play_chess() and then print it in the same function using print(board).
+
+Here is the code so far:
+
+import tkinter
+
+class Game_Object():
+    def __init__(self, piece, icon, colour, column, row):
+        self.icon = icon
+        self.colour = colour
+        self.piece = piece
+        self.row = row
+        self.column = column
+        self.score = score
+
+def play_Chess():
+    create_board(board)
+    window = tkinter.Tk()
+    window.title('chess')
+    print(board)
+    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+    window.mainloop()
+    return window
+
+
+icons = ['White_Rook.gif', 'White_Bishop.gif', 'White_Knight.gif', 'White_Queen.gif', 'White_King.gif', 'White_Knight.gif', 'White_Bishop.gif', 'White_Rook.gif', 'Black_Rook.gif', 'Black_Bishop.gif', 'Black_Knight.gif', 'Black_King.gif', 'Black_Queen.gif', 'Black_Knight.gif', 'Black_Bishop.gif', 'Black_Rook.gif’]
+white_pieces = ['Rook', 'Bishop', 'Knight', 'Queen',  'King', 'Knight', 'Bishop', 'Rook'] 
+
+black_pieces = ['Rook', 'Bishop', 'Knight', 'King',  'Queen', 'Knight', 'Bishop', 'Rook']
+
+path = 'D:/Digi@Local/MyCode/Python/4 - Green/Code/Chess_Resources/'
+piecetomove = 0
+squaresToClear = 0
+gameOver = False
+score = 0 
+onclick = 0
+window = None
+turn = 0
+board = []
+
+
+if __name__ =="__main__":
+    window = play_Chess()
+
+
+Now for the graphics.
+
+
+Let’s create a function: call it layout_window and pass it window
+
+In order to create our checker board pattern we will use tkinter grid() function. This divides the window into rows and columns. Once we have got our grid we can pull information out of it with makes it like a dictionary. This’s why it can be useful for our game 
+
+First let’s create a variable for each squares colour. We can switch this between black and white.
+
+Let’s call our variable bttnclr and set it’s value to a string(thus it will have to have quotations marks ) ‘white’
+
+Now we are going to have to go though each square in our code and set it to its right color and place an icon on it the piece.
+
+An icon is an image, it belongs to the square as  it’s size and colour dose. When we want to move our piece we will simply delete the icon and place the same icon on another square, but we will be doing that later.
+
+We already know all our icons they are set in our icons = [] list; they are simply a list of images. Each one of these images are associated with their actual piece through the game object() class. Therefore there positions are already set through the list board = [] . 
+
+So in our code we will start with bttnclr = ‘white’
+And set our square to bttnclr. we then need to set bttnclr to ‘black’ before setting our square back to bttnclr. This needs to be repeated 8 times before moving on to the next row. As there are 8 rows all of this will have to be repeated ? times.
+
+At the same to we will have to place the icons on the board. Here is how we do it.
+
+def layout_window(window):
+    bttnclr="white"
+    for rowNumber, rowlist in enumerate(board):
+        for columnNumber, columnEntry in enumerate(rowlist):
+            try:
+                img = tkinter.PhotoImage(file = board[rowNumber][columnNumber].icon)
+                square = tkinter.Label(window, bg = bttnclr, image = img)
+                square.image = img
+            except:
+                square = tkinter.Label(window, text = "                 \n\n\n", bg = bttnclr)
+
+            if bttnclr == "white":
+                bttnclr = "grey"
+            else:
+                bttnclr = "white"
+            square.grid(row = rowNumber, column = columnNumber)
+            square.bind("<Button-1>", on_click)
+        if bttnclr == "white":
+            bttnclr = "grey"
+        else:
+            bttnclr = "white"
+
+Save and run your code.
+
+Let’s move on to moving our piece.
+
+This is the hard bit; we have got to check an event what type it is and where it happened.
+
+This is where Tkinter helps us event more with it’s grid() function. We will be calling previous functions to help us so let’s do some finishing touches on them first. 
+
+The play_chess() function dose not yet call our layout_window() function type layout_window(window ) within our play_chess() function to call it. ( note: this has to be indented )
+
+Run and save your work.
+
+This should now make a window with a chess board and pieces appear on the screen. 
+
+Are there any errors in your code so far; if so I challenge you to fix them.
+
+While we are in our play_chess() function we can get ready rid of the code: print(board) this is because we know how the board looks like as it is upon our screen.
+
+Now we will start with checking for a click(event). So we know that something has been clicked. Start a new function by typing:
+
+def on_click(event):
+
+Let’s now make some key variables global this means they can be used everywhere in our code. 
+Type global then the variable’s name to do this.
+
+Here are the variables we want global:
+window
+onclick
+piecetomove
+turn
+
+Make sure your code is indented to show we are in the on_click() event.
+
+Next we want to see if we what is the piece we want to move and where we want to move it.
+
+As our function so clearly shows we will be checking a click. 
+
+Our first click shall check what piece we want to move. While our second checks where we want to move it to and then moves our piece there. 
+
+To check what click we are on we will use the onclick variable we created earlier. 
+
+On each click we make we will add 1 to our variable. We will then check if onclick’s value is equivalent to 1 ( we set it to 0 at the start so when we first click, onclick should have the value of 1 ) 
+
+If it is we will set a new variable to the icon’s characteristics on that persific square. We will also record witch square was clicked in a different variable.
+
+This is so later when we see that onclick has the value of 1 we can replace that square with a 0 in our board = [] and set the square we just clicked on to our piece’s characteristics.
+
+Then we can set our graphical board to look like our list board. We have already done this with our  layout_window function. So all we have to do is call it. We already know how to do this however we also have to pass it window otherwise you will get an error.
+
+Here is the code
+
+def on_click(event):
+    global window
+    global onclick
+    global piecetomove
+    global turn
+    onclick = onclick+1
+    square = event.widget
+    bttnclr="white"
+    rowNumber = int(square.grid_info()["row"])
+    columnNumber  = int(square.grid_info()["column"])
+    try:
+        if onclick == 1 and ((turn == 0 and board[rowNumber][columnNumber].colour == 'white') or (turn == 1 and board[rowNumber][columnNumber].colour == 'black')) or onclick == 2:
+            currentText = square.cget("text")
+
+            if onclick == 1:
+                print('Where would you like to move your', board[rowNumber][columnNumber].piece, 'to?')
+                oldclour = board[rowNumber][columnNumber].colour
+                #print(board[rowNumber][columnNumber].colour, oldclour)
+                piecetomove = rowNumber,columnNumber
+                return
+            else:
+           # if oldcolour != board[oldrowNumber][oldcolumnNumber].colour:
+    #           if board[oldrowNumber][oldcolumnNumber].checkMove(rowNumber,columnNumber)
+                oldrownumber,j = piecetomove
+                board[rowNumber][columnNumber] = board[oldrownumber][oldcolumnNumber]
+                board[piecetomove[0]][piecetomove[1]] = 0
+               # print(board[rowNumber][columnNumber].colour, oldclour)
+                layout_window(window)
+                if turn == 0:
+                    turn = 1
+                else:
+                    turn = 0
+
+Before we move on to our rules let’s have a bit of fun with our functions.
