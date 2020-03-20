@@ -24,37 +24,42 @@ def on_click(event):
     global turn
     onclick = onclick+1 
     square = event.widget
-    bttnclr='white'
+#    bttnclr='white'
     row_number = int(square.grid_info()['row'])
     column_number = int(square.grid_info() ['column'])
     try:
-        if onclick == 1 and ((turn == 0 and board[row_number] [column_number].colour == 'white') or (turn == 1 and board[row_number] [column_number].colour == 'black')) or onclick == 2:
+        if (onclick == 1 and 
+                (
+                    (turn == 0 and board[row_number][column_number].colour == 'white') 
+                    or 
+                    (turn == 1 and board[row_number][column_number].colour == 'black')
+                ) 
+                or onclick == 2):
             currentText = square.cget('text')
             if onclick == 1:
                 print('Where would you like to move your', board[row_number] [column_number].piece, 'to?')
-                oldclour = board[row_number]
-                [column_number].colour
+                oldclour = board[row_number][column_number].colour
             #print(board[row_number] [column_number].colour, oldclour)
-            piecetomove = row_number,column_number 
-            return
-        else:
-            # if oldcolour != board[oldrowNumber] [old_column_number].colour:
-            # if board[oldrowNumber] [old_column_number].checkMove (row_number,column_number)
-            old_row_number, old_column_number = piecetomove
-            board[row_number][column_number] = board[old_row_number][old_column_number]
-            board[piecetomove[0]][piecetomove[1]] = 0
-            # print(board[row_number][column_number].colour, oldclour)
-            layout_window(window) 
-            if turn == 0:
-                turn = 1
+                piecetomove = row_number,column_number 
+                return
             else:
-                turn = 0
+                # if oldcolour != board[oldrowNumber] [old_column_number].colour:
+                # if board[oldrowNumber] [old_column_number].checkMove (row_number,column_number)
+                old_row_number, old_column_number = piecetomove
+                board[row_number][column_number] = board[old_row_number][old_column_number]
+                board[piecetomove[0]][piecetomove[1]] = 0
+                # print(board[row_number][column_number].colour, oldclour)
+        layout_window(window) 
+        if turn == 0:
+            turn = 1
+        else:
+            turn = 0
     except:
         if onclick == 1:
             print('No piece there, try again')
         else:
             print('an error has ocurred') 
-            onclick = 0
+    onclick = 0
 
 def layout_window(window): 
     bttnclr='white'
@@ -77,8 +82,9 @@ def layout_window(window):
         else:
             bttnclr = 'white'
 
-def create_board(board): 
-    global squares_to_clear 
+def create_board(board):
+    #don't think we need this here?
+#    global squares_to_clear 
     for row in range(0,8):
         row_list = []
         for column in range(0,8):
@@ -98,9 +104,11 @@ def play_chess():
     create_board(board)
     window = tkinter.Tk() 
     window.title('chess') 
-    layout_window(window) 
+    layout_window(window)
+    #not sure what this line was doing?
 #    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
+    #don't need to return window - everything is happening within the mainloop() from here on
 #    return window
 
 def updateFile(): 
@@ -137,5 +145,4 @@ window = None
 turn = 0
 
 if __name__ =='__main__': 
-    #    window = play_chess()
     play_chess()
