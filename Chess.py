@@ -25,7 +25,6 @@ def on_click(event):
     global old_colour
     onclick = onclick+1 
     square = event.widget
-#    bttnclr='white'
     row_number = int(square.grid_info()['row'])
     column_number = int(square.grid_info() ['column'])
     try:
@@ -50,7 +49,6 @@ def on_click(event):
                     if board[old_row_number][old_column_number].checkMove(row_number,column_number):
                         board[row_number][column_number] = board[old_row_number][old_column_number]
                         board[piecetomove[0]][piecetomove[1]] = 0
-                # print(board[row_number][column_number].colour, oldclour)
         layout_window(window) 
         if turn == 0:
             turn = 1
