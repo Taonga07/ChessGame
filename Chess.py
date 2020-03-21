@@ -39,7 +39,6 @@ def on_click(event):
             if onclick == 1:
                 print('Where would you like to move your', board[row_number][column_number].piece, 'to?')
                 old_colour = board[row_number][column_number].colour
-            #print(board[row_number] [column_number].colour, oldclour)
                 piecetomove = (row_number,column_number)
                 return
             else:
@@ -106,7 +105,6 @@ def play_chess():
     #not sure what this line was doing?
     window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
-    #don't need to return window - everything is happening within the mainloop() from here on
     return window
 
 def updateFile(): 
