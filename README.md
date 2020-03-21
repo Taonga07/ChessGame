@@ -1,8 +1,8 @@
 # Chess
 
-this is a two player game as playing against computer is not an option yet. 
+This is a two player game; playing against computer is not an option yet. 
 
-the rules have not been developed yet but will be soon so do check for updates.
+The rules have not been developed yet but will be soon so do check for updates.
 
 main.py allows your gane to be saved or opened. This is still under devlopment but soon will be done.
 
