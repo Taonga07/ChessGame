@@ -1,4 +1,4 @@
-chess
+# Chess
 
 this is a two player game as playing against computer is not an option yet. 
 
