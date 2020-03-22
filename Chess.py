@@ -102,7 +102,6 @@ def play_chess():
     window = tkinter.Tk() 
     window.title('chess') 
     layout_window(window)
-    #not sure what this line was doing?
     window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
     return window
