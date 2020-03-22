@@ -1,6 +1,7 @@
 import Chess
 from tkinter import *
 from tkinter import filedialog
+import os
 
 def onOpen():
     Open = filedialog.askopenfilename(initialdir = "/",title = "Open file",filetypes = (("main files","*txt*"),("All files","*.*")))
@@ -13,6 +14,15 @@ def onSave():
     file = open(Save,"w+")
     file.write(Chess.board)
     file.close() 
+
+def openGuide():
+    try:
+        os.system("gedit Guide.txt")
+    except:
+        try:
+            os.system("notepad Guide.txt")
+        except:
+            print("Neither gedit nor notepad could be used to open the file.")
 
 def main():
     window = Tk()
@@ -29,17 +39,20 @@ def main():
 
     filemenu = Menu(menubar, tearoff=0)
     editmenu = Menu(menubar, tearoff=0)
-    veiwmenu = Menu(menubar, tearoff=0)
+    viewmenu = Menu(menubar, tearoff=0)
     toolmenu = Menu(menubar, tearoff=0)
     helpmenu = Menu(menubar, tearoff=0)
+
     filemenu.add_command(label="New", command=Chess.play_chess)
     filemenu.add_command(label="Open", command=onOpen)
     filemenu.add_command(label="Save", command=onSave)
     filemenu.add_command(label="Exit", command=window.quit)
 
+    helpmenu.add_command(label="Open Guide", command=openGuide)
+
     menubar.add_cascade(label="File", menu=filemenu)
     menubar.add_cascade(label="Edit", menu=editmenu)
-    menubar.add_cascade(label="View", menu=veiwmenu)
+    menubar.add_cascade(label="View", menu=viewmenu)
     menubar.add_cascade(label="Tools", menu=toolmenu)
     menubar.add_cascade(label="Help", menu=helpmenu)
 
