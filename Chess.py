@@ -9,13 +9,7 @@ class Game_Object():
         self.column = column
         self.score = score
 
-class Piece(Game_Object):
-    def Move():
-        #this prevents it throwing an empty function error, though the solution down there with pass seems to work... hmm...
-        foo = None
-        #TODO Make moving work
-
-class Pawn(Piece):
+class Pawn(Game_Object):
     def __init__(self, icon):
         super().__int__(icon, colour) 
         self.piece = 'Pawn'
@@ -48,14 +42,12 @@ def on_click(event):
                 piecetomove = (row_number,column_number)
                 return
             else:
-                #FIXME Deobfuscate this...
                 #changed to here - not debugged
                 old_row_number, old_column_number = piecetomove
                 if oldcolour != board[old_row_number][old_column_number].colour:
                     if board[old_row_number][old_column_number].checkMove(row_number,column_number):
                         board[row_number][column_number] = board[old_row_number][old_column_number]
                         board[piecetomove[0]][piecetomove[1]] = 0
-
         layout_window(window) 
         if turn == 0:
             turn = 1
@@ -110,14 +102,8 @@ def play_chess():
     window = tkinter.Tk() 
     window.title('chess') 
     layout_window(window)
-    #FIXME Tkinter does not accept gifs, I have commented it out for now
-    try:
-        print("WARNING: Tried to access disabled code, passing")
-        #window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
-
-    except:
-        print("ERROR: Failed to set icon in window manager")
-
+    #not sure what this line was doing?
+    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
     return window
 
@@ -141,20 +127,6 @@ cwd = os.getcwd()
 resources = '/Chess_Resources/'
 path = cwd + resources
 icons = ['White_Rook.gif', 'White_Bishop.gif', 'White_Knight.gif', 'White_Queen.gif', 'White_King.gif', 'White_Knight.gif', 'White_Bishop.gif', 'White_Rook.gif', 'Black_Rook.gif', 'Black_Bishop.gif', 'Black_Knight.gif', 'Black_King.gif', 'Black_Queen.gif', 'Black_Knight.gif', 'Black_Bishop.gif', 'Black_Rook.gif'] #/media/barton_hill/THOMAS/ Digi@Local/MyCode/Python/4 - Green/Code/Chess_Resources/ gameOver = False
-
-iconsDict = {"WhiteRook" : 'White_Rook.gif', 
-"WhiteBishop" : "White_Bishop.gif", 
-"WhiteKnight" : "White_Knight.gif",
-"WhiteQueen" : "White_Queen.gif",
-"WhiteKing" : "White_King.gif",
-"WhiteRook" : "White_Rook.gif",
-"BlackRook" : 'Black_Rook.gif', 
-"BlackBishop" : "Black_Bishop.gif", 
-"BlackKnight" : "Black_Knight.gif",
-"BlackQueen" : "Black_Queen.gif",
-"BlackKing" : "Black_King.gif",
-"BlackRook" : "Black_Rook.gif",}
-
 white_pieces = ['Rook', 'Bishop', 'Knight', 'Queen', 'King', 'Knight', 'Bishop', 'Rook']
 black_pieces = ['Rook', 'Bishop', 'Knight', 'King', 'Queen', 'Knight', 'Bishop', 'Rook'] 
 
