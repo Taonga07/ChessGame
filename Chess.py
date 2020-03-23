@@ -8,118 +8,120 @@ class Game_Object():
         self.row = row
         self.column = column
         self.score = score
-
+        
 class Pawn(Game_Object):
     def __init__(self, icon):
-        super().__int__(icon, colour) 
+        super().__int__(icon, colour)
         self.piece = 'Pawn'
-
-    def checkMove(new_row_number,new_column_number):
+    def checkMove(newrowNumber,newcolumnNumber):
         pass
 
 def on_click(event):
+    global turn
     global window
     global onclick
-    global piecetomove
-    global turn
     global old_colour
-    onclick = onclick+1 
+    global piecetomove
+    onclick = onclick+1
     square = event.widget
-    row_number = int(square.grid_info()['row'])
-    column_number = int(square.grid_info() ['column'])
+    rowNumber = int(square.grid_info()["row"])
+    columnNumber  = int(square.grid_info()["column"])
     try:
-        if (onclick == 1 and 
-                (
-                    (turn == 0 and board[row_number][column_number].colour == 'white') 
-                    or 
-                    (turn == 1 and board[row_number][column_number].colour == 'black')
-                ) 
-                or onclick == 2):
-            currentText = square.cget('text')
+        if onclick == 1 and ((turn == 0 and board[rowNumber][columnNumber].colour == 'white') or (turn == 1 and board[rowNumber][columnNumber].colour == 'black')) or onclick == 2:
+            currentText = square.cget("text")
+
             if onclick == 1:
-                print('Where would you like to move your', board[row_number][column_number].piece, 'to?')
-                old_colour = board[row_number][column_number].colour
-                piecetomove = (row_number,column_number)
+                print('Where would you like to move your', board[rowNumber][columnNumber].piece, 'to?')
+                old_colour = board[rowNumber][columnNumber].colour
+                piecetomove = rowNumber,columnNumber
                 return
             else:
-                #changed to here - not debugged
-                old_row_number, old_column_number = piecetomove
-                if oldcolour != board[old_row_number][old_column_number].colour:
-                    if board[old_row_number][old_column_number].checkMove(row_number,column_number):
-                        board[row_number][column_number] = board[old_row_number][old_column_number]
-                        board[piecetomove[0]][piecetomove[1]] = 0
-        layout_window(window) 
-        if turn == 0:
-            turn = 1
-        else:
-            turn = 0
+                #if old_colour != board[rowNumber][columnNumber].colour:
+                #if board[oldrowNumber][oldcolumnNumber].checkMove(rowNumber,columnNumber)
+                oldrownumber,oldcolumnNumber = piecetomove
+                board[rowNumber][columnNumber] = board[oldrownumber][oldcolumnNumber]
+                board[oldrownumber][oldcolumnNumber] = 0
+                #intresting
+                print(board[rowNumber][columnNumber].colour, old_colour)
+                layout_window(window)
+                if turn == 0:
+                    turn = 1
+                else:
+                    turn = 0
     except:
         if onclick == 1:
             print('No piece there, try again')
         else:
-            print('an error has ocurred') 
+            print('an error has ocurred')
+            raise
     onclick = 0
-
-def layout_window(window): 
-    bttnclr='white'
-    for row_number, row_list in enumerate(board):
-        for column_number, column_entry in enumerate(row_list):
-            try: 
-                img = tkinter.PhotoImage(file = board[row_number] [column_number].icon)
-                square = tkinter.Label(window, bg = bttnclr, image = img) 
+    
+def layout_window(window):
+    bttnclr="white"
+    for rowNumber, rowlist in enumerate(board):
+        for columnNumber, columnEntry in enumerate(rowlist):
+            try:
+                img = tkinter.PhotoImage(file = board[rowNumber][columnNumber].icon)
+                square = tkinter.Label(window, bg = bttnclr, image = img)
                 square.image = img
             except:
-                square = tkinter.Label(window, text = '                 \n\n\n', bg = bttnclr)
-            if bttnclr == 'white': 
-                bttnclr = 'grey'
+                square = tkinter.Label(window, text = "                 \n\n\n", bg = bttnclr)
+
+            if bttnclr == "white":
+                bttnclr = "grey"
             else:
-                bttnclr = 'white'
-            square.grid(row = row_number, column = column_number)
-            square.bind('<Button-1>', on_click)
-        if bttnclr == 'white': 
-            bttnclr = 'grey'
+                bttnclr = "white"
+            square.grid(row = rowNumber, column = columnNumber)
+            square.bind("<Button-1>", on_click)
+        if bttnclr == "white":
+            bttnclr = "grey"
         else:
-            bttnclr = 'white'
+            bttnclr = "white"
 
 def create_board(board):
+    global squaresToClear
     for row in range(0,8):
-        row_list = []
+        rowlist = []
         for column in range(0,8):
             if row == 0:
-                row_list.append(Game_Object(black_pieces[column], path+icons[column+8], 'black', column, row))
+                rowlist.append(Game_Object(black_pieces[column], path+icons[column+8], 'black', column, row))
             elif row == 7:
-                row_list.append(Game_Object(white_pieces[column], path+icons[column], 'white', column, row))
+                rowlist.append(Game_Object(white_pieces[column], path+icons[column], 'white', column, row))
             elif row == 6:
-                row_list.append(Game_Object('Pawn', path+'White_Pawn.gif', 'white', column, row))
+                rowlist.append(Game_Object('Pawn', path+'White_Pawn.gif', 'white', column, row))
             elif row == 1:
-                row_list.append(Game_Object('Pawn', path+'Black_Pawn.gif', 'black', column, row))
-            else: 
-                row_list.append(0)
-        board.append(row_list)
+                rowlist.append(Game_Object('Pawn', path+'Black_Pawn.gif', 'black', column, row))
+            else:
+                rowlist.append(0)
+        board.append(rowlist)
 
-def play_chess(): 
+def play_Chess():
     create_board(board)
-    window = tkinter.Tk() 
-    window.title('chess') 
+    window = tkinter.Tk()
+    window.title('chess')
     layout_window(window)
     window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
     return window
 
-def updateFile(): 
+def updateFile():
     Game = 0
     try:
         file = open(path + Game +'.txt','r')
         board_state = json.load(file)
-        file.close() 
+        file.close()
     except:
-        board_state = [] 
-        if board_state == ' ':
-            file = json.load(board) 
-        else:
-            file = json.load(board) 
-            file.close()
+        board_state = []
+    if board_state == ' ':
+        file = json.load(board)
+    else:
+        file = json.load(board)
+    file.close()
     return board_state
+    
+    
+    
+  
 
 #set up our path and icon images
 cwd = os.getcwd()
@@ -140,5 +142,7 @@ window = None
 turn = 0
 old_colour = 'white'
 
-if __name__ =='__main__': 
-    window = play_chess()
+if __name__ =="__main__":
+    window = play_Chess()
+
+                
