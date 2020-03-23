@@ -118,10 +118,6 @@ def updateFile():
         file = json.load(board)
     file.close()
     return board_state
-    
-    
-    
-  
 
 #set up our path and icon images
 cwd = os.getcwd()
@@ -144,5 +140,3 @@ old_colour = 'white'
 
 if __name__ =="__main__":
     window = play_Chess()
-
-                
