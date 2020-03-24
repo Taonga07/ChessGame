@@ -43,9 +43,19 @@ def on_click(event):
                 piece_to_move = row_number,column_number
                 return
             else:
-                if (isinstance(board[row_number][column_number], GameObject) and
+                if board[row_number][column_number] == 0: #nothing at the square we're moving to
+                    if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
+                        board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
+                        board[piece_to_move[0]][piece_to_move[1]] = 0
+                        #intresting
+                        layout_window(window)
+                        if turn == 0:
+                            turn = 1
+                        else:
+                            turn = 0
+
+                elif (isinstance(board[row_number][column_number], GameObject) and
                     old_colour != board[row_number][column_number].colour):
-                    print(board[piece_to_move[0]][piece_to_move[1]])
                     if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
                         board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
                         board[piece_to_move[0]][piece_to_move[1]] = 0
