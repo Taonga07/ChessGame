@@ -36,18 +36,19 @@ def on_click(event):
                 piecetomove = rowNumber,columnNumber
                 return
             else:
-                #if old_colour != board[rowNumber][columnNumber].colour:
-                #if board[oldrowNumber][oldcolumnNumber].checkMove(rowNumber,columnNumber)
-                oldrownumber,oldcolumnNumber = piecetomove
-                board[rowNumber][columnNumber] = board[oldrownumber][oldcolumnNumber]
-                board[oldrownumber][oldcolumnNumber] = 0
-                #intresting
-                print(board[rowNumber][columnNumber].colour, old_colour)
-                layout_window(window)
-                if turn == 0:
-                    turn = 1
-                else:
-                    turn = 0
+                print(old_colour)
+                if old_colour != board[rowNumber][columnNumber].colour:
+                    if board[oldrowNumber][oldcolumnNumber].checkMove(rowNumber,columnNumber):
+                        oldrownumber,oldcolumnNumber = piecetomove
+                        board[rowNumber][columnNumber] = board[oldrownumber][oldcolumnNumber]
+                        board[oldrownumber][oldcolumnNumber] = 0
+                        #intresting
+                        print(board[rowNumber][columnNumber].colour, old_colour)
+                        layout_window(window)
+                        if turn == 0:
+                            turn = 1
+                        else:
+                            turn = 0
     except:
         if onclick == 1:
             print('No piece there, try again')
