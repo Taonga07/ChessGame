@@ -96,7 +96,6 @@ def layout_window(window):
             bttnclr = "white"
 
 def create_board(board):
-    global squaresToClear
     for row in range(0,8):
         rowlist = []
         for column in range(0,8):
