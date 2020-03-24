@@ -112,12 +112,12 @@ def create_board(board):
                 rowlist.append(0)
         board.append(rowlist)
 
-def play_Chess():
+def play_chess():
     create_board(board)
     window = tkinter.Tk()
     window.title('chess')
     layout_window(window)
-    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+    #window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
     return window
 
@@ -156,4 +156,4 @@ turn = 0
 old_colour = 'white'
 
 if __name__ =="__main__":
-    window = play_Chess()
+    window = play_chess()
