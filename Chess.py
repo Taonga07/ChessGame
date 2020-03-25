@@ -1,21 +1,5 @@
-import tkinter, os
+import tkinter, Rules, os
 
-class GameObject():
-    def __init__(self, piece, icon, colour, column, row):
-        self.icon = icon
-        self.colour = colour
-        self.piece = piece
-        self.row = row
-        self.column = column
-        self.score = score
-        
-class Pawn(GameObject):
-    def __init__(self, piece, icon, colour, column, row):
-        super().__init__(piece, icon, colour, column, row)
-        self.piece = 'Pawn'
-
-    def check_move(self, new_row_number,new_column_number):
-        return True
 
 def on_click(event):
     global turn
@@ -100,9 +84,9 @@ def create_board(board):
         rowlist = []
         for column in range(0,8):
             if row == 0:
-                rowlist.append(GameObject(black_pieces[column], path+icons[column+8], 'black', column, row))
+                rowlist.append(Rules.GameObject(black_pieces[column], path+icons[column+8], 'black', column, row))
             elif row == 7:
-                rowlist.append(GameObject(white_pieces[column], path+icons[column], 'white', column, row))
+                rowlist.append(Rules.GameObject(white_pieces[column], path+icons[column], 'white', column, row))
             elif row == 6:
                 rowlist.append(Pawn('Pawn', path+'White_Pawn.gif', 'white', column, row))
             elif row == 1:
@@ -111,12 +95,12 @@ def create_board(board):
                 rowlist.append(0)
         board.append(rowlist)
 
-def play_chess():
+def play_Chess():
     create_board(board)
     window = tkinter.Tk()
     window.title('chess')
     layout_window(window)
-    #window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
     return window
 
@@ -155,4 +139,4 @@ turn = 0
 old_colour = 'white'
 
 if __name__ =="__main__":
-    window = play_chess()
+    window = play_Chess()
