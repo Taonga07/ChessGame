@@ -1,6 +1,6 @@
 import tkinter, os
 
-class Game_Object():
+class GameObject():
     def __init__(self, piece, icon, colour, column, row):
         self.icon = icon
         self.colour = colour
@@ -9,45 +9,62 @@ class Game_Object():
         self.column = column
         self.score = score
         
-class Pawn(Game_Object):
-    def __init__(self, icon):
-        super().__int__(icon, colour)
+class Pawn(GameObject):
+    def __init__(self, piece, icon, colour, column, row):
+        super().__init__(piece, icon, colour, column, row)
         self.piece = 'Pawn'
-    def checkMove(newrowNumber,newcolumnNumber):
-        pass
+
+    def check_move(self, new_row_number,new_column_number):
+        return True
 
 def on_click(event):
     global turn
     global window
     global onclick
     global old_colour
-    global piecetomove
+    global piece_to_move
     onclick = onclick+1
     square = event.widget
-    rowNumber = int(square.grid_info()["row"])
-    columnNumber  = int(square.grid_info()["column"])
+    row_number = int(square.grid_info()["row"])
+    column_number  = int(square.grid_info()["column"])
     try:
-        if onclick == 1 and ((turn == 0 and board[rowNumber][columnNumber].colour == 'white') or (turn == 1 and board[rowNumber][columnNumber].colour == 'black')) or onclick == 2:
+        if ((onclick == 1 
+            and (
+                (turn == 0 and board[row_number][column_number].colour == 'white') 
+                or (turn == 1 and board[row_number][column_number].colour == 'black')
+            )) 
+            or onclick == 2
+            ):
             currentText = square.cget("text")
 
             if onclick == 1:
-                print('Where would you like to move your', board[rowNumber][columnNumber].piece, 'to?')
-                old_colour = board[rowNumber][columnNumber].colour
-                piecetomove = rowNumber,columnNumber
+                print('Where would you like to move your', board[row_number][column_number].piece, 'to?')
+                old_colour = board[row_number][column_number].colour
+                piece_to_move = row_number,column_number
                 return
             else:
-                #if old_colour != board[rowNumber][columnNumber].colour:
-                #if board[oldrowNumber][oldcolumnNumber].checkMove(rowNumber,columnNumber)
-                oldrownumber,oldcolumnNumber = piecetomove
-                board[rowNumber][columnNumber] = board[oldrownumber][oldcolumnNumber]
-                board[oldrownumber][oldcolumnNumber] = 0
-                #intresting
-                print(board[rowNumber][columnNumber].colour, old_colour)
-                layout_window(window)
-                if turn == 0:
-                    turn = 1
-                else:
-                    turn = 0
+                if board[row_number][column_number] == 0: #nothing at the square we're moving to
+                    if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
+                        board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
+                        board[piece_to_move[0]][piece_to_move[1]] = 0
+                        #intresting
+                        layout_window(window)
+                        if turn == 0:
+                            turn = 1
+                        else:
+                            turn = 0
+
+                elif (isinstance(board[row_number][column_number], GameObject) and
+                    old_colour != board[row_number][column_number].colour):
+                    if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
+                        board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
+                        board[piece_to_move[0]][piece_to_move[1]] = 0
+                        #intresting
+                        layout_window(window)
+                        if turn == 0:
+                            turn = 1
+                        else:
+                            turn = 0
     except:
         if onclick == 1:
             print('No piece there, try again')
@@ -58,10 +75,10 @@ def on_click(event):
     
 def layout_window(window):
     bttnclr="white"
-    for rowNumber, rowlist in enumerate(board):
-        for columnNumber, columnEntry in enumerate(rowlist):
+    for row_number, rowlist in enumerate(board):
+        for column_number, columnEntry in enumerate(rowlist):
             try:
-                img = tkinter.PhotoImage(file = board[rowNumber][columnNumber].icon)
+                img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
                 square = tkinter.Label(window, bg = bttnclr, image = img)
                 square.image = img
             except:
@@ -71,7 +88,7 @@ def layout_window(window):
                 bttnclr = "grey"
             else:
                 bttnclr = "white"
-            square.grid(row = rowNumber, column = columnNumber)
+            square.grid(row = row_number, column = column_number)
             square.bind("<Button-1>", on_click)
         if bttnclr == "white":
             bttnclr = "grey"
@@ -79,28 +96,27 @@ def layout_window(window):
             bttnclr = "white"
 
 def create_board(board):
-    global squaresToClear
     for row in range(0,8):
         rowlist = []
         for column in range(0,8):
             if row == 0:
-                rowlist.append(Game_Object(black_pieces[column], path+icons[column+8], 'black', column, row))
+                rowlist.append(GameObject(black_pieces[column], path+icons[column+8], 'black', column, row))
             elif row == 7:
-                rowlist.append(Game_Object(white_pieces[column], path+icons[column], 'white', column, row))
+                rowlist.append(GameObject(white_pieces[column], path+icons[column], 'white', column, row))
             elif row == 6:
-                rowlist.append(Game_Object('Pawn', path+'White_Pawn.gif', 'white', column, row))
+                rowlist.append(Pawn('Pawn', path+'White_Pawn.gif', 'white', column, row))
             elif row == 1:
-                rowlist.append(Game_Object('Pawn', path+'Black_Pawn.gif', 'black', column, row))
+                rowlist.append(Pawn('Pawn', path+'Black_Pawn.gif', 'black', column, row))
             else:
                 rowlist.append(0)
         board.append(rowlist)
 
-def play_Chess():
+def play_chess():
     create_board(board)
     window = tkinter.Tk()
     window.title('chess')
     layout_window(window)
-    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+    #window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
     window.mainloop()
     return window
 
@@ -129,7 +145,7 @@ black_pieces = ['Rook', 'Bishop', 'Knight', 'King', 'Queen', 'Knight', 'Bishop',
 
 board = [] 
 score = 0
-piecetomove = (0) 
+piece_to_move = (0) 
 targetpiece = 0 
 piecemove = 0 
 piece_capture = 0 
@@ -139,4 +155,4 @@ turn = 0
 old_colour = 'white'
 
 if __name__ =="__main__":
-    window = play_Chess()
+    window = play_chess()
