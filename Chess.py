@@ -7,11 +7,12 @@ def set_up_window():
     play_chess(window)
     
 def play_chess(window):
-    #reset_board(board)
+    #reset_board()
     #create_board(window, board)
     window.mainloop()
 
 def reset_board(board):
+    board = []
     pass
     #return board
 
