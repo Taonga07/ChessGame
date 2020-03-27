@@ -3,7 +3,7 @@ import tkinter, Rules, os
 def set_up_window():
     window = tkinter.Tk()
     window.title('chess')
-    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file = Rules.path +'Black_King.gif'))
+    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file = Rules.path +'icon.gif'))
     play_chess(window)
     
 def play_chess(window):
@@ -16,7 +16,7 @@ def reset_board():
     return board
 
 def create_board(window, board):
-    pass
+    print(board)
 
 if __name__ =="__main__":
     set_up_window()
