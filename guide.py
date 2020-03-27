@@ -1,4 +1,5 @@
 import tkinter, Rules, os
 
-window = tkinter.Tk()
-window.mainloop()
+def set_up_window():
+    window = tkinter.Tk()
+    window.mainloop()

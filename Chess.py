@@ -7,14 +7,14 @@ def set_up_window():
     play_chess(window)
     
 def play_chess(window):
-    #reset_board()
-    #create_board(window, board)
+    reset_board()
+   # board = reset_board.board
+    create_board(window, board)
     window.mainloop()
 
-def reset_board(board):
+def reset_board():
     board = []
-    pass
-    #return board
+    return board
 
 def create_board(window, board):
     pass
@@ -23,5 +23,3 @@ if __name__ =="__main__":
     set_up_window()
     window.title('chess')
     window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file = path +'Black_King.gif'))
-    
-    
