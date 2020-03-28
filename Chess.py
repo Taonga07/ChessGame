@@ -80,7 +80,25 @@ def reset_board():
     return board
 
 def create_board(window, board):
-    print(board)
+
+    #print(board)
+    print("--------------------------------------------------------------------------------")
+    print("Board:")
+    print("")
+    for boardRow in board:
+        boardRowString = ""
+        for boardRowItem in boardRow:
+            # TODO: I would recommend using "None" to represent a blank board space
+            if boardRowItem == 0:
+                boardItemString = "_____"
+            else:
+                boardItemString = boardRowItem.getShortDescription()
+            boardRowString += boardItemString + " "
+        
+        print("row: " + str(boardRowString))
+    
+    print("")
+    print("--------------------------------------------------------------------------------")
 
 if __name__ =="__main__":
     set_up_window()

@@ -9,6 +9,14 @@ class GameObject():
         self.row = row
         self.column = column
         self.value = value
+    
+    # Returns something like: BRook
+    # where B means 'black' and 'Rook' is 4 characters showing the piece name
+    # Limits the result length to 5 chars so we can show a grid
+    def getShortDescription(self):
+        result = self.colour[0].capitalize()
+        result += self.piece[0:4]
+        return result
         
 class Pawn(GameObject):
     def __init__(self, piece, icon, colour, column, row):
