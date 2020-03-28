@@ -13,6 +13,43 @@ def play_chess(window):
 
 def reset_board():
     board = []
+
+
+    # Scratch
+    #               class      instances
+    #   New sprite: Rook       MASTER COPY
+    #       Clone Rook         SECOND COPY
+    #       Clone Rook         THIRD COPY
+    #
+    # Python
+    #   Define class: Rook     no automatic instance
+    #    instruction book
+    #
+    #   board[0][0] = Rook(black)
+    #   board[7][0] = Rook(black)
+    #   rookBlackLeft = Rook(white)
+    #   rookBlackRight = Rook(white)
+
+
+
+    ### board[0][0] = Rook(black)
+    ### board[1][0] = Knight(black)
+    ### board[2][0] = Bishop(black)
+    ### ...
+
+    # End result:
+    # Rook Knight  Bishop  Queen  King   Bishop  Knight  Rook           BLACK
+    # Pawn Pawn    Pawn    Pawn   Pawn   Pawn    Pawn    Pawn           BLACK
+    # 
+    #
+    #
+    #
+    # 
+    # Pawn Pawn    Pawn    Pawn   Pawn   Pawn    Pawn    Pawn           WHITE
+    # Rook Knight  Bishop  King   Queen  Bishop  Knight  Rook           WHITE
+
+
+
     for row in range(0,8):
         rowlist = []
         for column in range(0,8):
@@ -27,6 +64,18 @@ def reset_board():
             else:
                 rowlist.append(0)
         board.append(rowlist)
+
+    # End result for the above code:
+    # GameObject GameObject  GameObject  GameObject  GameObject   GameObject  GameObject  GameObject         BLACK
+    # Pawn       Pawn        Pawn        Pawn        Pawn         Pawn        Pawn        Pawn               BLACK
+    # 
+    #
+    #
+    #
+    # 
+    # Pawn Pawn    Pawn    Pawn   Pawn   Pawn    Pawn    Pawn           WHITE
+    # Rook Knight  Bishop  King   Queen  Bishop  Knight  Rook           WHITE
+
 
     return board
 
