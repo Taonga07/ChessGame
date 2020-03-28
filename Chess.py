@@ -17,9 +17,9 @@ def reset_board():
         rowlist = []
         for column in range(0,8):
             if row == 0:
-                rowlist.append(Rules.GameObject(Rules.pieces[column], Rules.path+Rules.icons[column+8], 'black', column, row))
+                rowlist.append(Rules.GameObject(Rules.pieces[column], Rules.path+Rules.icons[column+8], 'black', column, row, 6))
             elif row == 7:
-                rowlist.append(Rules.GameObject(Rules.pieces[column], Rules.path+Rules.icons[column], 'white', column, row))
+                rowlist.append(Rules.GameObject(Rules.pieces[column], Rules.path+Rules.icons[column], 'white', column, row, 6))
             elif row == 6:
                 rowlist.append(Rules.Pawn('Pawn', Rules.path+'White_Pawn.gif', 'white', column, row))
             elif row == 1:

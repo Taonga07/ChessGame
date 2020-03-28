@@ -2,7 +2,7 @@ import os
 
 
 class GameObject():
-    def __init__(self, piece, icon, colour, column, row):
+    def __init__(self, piece, icon, colour, column, row, value):
         self.icon = icon
         self.colour = colour
         self.piece = piece
@@ -12,18 +12,18 @@ class GameObject():
         
 class Pawn(GameObject):
     def __init__(self, piece, icon, colour, column, row):
-        super().__init__(piece, icon, colour, column, row)
+        super().__init__(piece, icon, colour, column, row, 1)
         self.piece = 'Pawn'
-        self.value = 1
+#        self.value = 1
 
     def check_move(self, new_row_number,new_column_number):
         return True
 
 class Rook(GameObject):
     def __init__(self, piece, icon, colour, column, row):
-        super().__init__(piece, icon, colour, column, row)
+        super().__init__(piece, icon, colour, column, row, 4)
         self.piece = 'Rook'
-        self.value = 4
+#        self.value = 4
 
     def check_move(self, new_row_number,new_column_number):
         return True
