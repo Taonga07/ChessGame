@@ -8,15 +8,25 @@ class GameObject():
         self.piece = piece
         self.row = row
         self.column = column
+        self.value = value
         
 class Pawn(GameObject):
     def __init__(self, piece, icon, colour, column, row):
         super().__init__(piece, icon, colour, column, row)
         self.piece = 'Pawn'
+        self.value = 1
 
     def check_move(self, new_row_number,new_column_number):
         return True
 
+class Rook(GameObject):
+    def __init__(self, piece, icon, colour, column, row):
+        super().__init__(piece, icon, colour, column, row)
+        self.piece = 'Rook'
+        self.value = 4
+
+    def check_move(self, new_row_number,new_column_number):
+        return True
 # our varibles/lits
 
 path = os.getcwd() + '/Chess_Resources/'
