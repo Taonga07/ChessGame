@@ -13,6 +13,21 @@ def play_chess(window):
 
 def reset_board():
     board = []
+    for row in range(0,8):
+        rowlist = []
+        for column in range(0,8):
+            if row == 0:
+                rowlist.append(Rules.GameObject(Rules.pieces[column], Rules.path+Rules.icons[column+8], 'black', column, row))
+            elif row == 7:
+                rowlist.append(Rules.GameObject(Rules.pieces[column], Rules.path+Rules.icons[column], 'white', column, row))
+            elif row == 6:
+                rowlist.append(Rules.Pawn('Pawn', Rules.path+'White_Pawn.gif', 'white', column, row))
+            elif row == 1:
+                rowlist.append(Rules.Pawn('Pawn', Rules.path+'Black_Pawn.gif', 'black', column, row))
+            else:
+                rowlist.append(0)
+        board.append(rowlist)
+
     return board
 
 def create_board(window, board):
