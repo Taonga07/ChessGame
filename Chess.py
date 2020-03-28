@@ -47,7 +47,6 @@ def on_click(event):
                     if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
                         board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
                         board[piece_to_move[0]][piece_to_move[1]] = 0
-                        #intresting
                         layout_window(window)
                         if turn == 0:
                             turn = 1
@@ -59,12 +58,13 @@ def on_click(event):
                     if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
                         board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
                         board[piece_to_move[0]][piece_to_move[1]] = 0
-                        #intresting
                         layout_window(window)
                         if turn == 0:
                             turn = 1
                         else:
                             turn = 0
+                else:
+                    print('you can not take your own piece')
     except:
         if onclick == 1:
             print('No piece there, try again')
