@@ -1,11 +1,40 @@
-import tkinter, Rules, os
+import tkinter, Rules, Files
 
 def set_up_window():
     window = tkinter.Tk()
     window.title('chess')
     window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file = Rules.path +'icon.gif'))
-    play_chess(window)
-    
+    start(window)
+
+def start(window):
+    w = tkinter.Label(window, image = Rules.photo)
+    w.pack()
+    ent = Entry(window)
+    ent.pack()
+    ent.focus_set() 
+    menubar = tkinter.Menu(window)
+
+    filemenu = tkinter.Menu(menubar, tearoff = 0)
+    editmenu = tkinter.Menu(menubar, tearoff = 0)
+    viewmenu = tkinter.Menu(menubar, tearoff= 0 )
+    toolmenu = tkinter.Menu(menubar, tearoff = 0)
+    helpmenu = tkinter.Menu(menubar, tearoff = 0)
+
+    filemenu.add_command(label="New", command = play_chess(window))
+    filemenu.add_command(label="Open", command = Files.onOpen(window, board))
+    filemenu.add_command(label="Save", command = Files.onSave(board)
+    filemenu.add_command(label="Exit", command = window.destroy())
+
+    helpmenu.add_command(label="Open Guide", command = Files.openGuide())
+
+    menubar.add_cascade(label="File", menu = filemenu)
+    menubar.add_cascade(label="Edit", menu = editmenu)
+    menubar.add_cascade(label="View", menu = viewmenu)
+    menubar.add_cascade(label="Tools", menu = toolmenu)
+    menubar.add_cascade(label="Help", menu = helpmenu)
+
+    window.config(menu = menubar)
+      
 def play_chess(window):
     board = reset_board()
     create_board(window, board)
