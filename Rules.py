@@ -73,10 +73,23 @@ white_pieces = ['Rook', 'Knight', 'Bishop', 'Queen', 'King', 'Bishop', 'Knight',
 black_pieces = ['Rook', 'Knight', 'Bishop', 'King', 'Queen', 'Bishop', 'Knight', 'Rook'] 
 
 pieces = [
-    [Rook, 5, [black, 'Black_Rook'], [white, 'White_Rook']]
-    [Bishop, 3, [black, 'Black_Bisop'], [white, 'White_Bisop']]
-    [Queen, 9, [black, 'Black_Queeen'], [white, 'White_Queeen']]
-    [King, 0, [black, 'Black_King'], [white, 'White_King']]
-    [Knight, 5, [black, 'Black_Knight'], [white, 'White_Knight']]
-    [pawn, 1, [black, 'Black_Pawn'], [white, 'White_Pawn']]
+    [Rook, 5, ['black', 'Black_Rook'], ['white', 'White_Rook']]
+    [Bishop, 3, ['black', 'Black_Bisop'], ['white', 'White_Bisop']]
+    [Queen, 9, ['black', 'Black_Queeen'], ['white', 'White_Queeen']]
+    [King, 0, ['black', 'Black_King'], ['white', 'White_King']]
+    [Knight, 5, ['black', 'Black_Knight'], ['white', 'White_Knight']]
+    [pawn, 1, ['black', 'Black_Pawn'], ['white', 'White_Pawn']]
 ]
+
+# list to make life easier?
+#it's structure 
+# piece name, piece value [piece icon if black], [piece icon if white]
+
+#how we can use it
+
+# if row == 2 or 7:
+#       add to list board pawn
+#
+#if row == 1 or 8:
+#   go through pieces list exept from pawn bit (backwards if row == 8 forwards if row == 1  (this is because we will start at the same coloum and so by going backwards we have king + queen on rigt sqare according to colour )  )
+#   give persition of each piece to our classes
