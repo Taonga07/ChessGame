@@ -49,6 +49,9 @@ def reset_board():
     for row in range(0,8):
         rowlist = []
         for column in range(0,8):
+#            if row == 7:
+#                for i in range(Rules.white_pieces):
+#                    rowlist.append(Rules.(i)(i, white_pieces[column], path+icons[column], 'white', column, row))
             if row == 6:
                 rowlist.append(Rules.Pawn('Pawn', Rules.path+'White_Pawn.gif', 'white', column, row))
             elif row == 1:
