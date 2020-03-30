@@ -42,11 +42,69 @@ def create_board(window, board):
             else:
                 bttnclr = "white"
             square.grid(row = row_number, column = column_number)
-#            square.bind("<Button-1>", on_click)
+            square.bind("<Button-1>", on_click)
         if bttnclr == "white":
             bttnclr = "grey"
         else:
             bttnclr = "white"
+
+
+def on_click(event):
+    movepiece(window)
+
+def movepiece(window):
+    global click
+    global old_colour
+    global piece_to_move
+    Rules.click += 1
+    square = on_click.event.widget
+    row_number = int(square.grid_info()["row"])
+    column_number  = int(square.grid_info()["column"])
+    try:
+        if ((click == 1 
+            and (
+                (Rules.turn == 0 and board[row_number][column_number].colour == 'white') 
+                or (Rules.turn == 1 and board[row_number][column_number].colour == 'black')
+            )) 
+            or click == 2
+            ):
+            currentText = square.cget("text")
+
+            if click == 1:
+                print('Where would you like to move your', board[row_number][column_number].piece, 'to?')
+                old_colour = board[row_number][column_number].colour
+                piece_to_move = row_number,column_number
+                reRules.turn
+            else:
+                if board[row_number][column_number] == 0: #nothing at the square we're moving to
+                    if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
+                        board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
+                        board[piece_to_move[0]][piece_to_move[1]] = 0
+                        layout_window(window)
+                        if Rules.turn == 0:
+                            Rules.turn = 1
+                        else:
+                            Rules.turn = 0
+
+                elif (isinstance(board[row_number][column_number], GameObject) and
+                    old_colour != board[row_number][column_number].colour):
+                    if board[piece_to_move[0]][piece_to_move[1]].check_move(row_number,column_number):
+                        board[row_number][column_number] = board[piece_to_move[0]][piece_to_move[1]]
+                        board[piece_to_move[0]][piece_to_move[1]] = 0
+                        layout_window(window)
+                        if Rules.turn == 0:
+                            Rules.turn = 1
+                        else:
+                            Rules.turn = 0
+                else:
+                    print('you can not take your own piece')
+    except:
+        if click == 1:
+            print('No piece there, try again')
+        else:
+            print('an error has ocurred')
+            raise
+    click = 0
 
 
 if __name__ =="__main__":
