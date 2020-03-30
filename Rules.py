@@ -68,5 +68,4 @@ class Knight(GameObject):
 # our varibles/lists
 
 path = os.getcwd() + '/Chess_Resources/'
-photo = tkinter.PhotoImage(file = path + "Intro.gif")
 icons = ['White_Rook.gif', 'White_Bishop.gif', 'White_Knight.gif', 'White_Queen.gif', 'White_King.gif', 'White_Knight.gif', 'White_Bishop.gif', 'White_Rook.gif', 'Black_Rook.gif', 'Black_Bishop.gif', 'Black_Knight.gif', 'Black_King.gif', 'Black_Queen.gif', 'Black_Knight.gif', 'Black_Bishop.gif', 'Black_Rook.gif']
