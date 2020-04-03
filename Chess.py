@@ -29,7 +29,23 @@ def menu(window):
     filemenu.add_command(label="New", command = lambda: play_chess(window))
     filemenu.add_command(label="Open", command = lambda: Files.onOpen(window, board))
     filemenu.add_command(label="Save", command = lambda: Files.onSave(board))
+    filemenu.add_separator()
     filemenu.add_command(label="Exit", command = lambda: window.destroy())
+
+    editmenu.add_command(label="custormise pieces", command = lambda: Files.openGuide())
+    editmenu.add_command(label="custormise board", command = lambda: Files.openGuide())
+    editmenu.add_checkbutton(label='Blindfold Chess', command = lambda: Files.openGuide())
+    
+    viewmenu.add_checkbutton(label='points', command = lambda: Files.openGuide())
+    viewmenu.add_checkbutton(label='pieces taken', command = lambda: Files.openGuide())
+    viewmenu.add_checkbutton(label='computer evaluation', command = lambda: Files.openGuide())
+    viewmenu.add_command(label="game history", command = lambda: Files.openGuide())
+
+    toolmenu.add_command(label="takeback", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="flip board", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="Request stalemate", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="Resighn", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="hint", command = lambda: Files.openGuide())
 
     helpmenu.add_command(label="Open Guide", command = lambda: Files.openGuide())
 
@@ -38,6 +54,11 @@ def menu(window):
     menubar.add_cascade(label="View", menu = viewmenu)
     menubar.add_cascade(label="Tools", menu = toolmenu)
     menubar.add_cascade(label="Help", menu = helpmenu)
+
+#    img1 = tkinter.PhotoImage(Rules.path+'icon.png')
+#    b = tkinter.Button(menubar, image=img1, width=6)
+#    b.image = img1
+#    b.pack(side=tkinter.RIGHT)
 
     window.config(menu = menubar)
 
