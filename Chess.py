@@ -28,25 +28,16 @@ def reset_board():
 
 def create_board(window, board):
     bttnclr="white"
-    for row_number, rowlist in enumerate(board):
-        for column_number, columnEntry in enumerate(rowlist):
-            try:
-                img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
-                square = tkinter.Label(window, bg = bttnclr, image = img)
-                square.image = img
-            except:
-                square = tkinter.Label(window, text = "                 \n\n\n", bg = bttnclr)
+    for column_number in board:
+        for row_number in column_number:
+            img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
+            square = tkinter.Label(window, bg = bttnclr, image = img)
+            square.image = img
 
-            if bttnclr == "white":
+    if bttnclr == "white":
                 bttnclr = "grey"
-            else:
-                bttnclr = "white"
-            square.grid(row = row_number, column = column_number)
-#            square.bind("<Button-1>", on_click)
-        if bttnclr == "white":
-            bttnclr = "grey"
-        else:
-            bttnclr = "white"
+    else:
+        bttnclr = "white"
 
 
 if __name__ =="__main__":
