@@ -116,7 +116,9 @@ def play_chess():
     window = tkinter.Tk()
     window.title('chess')
     layout_window(window)
-    #window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file= path +'Black_King.gif'))
+    #statusbar = tkinter.Label(window, text=turn, bd=1, relief=tkinter.SUNKEN, anchor=tkinter.W)
+    #statusbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
     window.mainloop()
     return window
 
