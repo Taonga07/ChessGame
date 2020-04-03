@@ -21,7 +21,7 @@ def reset_board():
             elif row == 1:
                 rowlist.append(Rules.Pawn('Pawn', Rules.path+'Black_Pawn.gif', 'black', column, row))
             else:
-                rowlist.append(0)
+                rowlist.append(None)
         board.append(rowlist)
 
     return board
@@ -30,15 +30,17 @@ def create_board(window, board):
     bttnclr="white"
     for column_number in board:
         for row_number in column_number:
-            img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
-            square = tkinter.Label(window, bg = bttnclr, image = img)
-            square.image = img
-
-    if bttnclr == "white":
+            try:
+                img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
+                square = tkinter.Label(window, bg = bttnclr, image = img)
+                square.image = img
+            except:
+                square = tkinter.Label(window, text = "                 \n\n\n", bg = bttnclr)
+            square.grid(row = row_number, column = column_number)
+            if bttnclr == "white":
                 bttnclr = "grey"
-    else:
-        bttnclr = "white"
-
+            else:
+                bttnclr = "white"
 
 if __name__ =="__main__":
     set_up_window()
