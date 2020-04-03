@@ -108,7 +108,7 @@ def create_board(board):
             elif row == 1:
                 rowlist.append(Pawn('Pawn', path+'Black_Pawn.gif', 'black', column, row))
             else:
-                rowlist.append(0)
+                rowlist.append(None)
         board.append(rowlist)
 
 def play_chess():
