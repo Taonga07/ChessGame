@@ -7,7 +7,7 @@ class GameObject():
         self.piece = piece
         self.colour = colour
         self.column = column
-        self.possible_moves = []
+        self.possible_moves= []
         self.icon = CC.path+self.colour+'_'+self.piece+'.gif'
     def highlight_moves(self, window, board):
         for i in self.possible_moves:
@@ -18,8 +18,13 @@ class GameObject():
             else: # none has no attrubrite to clour this stops this error 
                 if board[row_number][column_number].colour != self.colour:
                     square.config(bg='red') # highlight position i red
-    def check_move(self, destination_square):
+    def check_move(self, destination_square, board):
         if destination_square in self.possible_moves:
+            destination_row, destination_column = destination_square
+            if board[destination_row][destination_column] != None:
+                if board[destination_row][destination_column].colour != board[self.row][self.column].colour:
+                    #check check
+                    return True
             return True
         return False
     def explore_moves(self, direction, board):
@@ -28,13 +33,17 @@ class GameObject():
         while True:
             working_value = ((working_value[0] + direction[0]), (working_value[1] + direction[1])) 
             if (working_value[0] >= 0)and(working_value[0] <= 7)and(working_value[1] >= 0)and(working_value[1] <= 7):
+                print('inboard')
                 if board[working_value[0]][working_value[1]] == None:
                     moves.append(working_value)
                 else:
                     moves.append(working_value)
+                    print('found piece')
                     break
             else:
+                print('outofboard')
                 break
+        print(moves)
         return moves
 
 class Pawn(GameObject):
@@ -42,22 +51,25 @@ class Pawn(GameObject):
         super().__init__('Pawn', colour, column, row, 1)
         self.first_move = True
     def find_moves(self, board):
-        if self.colour == 'white':
+        self.possible_moves= []
+        if self.colour == 'White':
             if board[self.row - 1][self.column] == None: 
                 self.possible_moves.append((self.row - 1, self.column))
                 if ( board[self.row - 2][self.column] == None ) and (self.first_move == True):
                     self.possible_moves.append((self.row - 2, self.column))
+                    self.first_move = False
             if self.column < 7:
                 if board[self.row - 1][self.column + 1] != None:
                     self.possible_moves.append((self.row - 1, self.column + 1))
             if self.column > 0:
                 if board[self.row - 1][self.column - 1] != None:
                     self.possible_moves.append((self.row - 1, self.column - 1))
-        elif self.colour == 'black':
+        elif self.colour == 'Black':
             if board[self.row + 1][self.column] == None: 
                 self.possible_moves.append((self.row + 1, self.column))
                 if ( board[self.row + 2][self.column] == None ) and (self.first_move == True):
                     self.possible_moves.append((self.row + 2, self.column))
+                    self.first_move = False
             if self.column < 7:
                 if board[self.row + 1][self.column + 1] != None :
                     self.possible_moves.append((self.row + 1, self.column + 1))
@@ -69,6 +81,7 @@ class Rook(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Rook', colour, column, row, 4)
     def find_moves(self, board):
+        self.possible_moves= []
         self.possible_moves.extend(self.explore_moves((-1, 0), board))# up
         self.possible_moves.extend(self.explore_moves((0, +1), board))# right
         self.possible_moves.extend(self.explore_moves((0, -1), board))# left
@@ -77,7 +90,8 @@ class Rook(GameObject):
 class Bishop(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Bishop', colour, column, row, 3)
-    def find_moves(self, board): 
+    def find_moves(self, board):
+        self.possible_moves= [] 
         self.possible_moves.extend(self.explore_moves((-1, -1), board))# up left
         self.possible_moves.extend(self.explore_moves((-1, +1), board))# up right
         self.possible_moves.extend(self.explore_moves((+1, -1), board))# down left
@@ -86,7 +100,8 @@ class Bishop(GameObject):
 class King(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('King', colour, column, row, 1)
-    def find_moves(self, board): 
+    def find_moves(self, board):
+        self.possible_moves= [] 
         if self.row > 0:
             self.possible_moves.append((self.row-1, self.column))
             if self.column > 0:
@@ -108,6 +123,7 @@ class Queen(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Queen', colour, column, row, 9)
     def find_moves(self, board):
+        self.possible_moves= []
         self.possible_moves.extend(self.explore_moves((-1, -1), board))# up left
         self.possible_moves.extend(self.explore_moves((-1, +1), board))# up right
         self.possible_moves.extend(self.explore_moves((+1, -1), board))# down left
@@ -121,6 +137,8 @@ class Knight(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Knight', colour, column, row, 5)
     def find_moves(self, board): 
+        self.possible_moves= []
+        print(self.row ,self.column)
         if self.row < 6 and self.column > 0:
             self.possible_moves.append((self.row+2, self.column-1))
         if self.row < 6 and self.column < 7:

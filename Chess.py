@@ -1,36 +1,18 @@
-import tkinter, CC, CP, File, os
+import tkinter, CC, CP, os
 from tkinter import messagebox
 
 def set_up_window():
     global window
     window = tkinter.Tk()
     window.title('chess')
-    print(window)
-    File.start(window)
-    print(window)
-    window.mainloop()
+    return window
 
-def play_chess(window):
+def play_chess():
     global board
-    print(window)
-    destroy_all_widgets(window)
-    CC.reset_varibles()
-    File.menu1(window)
+    window = set_up_window()
     board = reset_board()
     layout_board(window, board)
-
-def destroy_all_widgets(window):
-    for widget in window.winfo_children():
-        if widget.winfo_class() != 'menubar':
-            widget.destroy()
-
-def mssg_bar(window, mssg):
-    messageLabel = tkinter.Label(window, text=mssg)
-    messageLabel.grid(
-        row=9,
-        column=3,
-        columnspan=5,
-        sticky=tkinter.N + tkinter.S + tkinter.W + tkinter.E)
+    window.mainloop()
 
 def reset_board():
     board = []
@@ -73,36 +55,31 @@ def on_click(event):
     column_number  = int(square.grid_info()["column"])
     square_clicked = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
-    if CC.onclick == 1: # this is our fist click we are selecting the piece we want to move
+    print(CC.onclick)
+    if CC.onclick == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((CC.turn == 0)and(piece_clicked.colour == 'White'))or((CC.turn == 1)and(piece_clicked.colour == 'Black'))):
             square.config(bg='blue') # set clicked square background to blue
             CC.square_clicked = square_clicked #row_number,column_number
             piece_clicked.find_moves(board)
             CC.old_click = square_clicked
             piece_clicked.highlight_moves(window, board)
-        else: # if there is a pice where we clicked
+        else: # if there is no piece or wrong colour piece where we clicked
             tkinter.messagebox.showinfo("Move Not Allowed","No/Your piece there, try again")
             CC.onclick = 1 - CC.onclick
-            return
     else: # this is our second click, we are selecting the square to move to
-        if board[row_number][column_number] != None:
-            if piece_clicked.colour == board[row_number][column_number].colour: # if we are taking our own piece
-                tkinter.messagebox.showinfo("Move Not Allowed","You can not take your own piece")
-                CC.onclick = 1 - CC.onclick
-                return
-            valid_move = piece_clicked.check_move(square_clicked)
-            if not valid_move:
-                tkinter.messagebox.showinfo("Move Not Allowed", "Move Not Allowed")
-                layout_board(window, board) #reset board
-                CC.onclick = 1 - CC.onclick #seond click we want to alternate bettwen click 1 and 2
-                return
+        row, column = CC.old_click
+        old_piece = board[row][column]
+        valid_move = old_piece.check_move(square_clicked, board) # see if current sqare in possible moves
+        if not valid_move:
+            tkinter.messagebox.showinfo("Your piece can not move there!", "Move Not Allowed")
+            layout_board(window, board) #reset board
+            return
         board[row_number][column_number] = board[CC.old_click[0]][CC.old_click[1]]
         board[row_number][column_number].row = row_number
         board[row_number][column_number].column = column_number
         board[CC.old_click[0]][CC.old_click[1]] = None
         layout_board(window, board) #reset board
-        CC.onclick = 1 - CC.onclick
         CC.turn = 1 - CC.turn
 
 if __name__ =="__main__":
-    set_up_window()
+    play_chess()
