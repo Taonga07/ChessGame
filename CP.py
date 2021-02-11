@@ -136,6 +136,7 @@ class Queen(GameObject):
 class Knight(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Knight', colour, column, row, 5)
+        print(str(colour) + " knight created " + str(column) + "," + str(row))
     def find_moves(self, board): 
         self.possible_moves= []
         print(self.row ,self.column)
