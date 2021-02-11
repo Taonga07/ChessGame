@@ -2,13 +2,11 @@ import tkinter, CC, CP, os
 from tkinter import messagebox
 
 def set_up_window():
-    global window
     window = tkinter.Tk()
     window.title('chess')
     return window
 
 def play_chess():
-    global board
     window = set_up_window()
     board = reset_board()
     layout_board(window, board)
@@ -44,18 +42,17 @@ def layout_board(window, board):
                 square = tkinter.Label(window, bg = CC.bttnclrs[CC.bttnclr_turn], image = img)
                 square.image = img
             square.grid(row = row_number, column = column_number, sticky = tkinter.N+tkinter.S+tkinter.W+tkinter.E)
-            square.bind("<Button-1>", on_click)
+            square.bind("<Button-1>", lambda event, data=window, data1 = board: on_click(event, data, data1))
             CC.bttnclr_turn = 1-CC.bttnclr_turn
         CC.bttnclr_turn = 1-CC.bttnclr_turn
 
-def on_click(event):
+def on_click(event, window, board):
     CC.onclick = 1 - CC.onclick
     square = event.widget
     row_number = int(square.grid_info()["row"])
     column_number  = int(square.grid_info()["column"])
     square_clicked = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
-    print(CC.onclick)
     if CC.onclick == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((CC.turn == 0)and(piece_clicked.colour == 'White'))or((CC.turn == 1)and(piece_clicked.colour == 'Black'))):
             square.config(bg='blue') # set clicked square background to blue
