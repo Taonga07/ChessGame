@@ -20,15 +20,13 @@ def reset_board():
         rowlist = []
         for column in range(0,8):
             if row == 0:
-                for piece in CP.pieces:
-                    rowlist.append(piece('Black', column, row))
+                    rowlist.append(CP.pieces[column]('Black', column, row))
             elif row == 1:
                 rowlist.append(CP.Pawn('Black', column, row))
             elif row == 6:
                 rowlist.append(CP.Pawn('White', column, row))
             elif row == 7:
-                for piece in CP.pieces:
-                    rowlist.append(piece('White', column, row))
+                rowlist.append(CP.pieces[column]('White', column, row))
             else:
                 rowlist.append(None)
         board.append(rowlist)
@@ -55,7 +53,6 @@ def on_click(event):
     column_number  = int(square.grid_info()["column"])
     square_clicked = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
-    print(CC.onclick)
     if CC.onclick == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((CC.turn == 0)and(piece_clicked.colour == 'White'))or((CC.turn == 1)and(piece_clicked.colour == 'Black'))):
             square.config(bg='blue') # set clicked square background to blue
