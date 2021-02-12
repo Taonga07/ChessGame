@@ -44,6 +44,23 @@ def layout_board(window, board):
             CC.bttnclr_turn = 1-CC.bttnclr_turn
         CC.bttnclr_turn = 1-CC.bttnclr_turn
 
+def CheckForCheck(board, colour):
+    #go througheach sqaue in board chech is the piece can take the king at the sqaure with find moves
+    for column_number in range(0, 8):
+        for row_number in range(0, 8):
+            if board[row_number][column_number] != None:
+                board[row_number][column_number].find_moves(board) # reset possible moves for current piece
+                for move in (board[row_number][column_number].possible_moves): # go through the list
+                    row, column = move #set item to the row and column it is made of for fute use
+                    if board[row_number][column_number].colour != colour: # we are not taking our own piece
+                        if colour == 'White':
+                            if board[row][column] == board[7][4]:#if white king in item of list
+                                return True
+                        else:
+                            if board[row][column] == board[0][4]:#if black king in item of list
+                                return True
+    return False
+
 def on_click(event, window, board):
     CC.onclick = 1 - CC.onclick
     square = event.widget
@@ -54,6 +71,12 @@ def on_click(event, window, board):
     if CC.onclick == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((CC.turn == 0)and(piece_clicked.colour == 'White'))or((CC.turn == 1)and(piece_clicked.colour == 'Black'))):
             square.config(bg='blue') # set clicked square background to blue
+            check = CheckForCheck(board, piece_clicked.colour)
+            if check == True:
+                tkinter.messagebox.showinfo("Move Not Allowed","You can not move in check")
+                layout_board(window, board) #reset board
+                CC.onclick = 1 - CC.onclick
+                return
             CC.square_clicked = square_clicked #row_number,column_number
             piece_clicked.find_moves(board)
             CC.old_click = square_clicked
@@ -66,7 +89,7 @@ def on_click(event, window, board):
         old_piece = board[row][column]
         valid_move = old_piece.check_move(square_clicked, board) # see if current sqare in possible moves
         if not valid_move:
-            tkinter.messagebox.showinfo("Your piece can not move there!", "Move Not Allowed")
+            tkinter.messagebox.showinfo("Move Not Allowed", "Your piece can not move there!")
             layout_board(window, board) #reset board
             return
         board[row_number][column_number] = board[CC.old_click[0]][CC.old_click[1]]

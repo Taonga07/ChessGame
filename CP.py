@@ -22,9 +22,10 @@ class GameObject():
         if destination_square in self.possible_moves:
             destination_row, destination_column = destination_square
             if board[destination_row][destination_column] != None:
-                if board[destination_row][destination_column].colour != board[self.row][self.column].colour:
-                    #check check
+                if board[destination_row][destination_column].colour != self.colour:
                     return True
+                else:
+                    return False
             return True
         return False
     def explore_moves(self, direction, board):
@@ -93,6 +94,7 @@ class Bishop(GameObject):
 class King(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('King', colour, column, row, 1)
+        self.check_moves = []
     def find_moves(self, board):
         if self.row > 0:
             self.possible_moves.append((self.row-1, self.column))
