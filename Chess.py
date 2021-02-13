@@ -1,16 +1,35 @@
 import tkinter, CC, CP, os
 from tkinter import messagebox
+from Dev_example_scenarios import *
 
 def set_up_window():
     window = tkinter.Tk()
     window.title('chess')
     return window
 
+def on_scenario_click(window, board, scenario_num):
+    clear_board(board)
+    setup_board_for_example_scenario(board, scenario_num)
+    layout_board(window, board)
+
+def clear_board(board):
+    for column_number in range(0, 8):
+        for row_number in range(0, 8):
+            board[row_number][column_number] = None
+
+# show buttons at bottom of board to allow you to force the board into certain states (testing scenarios)
+def show_developer_buttons(window, board):
+    button = tkinter.Button(window, text="Scenario 1", fg="red")
+    button.grid(row = 100, column = 0, sticky = tkinter.N+tkinter.S+tkinter.W+tkinter.E)
+    button.bind("<Button-1>", lambda event: on_scenario_click(window, board, 1))
+
 def play_chess():
     window = set_up_window()
     board = reset_board()
     layout_board(window, board)
+    show_developer_buttons(window, board)
     window.mainloop()
+
 
 def reset_board():
     board = []
@@ -55,9 +74,11 @@ def CheckForCheck(board, colour):
                     for move in (board[row_number][column_number].possible_moves): # go through the list
                         row, column = move #set item to the row and column it is made of for fute use
                         if colour == 'White':
+                            # TODO: Is this correct to hard code 7,4? What if the king has moved?
                             if board[row][column] == board[7][4]:#if white king in item of list
                                 check_pieces.append(board[row_number][column_number])
                         else:
+                            # TODO: Is this correct to hard code 7,4? What if the king has moved?
                             if board[row][column] == board[0][4]:#if black king in item of list
                                 check_pieces.append(board[row_number][column_number])
     #if not checkmate
