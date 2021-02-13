@@ -16,18 +16,7 @@ class GameObject():
             if board[row_number][column_number] == None: #if there is nothing at position i
                 square.config(bg='green') # highlight position i green
             else: # none has no attrubrite to clour this stops this error 
-                if board[row_number][column_number].colour != self.colour:
-                    square.config(bg='red') # highlight position i red
-    def check_move(self, destination_square, board):
-        if destination_square in self.possible_moves:
-            destination_row, destination_column = destination_square
-            if board[destination_row][destination_column] != None:
-                if board[destination_row][destination_column].colour != self.colour:
-                    return True
-                else:
-                    return False
-            return True
-        return False
+                square.config(bg='red') # highlight position i red
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
         moves = []
