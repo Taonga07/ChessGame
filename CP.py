@@ -35,7 +35,11 @@ class GameObject():
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Pawn', colour, column, row, 1)
-        self.first_move = True
+        self.first_move = self.Check_If_First_Move()
+    def Check_If_First_Move(self):
+        if (self.row == 0 and self.colour == 'Black') or (self.row == 7 and self.colour == 'White'):
+            return True
+        return False
     def find_moves(self, board):
         if self.colour == 'White':
             if board[self.row - 1][self.column] == None: 
