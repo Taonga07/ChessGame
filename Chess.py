@@ -73,14 +73,8 @@ def CheckForCheck(board, colour):
                     board[row_number][column_number].find_moves(board) # reset possible moves for current piece
                     for move in (board[row_number][column_number].possible_moves): # go through the list
                         row, column = move #set item to the row and column it is made of for fute use
-                        if colour == 'White':
-                            # TODO: Is this correct to hard code 7,4? What if the king has moved?
-                            if board[row][column] == board[7][4]:#if white king in item of list
-                                check_pieces.append(board[row_number][column_number])
-                        else:
-                            # TODO: Is this correct to hard code 7,4? What if the king has moved?
-                            if board[row][column] == board[0][4]:#if black king in item of list
-                                check_pieces.append(board[row_number][column_number])
+                        if board[row][column] != None and board[row][column].piece == 'King' and board[row][column].colour ==  colour:#if king in item of list
+                            check_pieces.append(board[row_number][column_number])
     #if not checkmate
     for column_number in range(0, 8):
         for row_number in range(0, 8):
