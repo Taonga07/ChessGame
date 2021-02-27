@@ -1,9 +1,10 @@
-import tkinter, CC, CP, os
+import tkinter, File, CC, CP, os
 from tkinter import messagebox
 from Dev_example_scenarios import *
 
 def set_up_window():
     window = tkinter.Tk()
+    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file=CC.path + 'Icon.png'))
     window.title('chess')
     return window
 
@@ -26,6 +27,7 @@ def show_developer_buttons(window, board):
 def play_chess():
     window = set_up_window()
     board = reset_board()
+    File.menu(window, board)
     layout_board(window, board)
     show_developer_buttons(window, board)
     window.mainloop()
