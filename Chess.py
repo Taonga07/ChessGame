@@ -108,6 +108,7 @@ def on_click(event, window, board):
             CheckForCheck(board, piece_clicked.colour) # check for check/checkmate
             square.config(bg='blue') # set clicked square background to blue
             CC.square_clicked = square_clicked #row_number,column_number
+            piece_clicked.possible_moves = [] # reset posible moves
             piece_clicked.find_moves(board)
             CC.old_click = square_clicked
             piece_clicked.highlight_moves(window, board)
