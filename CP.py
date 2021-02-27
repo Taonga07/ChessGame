@@ -11,6 +11,7 @@ class GameObject():
         self.icon = CC.path+self.colour+'_'+self.piece+'.gif'
     def highlight_moves(self, window, board):
         for i in self.possible_moves:
+            print(i)
             row_number, column_number = i # get row and column of position i in board
             squarex = window.grid_slaves(row = row_number, column = column_number)
             print(f"squarex: {squarex}")
@@ -44,31 +45,21 @@ class Pawn(GameObject):
             return True
         return False
     def find_moves(self, board):
-        print(f"Pawn, find_moves {self.row}, {self.column} - {self.colour}")
         if self.colour == 'White':
-            if board[self.row - 1][self.column] == None:
-                self.possible_moves.append((self.row - 1, self.column))
-                if ( board[self.row - 2][self.column] == None ) and (self.first_move()):
-                    self.possible_moves.append((self.row - 2, self.column))
-            if self.column < 7:
-                if board[self.row - 1][self.column + 1] != None:
-                    self.possible_moves.append((self.row - 1, self.column + 1))
-            if self.column > 0:
-                if board[self.row - 1][self.column - 1] != None:
-                    self.possible_moves.append((self.row - 1, self.column - 1))
-        elif self.colour == 'Black':
-            if board[self.row + 1][self.column] == None: 
-                self.possible_moves.append((self.row + 1, self.column))
-                if ( board[self.row + 2][self.column] == None ) and (self.first_move()):
-                    self.possible_moves.append((self.row + 2, self.column))
-            if self.column < 7:
-                if board[self.row + 1][self.column + 1] != None :
-                    self.possible_moves.append((self.row + 1, self.column + 1))
-            if self.column > 0:
-                if board[self.row + 1][self.column - 1] != None:
-                    self.possible_moves.append((self.row + 1, self.column - 1))
-        print(f"Pawn, possible_moves: {self.possible_moves}")
-
+            direction = -1
+        else: 
+            direction = 1
+        if board[self.row + direction][self.column] == None: 
+            self.possible_moves.append(((self.row + direction), self.column))
+            if self.first_move():
+                if board[self.row+ (direction*2)][self.column] == None:
+                    self.possible_moves.append(((self.row + (direction*2)), self.column))
+        if self.column < 7:
+            if board[self.row + direction][self.column - 1] != None :
+                self.possible_moves.append(((self.row + direction), (self.column -1)))
+        if self.column > 0:
+            if board[self.row + direction][self.column + 1] != None:
+                self.possible_moves.append(((self.row + direction), (self.column + 1)))
 
 class Rook(GameObject):
     def __init__(self, colour, column, row):

@@ -103,7 +103,7 @@ def CheckForCheck(board, colour):
                         row, column = move #set item to the row and column it is made of for fute use
                         if board[row][column] != None and board[row][column].piece == 'King' and board[row][column].colour ==  colour:#if king in item of list
                             check_pieces.append(board[row_number][column_number])
-    #if not checkmate
+
     for column_number in range(0, 8):
         for row_number in range(0, 8):
             if board[row_number][column_number] != None:
@@ -111,12 +111,10 @@ def CheckForCheck(board, colour):
                     board[row_number][column_number].find_moves(board) # reset possible moves for current piece
                     for move in (board[row_number][column_number].possible_moves): # go through the list
                         row, column = move #set item to the row and column it is made of for fute use
-                        if (board[row][column] != None) and (board[row][column].colour != colour): # if we are taking our own piece
+                        if board[row][column] not in check_pieces:
                             board[row_number][column_number].possible_moves.remove(move)
-                        elif board[row][column] not in check_pieces:
-                            board[row_number][column_number].possible_moves.remove(move)
-    #else:
-        #tkinter.messagebox.showinfo('Checkmate', f'{colour} wins! Well Done!')
+    if board == []: #if there is no moves out of check
+        tkinter.messagebox.showinfo('Checkmate', f'{colour} wins! Well Done!')
 
 def on_click(event, window, board):
     CC.onclick = 1 - CC.onclick
