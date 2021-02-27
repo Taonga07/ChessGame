@@ -87,11 +87,6 @@ def layout_board(window, board):
         CC.bttnclr_turn = 1-CC.bttnclr_turn
 
 def CheckForCheck(board, colour):
-    print(f"CheckForCheck, colour: {colour}")
-    if True:
-        print("CheckForCheck is disabled!")
-        return
-
     check_pieces = []
     #go througheach sqaue in board chech is the piece can take the king at the sqaure with find moves
     for column_number in range(0, 8):
@@ -101,9 +96,9 @@ def CheckForCheck(board, colour):
                     board[row_number][column_number].find_moves(board) # reset possible moves for current piece
                     for move in (board[row_number][column_number].possible_moves): # go through the list
                         row, column = move #set item to the row and column it is made of for fute use
-                        if board[row][column] != None and board[row][column].piece == 'King' and board[row][column].colour ==  colour:#if king in item of list
+                        if (board[row][column] != None) and (board[row][column].piece == 'King') and (board[row][column].colour == colour):
                             check_pieces.append(board[row_number][column_number])
-
+#this test if we can take the piece that has our king in check
     for column_number in range(0, 8):
         for row_number in range(0, 8):
             if board[row_number][column_number] != None:
@@ -113,7 +108,7 @@ def CheckForCheck(board, colour):
                         row, column = move #set item to the row and column it is made of for fute use
                         if board[row][column] not in check_pieces:
                             board[row_number][column_number].possible_moves.remove(move)
-    if board == []: #if there is no moves out of check
+    if check_pieces == []: #if there is no moves out of check
         tkinter.messagebox.showinfo('Checkmate', f'{colour} wins! Well Done!')
 
 def on_click(event, window, board):
@@ -126,8 +121,7 @@ def on_click(event, window, board):
     piece_clicked = board[row_number][column_number]
     if CC.onclick == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((CC.turn == 0)and(piece_clicked.colour == 'White'))or((CC.turn == 1)and(piece_clicked.colour == 'Black'))):
-            CheckForCheck(board, piece_clicked.colour) # check for check/checkmate
-            square.config(bg='blue') # set clicked square background to blue
+            ##CheckForCheck(board, piece_clicked.colour) # check for check/checkmate
             CC.square_clicked = square_clicked #row_number,column_number
             piece_clicked.possible_moves = [] # reset posible moves
             piece_clicked.find_moves(board)
