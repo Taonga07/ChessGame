@@ -12,7 +12,11 @@ class GameObject():
     def highlight_moves(self, window, board):
         for i in self.possible_moves:
             row_number, column_number = i # get row and column of position i in board
-            square = window.grid_slaves(row = row_number, column = column_number)[0] #returns list of widgets
+            squarex = window.grid_slaves(row = row_number, column = column_number)
+            print(f"squarex: {squarex}")
+            if len(squarex) > 1:
+                print(f"warning, this square has more than one grid slave!!! {row_number}, {column_number}. count: {len(squarex)}")
+            square = squarex[0] #returns list of widgets
             if board[row_number][column_number] == None: #if there is nothing at position i
                 square.config(bg='green') # highlight position i green
             else: # none has no attrubrite to clour this stops this error 
@@ -40,8 +44,9 @@ class Pawn(GameObject):
             return True
         return False
     def find_moves(self, board):
+        print(f"Pawn, find_moves {self.row}, {self.column} - {self.colour}")
         if self.colour == 'White':
-            if board[self.row - 1][self.column] == None: 
+            if board[self.row - 1][self.column] == None:
                 self.possible_moves.append((self.row - 1, self.column))
                 if ( board[self.row - 2][self.column] == None ) and (self.first_move()):
                     self.possible_moves.append((self.row - 2, self.column))
@@ -62,6 +67,8 @@ class Pawn(GameObject):
             if self.column > 0:
                 if board[self.row + 1][self.column - 1] != None:
                     self.possible_moves.append((self.row + 1, self.column - 1))
+        print(f"Pawn, possible_moves: {self.possible_moves}")
+
 
 class Rook(GameObject):
     def __init__(self, colour, column, row):

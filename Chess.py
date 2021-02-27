@@ -49,7 +49,26 @@ def reset_board():
         board.append(rowlist)
     return board
 
+# completely remove all grid slaves - causes some flicker
+def clear_board_ui(window):
+    grid_slaves = window.grid_slaves()
+    if len(grid_slaves) > 0:
+        for g in grid_slaves:
+            g.destroy()
+
+# remove only the grid slaves for the specified row/column
+def remove_grid_item(window, row_number, column_number):
+    grid_slaves = window.grid_slaves(row_number, column_number)
+    if len(grid_slaves) > 0:
+        for g in grid_slaves:
+            g.destroy()
+
 def layout_board(window, board):
+    # causes flicker so don't use this
+    #clear_board_ui(window)
+
+    grid_slaves = window.grid_slaves()
+    print(f"layout_board, grid slaves count: {len(grid_slaves)}")
     for column_number in range(0, 8):
         for row_number in range(0, 8):
             if board[row_number][column_number] == None:
@@ -58,12 +77,21 @@ def layout_board(window, board):
                 img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
                 square = tkinter.Label(window, bg = CC.bttnclrs[CC.bttnclr_turn], image = img)
                 square.image = img
+
+            # Connor added - remove any existing grid item at this location - stops UI memory leak
+            remove_grid_item(window, row_number, column_number)
+
             square.grid(row = row_number, column = column_number, sticky = tkinter.N+tkinter.S+tkinter.W+tkinter.E)
             square.bind("<Button-1>", lambda event, data=window, data1 = board: on_click(event, data, data1))
             CC.bttnclr_turn = 1-CC.bttnclr_turn
         CC.bttnclr_turn = 1-CC.bttnclr_turn
 
 def CheckForCheck(board, colour):
+    print(f"CheckForCheck, colour: {colour}")
+    if True:
+        print("CheckForCheck is disabled!")
+        return
+
     check_pieces = []
     #go througheach sqaue in board chech is the piece can take the king at the sqaure with find moves
     for column_number in range(0, 8):
@@ -95,6 +123,7 @@ def on_click(event, window, board):
     square = event.widget
     row_number = int(square.grid_info()["row"])
     column_number  = int(square.grid_info()["column"])
+    print(f"on_click {row_number}, {column_number}")
     square_clicked = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
     if CC.onclick == 0: # this is our fist click we are selecting the piece we want to move
