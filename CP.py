@@ -35,8 +35,7 @@ class GameObject():
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Pawn', colour, column, row, 1)
-        self.first_move = self.Check_If_First_Move()
-    def Check_If_First_Move(self):
+    def first_move(self):
         if (self.row == 1 and self.colour == 'Black') or (self.row == 6 and self.colour == 'White'):
             return True
         return False
@@ -44,9 +43,8 @@ class Pawn(GameObject):
         if self.colour == 'White':
             if board[self.row - 1][self.column] == None: 
                 self.possible_moves.append((self.row - 1, self.column))
-                if ( board[self.row - 2][self.column] == None ) and (self.first_move == True):
+                if ( board[self.row - 2][self.column] == None ) and (self.first_move()):
                     self.possible_moves.append((self.row - 2, self.column))
-                    self.first_move = False
             if self.column < 7:
                 if board[self.row - 1][self.column + 1] != None:
                     self.possible_moves.append((self.row - 1, self.column + 1))
@@ -56,9 +54,8 @@ class Pawn(GameObject):
         elif self.colour == 'Black':
             if board[self.row + 1][self.column] == None: 
                 self.possible_moves.append((self.row + 1, self.column))
-                if ( board[self.row + 2][self.column] == None ) and (self.first_move == True):
+                if ( board[self.row + 2][self.column] == None ) and (self.first_move()):
                     self.possible_moves.append((self.row + 2, self.column))
-                    self.first_move = False
             if self.column < 7:
                 if board[self.row + 1][self.column + 1] != None :
                     self.possible_moves.append((self.row + 1, self.column + 1))
