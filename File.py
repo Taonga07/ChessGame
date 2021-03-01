@@ -11,7 +11,7 @@ def menu(window, board):
     helpmenu = tkinter.Menu(menubar, tearoff=0)
 
     filemenu.add_command(label="New", command=lambda: Chess.play_chess())
-    filemenu.add_command(label="Open", command=lambda: onOpen(window, board))
+    filemenu.add_command(label="Open", command=lambda: onOpen(board))
     filemenu.add_command(label="Save", command=lambda: onSave(board))
     filemenu.add_separator()
     filemenu.add_command(label="Exit", command=lambda: window.destroy())
@@ -41,14 +41,16 @@ def menu(window, board):
 
     window.config(menu=menubar)
 
-def onOpen():
+def onOpen(board):
     File = filedialog.askopenfilename(initialdir = "/home",title = "Open file",filetypes = (("main files","*txt*"),("All files","*.*")))
     board = []
-    with open(File, 'r') as filehandle:
-        for row in range(0, 8):
-            rowlist = []
-            for column in range(0,8):
-                board.append(currentPlace)
+    input_file = open(File, 'r')
+    input_data = input_file.readlines()
+    input_file.closed
+    clear_board(board)
+    for i in input_data:
+        Piece, Colour, Row, Column
+        add_piece(board, Piece(Colour, Row, Column))
     window = Chess.set_up_window()
     Chess.layout_board(window, board)
     window.mainloop()
@@ -60,9 +62,18 @@ def onSave(board):
     for column_number in range(0, 8):
         for row_number in range(0,8):
             if board[row_number][column_number] != None:
-                write = board[row_number][column_number].piece + ' ' + board[row_number][column_number].colour + ' ' + str(row_number) + ' ' + str(column_number) + ' ' + '\n'
+                write = 'CP.' + board[row_number][column_number].piece + ' ' + board[row_number][column_number].colour + ' ' + str(row_number) + ' ' + str(column_number) + ' ' + '\n'
                 filehandle.write(write)
     filehandle.close()
+
+def clear_board(board):
+    for column_number in range(0, 8):
+        for row_number in range(0, 8):
+            board[row_number][column_number] = None
+
+def add_piece(board, piece):
+    board[piece.row][piece.column] = piece
+
 def openGuide():
     try:
         os.system("gedit Guide.txt")
