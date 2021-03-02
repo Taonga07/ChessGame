@@ -1,5 +1,5 @@
 from tkinter import filedialog, messagebox
-import tkinter, json, Chess, os
+import tkinter, json, Chess, os, CP
 
 def menu(window, board):
     menubar = tkinter.Menu(window)
@@ -43,18 +43,17 @@ def menu(window, board):
 
 def onOpen(board):
     File = filedialog.askopenfilename(initialdir = "/home",title = "Open file",filetypes = (("main files","*txt*"),("All files","*.*")))
-    board = []
+    clear_board(board)
     input_file = open(File, 'r')
     input_data = input_file.readlines()
     input_file.closed
-    clear_board(board)
     for i in input_data:
-        Piece, Colour, Row, Column
-        add_piece(board, Piece(Colour, Row, Column))
+        Piece, Colour, Row, Column = i.rstrip().split(' ')
+        print(Piece, Colour, Row, Column)
+        add_piece(board, eval(Piece+'('+'str(Colour)'+', '+'int(Row)'+', '+'int(Column)'+')'))
     window = Chess.set_up_window()
     Chess.layout_board(window, board)
     window.mainloop()
-
 
 def onSave(board):
     Save = filedialog.asksaveasfilename(initialdir = "/home",title = "Save as",filetypes = (("main files","*txt*"),("All files","*.*")))
