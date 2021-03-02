@@ -3,7 +3,7 @@ from tkinter import messagebox
 
 def set_up_window():
     window = tkinter.Tk()
-    window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file=CC.path + 'Icon.png'))
+    window.iconbitmap(CC.path+'Icon.ico')
     window.title('chess')
     return window
 
