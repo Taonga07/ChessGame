@@ -8,6 +8,7 @@ def set_up_window():
     return window
 
 def play_chess(file):
+    CD.set_vars()
     window = set_up_window()
     board = open_board(file)
     File.menu(window, board)
