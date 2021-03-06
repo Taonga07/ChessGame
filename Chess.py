@@ -9,12 +9,12 @@ def set_up_window():
 
 def play_chess(file):
     window = set_up_window()
-    board = reset_board(file)
+    board = open_board(file)
     File.menu(window, board)
     layout_board(window, board)
     window.mainloop()
 
-def reset_board(file):
+def open_board(file):
     board = []
     for column_number in range(0, 8):
         ColumnList = []
@@ -29,6 +29,7 @@ def reset_board(file):
         piece = eval(Piece+'(str(Colour)'+', '+'int(Column)'+', '+'int(Row))')
         board[int(piece.row)][int(piece.column)] = piece 
     return board
+
 def save_board(file, board):
     filehandle = open(file, 'w')
     for column_number in range(0, 8):
@@ -38,14 +39,6 @@ def save_board(file, board):
                 filehandle.write(write)
     filehandle.close()
 
-# completely remove all grid slaves - causes some flicker
-def clear_board_ui(window):
-    grid_slaves = window.grid_slaves()
-    if len(grid_slaves) > 0:
-        for g in grid_slaves:
-            g.destroy()
-
-# remove only the grid slaves for the specified row/column
 def remove_grid_item(window, row_number, column_number):
     grid_slaves = window.grid_slaves(row_number, column_number)
     if len(grid_slaves) > 0:
@@ -53,11 +46,7 @@ def remove_grid_item(window, row_number, column_number):
             g.destroy()
 
 def layout_board(window, board):
-    # causes flicker so don't use this
-    #clear_board_ui(window)
-
     grid_slaves = window.grid_slaves()
-    print(f"layout_board, grid slaves count: {len(grid_slaves)}")
     for column_number in range(0, 8):
         for row_number in range(0, 8):
             if board[column_number][row_number] == None:
