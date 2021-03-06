@@ -10,7 +10,7 @@ def menu(window, board):
     toolmenu = tkinter.Menu(menubar, tearoff=0)
     helpmenu = tkinter.Menu(menubar, tearoff=0)
 
-    filemenu.add_command(label="New", command=lambda: Chess.play_chess())
+    filemenu.add_command(label="New", command=lambda: Chess.play_chess('File.py'))
     filemenu.add_command(label="Open", command=lambda: onOpen(board))
     filemenu.add_command(label="Save", command=lambda: onSave(board))
     filemenu.add_separator()
@@ -60,15 +60,15 @@ def onSave(board):
     filehandle = open(Save, 'w')
     for column_number in range(0, 8):
         for row_number in range(0,8):
-            if board[row_number][column_number] != None:
-                write = 'CP.' + board[row_number][column_number].piece + ' ' + board[row_number][column_number].colour + ' ' + str(row_number) + ' ' + str(column_number) + ' ' + '\n'
+            if board[column_number][row_number] != None:
+                write = 'CP.' + board[column_number][row_number].piece + ' ' + board[column_number][row_number].colour + str(column_number) + ' ' + ' ' + str(row_number) + ' ' + '\n'
                 filehandle.write(write)
     filehandle.close()
 
 def clear_board(board):
     for column_number in range(0, 8):
         for row_number in range(0, 8):
-            board[row_number][column_number] = None
+            board[column_number][row_number] = None
 
 def add_piece(board, piece):
     board[piece.row][piece.column] = piece

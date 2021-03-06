@@ -8,6 +8,7 @@ class GameObject():
         self.colour = colour
         self.column = column
         self.possible_moves= []
+        print(CC.path,self.colour,'_',self.piece,'.gif')
         self.icon = CC.path+self.colour+'_'+self.piece+'.gif'
     def highlight_moves(self, window, board):
         for i in self.possible_moves:
