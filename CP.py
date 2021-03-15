@@ -18,24 +18,36 @@ class GameObject():
             if len(squarex) > 1:
                 print(f"warning, this square has more than one grid slave!!! {row_number}, {column_number}. count: {len(squarex)}")
             square = squarex[0] #returns list of widgets
-            if board[row_number][column_number] == None: #if there is nothing at position i
+            dest_square = board[row_number][column_number]
+            if dest_square == None: #if there is nothing at position i
                 square.config(bg='green') # highlight position i green
-            else: # none has no attrubrite to clour this stops this error 
-                square.config(bg='red') # highlight position i red
+            else: # none has no attrubrite to clour this stops this error
+                if self.colour != dest_square.colour:
+                    square.config(bg='red') # highlight position i red
+                else:
+                    print(f'DBG - remove row/col {i} from possible moves as same colour {self.colour}')
+                    self.possible_moves.remove(i) # remove from possible_moves
+        
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
         moves = []
         while True:
             working_value = ((working_value[0] + direction[0]), (working_value[1] + direction[1])) 
             if (working_value[0] >= 0)and(working_value[0] <= 7)and(working_value[1] >= 0)and(working_value[1] <= 7):
-                if board[working_value[0]][working_value[1]] == None:
+                dest_square = board[working_value[0]][working_value[1]]
+                if dest_square == None:
                     moves.append(working_value)
                 else:
-                    moves.append(working_value)
+                    if dest_square.colour != self.colour:
+                        moves.append(working_value)
                     break
             else:
                 break
         return moves
+    def __repr__(self):
+        # display object as constructor string
+        return (f'{self.__class__.__name__}('
+               f'{self.colour!r}, {self.column!r}, {self.row!r})')
 
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
@@ -54,11 +66,15 @@ class Pawn(GameObject):
             if self.first_move():
                 if board[self.row+ (direction*2)][self.column] == None:
                     self.possible_moves.append(((self.row + (direction*2)), self.column))
-        if self.column < 7:
-            if board[self.row + direction][self.column - 1] != None :
+        if self.column > 1:
+            dest_square = board[self.row + direction][self.column - 1]
+            if dest_square != None and dest_square.colour != self.colour:
+                # take left
                 self.possible_moves.append(((self.row + direction), (self.column -1)))
-        if self.column > 0:
-            if board[self.row + direction][self.column + 1] != None:
+        if self.column < 7:
+            dest_square = board[self.row + direction][self.column + 1]
+            if dest_square != None and dest_square.colour != self.colour:
+                # take right
                 self.possible_moves.append(((self.row + direction), (self.column + 1)))
 
 class Rook(GameObject):

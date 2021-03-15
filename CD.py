@@ -7,6 +7,7 @@ old_click = (0,0)
 square_clicked = (0, 0) 
 bttnclrs = 'white', 'grey'
 path = os.getcwd() + '/Chess_Resources/'
+save_path = os.getcwd()
 
 def set_vars():
     square_clicked = (0, 0)

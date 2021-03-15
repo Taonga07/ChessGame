@@ -1,5 +1,5 @@
 from tkinter import filedialog, messagebox
-import tkinter, json, Chess, os, CP
+import tkinter, json, Chess, os, CP, CD
 
 def menu(window, board):
     menubar = tkinter.Menu(window)
@@ -10,9 +10,9 @@ def menu(window, board):
     toolmenu = tkinter.Menu(menubar, tearoff=0)
     helpmenu = tkinter.Menu(menubar, tearoff=0)
 
-    filemenu.add_command(label="New", command=lambda: Chess.play_chess('File.py'))
-    filemenu.add_command(label="Open", command=lambda: onOpen(board))
-    filemenu.add_command(label="Save", command=lambda: onSave(board))
+    filemenu.add_command(label="New", command=lambda: onNew(window, board, 'Test.txt'))
+    filemenu.add_command(label="Open", command=lambda: onOpen(window, board))
+    filemenu.add_command(label="Save", command=lambda: onSave(window, board))
     filemenu.add_separator()
     filemenu.add_command(label="Exit", command=lambda: window.destroy())
 
@@ -41,37 +41,21 @@ def menu(window, board):
 
     window.config(menu=menubar)
 
-def onOpen(board):
-    File = filedialog.askopenfilename(initialdir = "/home",title = "Open file",filetypes = (("main files","*txt*"),("All files","*.*")))
-    clear_board(board)
-    input_file = open(File, 'r')
-    input_data = input_file.readlines()
-    input_file.closed
-    for i in input_data:
-        Piece, Colour, Row, Column = i.rstrip().split(' ')
-        print(Piece, Colour, Row, Column)
-        add_piece(board, eval(Piece+'('+'str(Colour)'+', '+'int(Row)'+', '+'int(Column)'+')'))
-    window = Chess.set_up_window()
+def onNew(window, board, filename):
+    board = Chess.open_board(filename)
     Chess.layout_board(window, board)
-    window.mainloop()
 
-def onSave(board):
-    Save = filedialog.asksaveasfilename(initialdir = "/home",title = "Save as",filetypes = (("main files","*txt*"),("All files","*.*")))
-    filehandle = open(Save, 'w')
-    for column_number in range(0, 8):
-        for row_number in range(0,8):
-            if board[column_number][row_number] != None:
-                write = 'CP.' + board[column_number][row_number].piece + ' ' + board[column_number][row_number].colour + str(column_number) + ' ' + ' ' + str(row_number) + ' ' + '\n'
-                filehandle.write(write)
-    filehandle.close()
+def onOpen(window, board):
+    filename = filedialog.askopenfilename(initialdir=CD.save_path, title='Open file',
+                        filetypes=(("main files","*txt*"),("All files","*.*")))
+    CD.save_path = os.path.split(filename)[0]   # update save location
+    onNew(window, board, filename)
 
-def clear_board(board):
-    for column_number in range(0, 8):
-        for row_number in range(0, 8):
-            board[column_number][row_number] = None
-
-def add_piece(board, piece):
-    board[piece.row][piece.column] = piece
+def onSave(window, board):
+    filename = filedialog.asksaveasfilename(initialdir=CD.save_path, title='Save as',
+                        filetypes=(("main files","*txt*"),("All files","*.*")))
+    CD.save_path = os.path.split(filename)[0]   # update save location
+    Chess.save_board(filename, board)
 
 def openGuide():
     try:
@@ -80,4 +64,4 @@ def openGuide():
         try:
             os.system("notepad Guide.txt")
         except:
-            tkinter.messagebox.showerror("Error","This is not possible!")
+            messagebox.showerror("Error","This is not possible!")
