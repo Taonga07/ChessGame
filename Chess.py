@@ -141,6 +141,7 @@ def on_click(event, window, board):
         if (piece_clicked != None)and(((CD.turn == 0)and(piece_clicked.colour == 'White'))or((CD.turn == 1)and(piece_clicked.colour == 'Black'))):
             ##CheckForCheck(board, piece_clicked.colour) # check for check/checkmate
             CD.square_clicked = square_clicked #row_number,column_number
+            square.config(bg='blue')# highlight square
             piece_clicked.possible_moves = [] # reset posible moves
             piece_clicked.find_moves(board)
             CD.old_click = square_clicked
