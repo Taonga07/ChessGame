@@ -9,7 +9,8 @@ def set_up_window():
     return window
 
 def play_chess(file):
-    CD.set_vars()
+    #CD.set_vars()
+    CD.reset_game_vars(CD.game_vars)
     window = set_up_window()
     board = open_board(file)
     File.menu(window, board)
@@ -90,19 +91,19 @@ def layout_board(window, board):
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             if board[row_number][column_number] == None:
-                square = tkinter.Label(window, text = "                 \n\n\n", bg = CD.bttnclrs[CD.bttnclr_turn])
+                square = tkinter.Label(window, text = "                 \n\n\n", bg = CD.bttnclrs[CD.game_vars['bttnclr_turn']])
             else:
                 img = tkinter.PhotoImage(file = board[row_number][column_number].icon)
-                square = tkinter.Label(window, bg = CD.bttnclrs[CD.bttnclr_turn], image = img)
+                square = tkinter.Label(window, bg = CD.bttnclrs[CD.game_vars['bttnclr_turn']], image = img)
                 square.image = img
 
             # Connor added - remove any existing grid item at this location - stops UI memory leak
             remove_grid_item(window, row_number, column_number)
 
             square.grid(row = row_number, column = column_number, sticky = tkinter.N+tkinter.S+tkinter.W+tkinter.E)
-            square.bind("<Button-1>", lambda event, data=window, data1 = board: on_click(event, data, data1))
-            CD.bttnclr_turn = 1-CD.bttnclr_turn
-        CD.bttnclr_turn = 1-CD.bttnclr_turn
+            square.bind("<Button-1>", lambda event, data=window, data1 = board, data2 = CD.game_vars: on_click(event, data, data1, data2))
+            CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
+        CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
 
 def CheckForCheck(board, colour):
     check_pieces = []
@@ -129,39 +130,40 @@ def CheckForCheck(board, colour):
     if check_pieces == []: #if there is no moves out of check
         messagebox.showinfo('Checkmate', f'{colour} wins! Well Done!')
 
-def on_click(event, window, board):
-    CD.onclick = 1 - CD.onclick
+def on_click(event, window, board, game_vars):
+    game_vars['onclick'] = 1 - game_vars['onclick']
     square = event.widget
     row_number = int(square.grid_info()["row"])
     column_number  = int(square.grid_info()["column"])
     print(f"on_click, row: {row_number}, column:{column_number}")
-    square_clicked = (row_number, column_number)
+    game_vars['square_clicked'] = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
-    if CD.onclick == 0: # this is our fist click we are selecting the piece we want to move
-        if (piece_clicked != None)and(((CD.turn == 0)and(piece_clicked.colour == 'White'))or((CD.turn == 1)and(piece_clicked.colour == 'Black'))):
+    if game_vars['onclick'] == 0: # this is our fist click we are selecting the piece we want to move
+        if (piece_clicked != None)and(((game_vars['turn'] == 0)and(piece_clicked.colour == 'White'))or((game_vars['turn'] == 1)and(piece_clicked.colour == 'Black'))):
             ##CheckForCheck(board, piece_clicked.colour) # check for check/checkmate
-            CD.square_clicked = square_clicked #row_number,column_number
+            # redundant game_vars['square_clicked'] = game_vars['square_clicked'] #row_number,column_number
             square.config(bg='blue')# highlight square
             piece_clicked.possible_moves = [] # reset posible moves
             piece_clicked.find_moves(board)
-            CD.old_click = square_clicked
+            game_vars['old_click'] = game_vars['square_clicked']
             piece_clicked.highlight_moves(window, board)
         else: # if there is no piece or wrong colour piece where we clicked
             messagebox.showinfo("Move Not Allowed","No/Your piece there, try again")
-            CD.onclick = 1 - CD.onclick
+            game_vars['onclick'] = 1 - game_vars['onclick']
     else: # this is our second click, we are selecting the square to move to
-        row, column = CD.old_click
+        row, column = game_vars['old_click']
         old_piece = board[row][column]
-        if square_clicked not in old_piece.possible_moves: # check possible move for piece
+        if game_vars['square_clicked'] not in old_piece.possible_moves: # check possible move for piece
             messagebox.showinfo("Move Not Allowed", "Your piece can not move there!")
             layout_board(window, board) #reset board
             return
-        board[row_number][column_number] = board[CD.old_click[0]][CD.old_click[1]]
+        old_click = game_vars['old_click']
+        board[row_number][column_number] = board[old_click[0]][old_click[1]]
         board[row_number][column_number].row = row_number
         board[row_number][column_number].column = column_number
-        board[CD.old_click[0]][CD.old_click[1]] = None
+        board[old_click[0]][old_click[1]] = None
         layout_board(window, board) #reset board
-        CD.turn = 1 - CD.turn
+        game_vars['turn'] = 1 - game_vars['turn']
 
 if __name__ =="__main__":
     play_chess('Test.txt')
