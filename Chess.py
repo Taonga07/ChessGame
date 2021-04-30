@@ -41,33 +41,50 @@ def CheckForCheck(board, colour):
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             if board[row_number][column_number] != None:
-                if board[row_number][column_number].colour != colour: # we are not taking our own piece
-                    board[row_number][column_number].find_moves(board) # reset possible moves for current piece
-                    for move in (board[row_number][column_number].possible_moves): # go through the list
+                test_piece = board[row_number][column_number]
+                if test_piece.colour != colour: # we are not taking our own piece
+                    test_piece.find_moves(board) # reset possible moves for current piece
+                    for move in test_piece.possible_moves: # go through the list
                         row, column = move #set item to the row and column it is made of for fute use
                         if (board[row][column] != None) and (board[row][column].piece == 'King') and (board[row][column].colour == colour):
-                            check_pieces.append(board[row_number][column_number])
-#this test if we can take the piece that has our king in check
-    for row_number in range(0, 8):
-        for column_number in range(0, 8):
-            if board[row_number][column_number] != None:
-                if board[row_number][column_number].colour == colour: # we are not setting restrictions for the otherside
-                    board[row_number][column_number].find_moves(board) # reset possible moves for current piece
-                    for move in (board[row_number][column_number].possible_moves): # go through the list
-                        row, column = move #set item to the row and column it is made of for fute use
-                        if board[row][column] not in check_pieces:
-                            print(f'1: {board[row_number][column_number].possible_moves}')
-                            board[row_number][column_number].possible_moves.remove(move)
-                            print(f'2: {board[row_number][column_number].possible_moves}')
-    if check_pieces != []: #if pieces are fretening king
-        messagebox.showinfo('Check')
+                            #print('test for check')
+                            #print(test_piece, test_piece.possible_moves)
+                            check_pieces.append(test_piece)
+    # this test if we can take the piece that has our king in check
+    # but we only need to run the counter_check if our king is in check
+    if check_pieces != []: #if pieces are threatening king
+        #print('check')
+        #print(board)
+        #print(check_pieces)
+        counter_check = []
+        for row_number in range(0, 8):
+            for column_number in range(0, 8):
+                if board[row_number][column_number] != None:
+                    counter_piece = board[row_number][column_number]
+                    if counter_piece.colour == colour: # we are not setting restrictions for the otherside
+                        counter_piece.find_moves(board) # reset possible moves for current piece
+                        #print(counter_piece)
+                        #print(counter_piece.possible_moves)
+                        for move in counter_piece.possible_moves: # go through the list
+                            row, column = move #set item to the row and column it is made of for fute use
+                            if board[row][column] in check_pieces: # I think you want to test if the piece threatening the king *is* one of the ones you can reach?
+                                #print(f'1: {board[row_number][column_number].possible_moves}')
+                                #board[row_number][column_number].possible_moves.remove(move)
+                                #print(f'2: {board[row_number][column_number].possible_moves}')
+                                counter_check.append(counter_piece)
+        if counter_check == []: # that is, we are in check, but have no pieces that can take the attacking piece
+            messagebox.showinfo('Checkmate')
+            print(check_pieces, counter_check)
+        else:
+            print(check_pieces, 'can be countered by', counter_check)
+            messagebox.showinfo('Check')
 
 def on_click(event, window, board, game_vars):
     game_vars['onclick'] = 1 - game_vars['onclick']
     square = event.widget
     row_number = int(square.grid_info()["row"])
     column_number  = int(square.grid_info()["column"])
-    print(f"on_click, row: {row_number}, column:{column_number}")
+    #print(f"on_click, row: {row_number}, column:{column_number}")
     game_vars['square_clicked'] = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
     if game_vars['onclick'] == 0: # this is our fist click we are selecting the piece we want to move
