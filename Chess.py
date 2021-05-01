@@ -35,7 +35,7 @@ def layout_board(window, board):
             CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
         CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
 
-def CheckForCheck(board, colour):
+def CheckForCheck(board, colour, game_vars):
     check_pieces = []
     #go througheach sqaue in board chech is the piece can take the king at the sqaure with find moves
     for row_number in range(0, 8):
@@ -76,8 +76,25 @@ def CheckForCheck(board, colour):
             messagebox.showinfo('Checkmate')
             print(check_pieces, counter_check)
         else:
+            # first lets check if the piece we've selected to defend is one that can defend
+            row, column = game_vars['old_click']
+            defending_piece = board[row][column]
+            #print('old_piece', defending_piece)
+            #print('defending pieces', counter_check)
+            if defending_piece in counter_check:
+                #print('defender in counter_check')
+                # now we can check if our defending piece is being moved into the proper position
+                for attacking_piece in check_pieces:
+                    #print('attcker', attacking_piece.possible_moves)
+                    # now test to see if our defender can block, or take the attacker
+                    if (game_vars['square_clicked'] in attacking_piece.possible_moves or
+                            game_vars['square_clicked'] == (attacking_piece.row, attacking_piece.column)):
+                        # we have moved our piece to defendcan actually move into a suitable position
+                        return False                   
             print(check_pieces, 'can be countered by', counter_check)
             messagebox.showinfo('Check')
+        return True
+    return False
 
 def on_click(event, window, board, game_vars):
     game_vars['onclick'] = 1 - game_vars['onclick']
@@ -89,7 +106,6 @@ def on_click(event, window, board, game_vars):
     piece_clicked = board[row_number][column_number]
     if game_vars['onclick'] == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((game_vars['turn'] == 0)and(piece_clicked.colour == 'White'))or((game_vars['turn'] == 1)and(piece_clicked.colour == 'Black'))):
-            CheckForCheck(board, piece_clicked.colour) # check for check/checkmate
             # redundant game_vars['square_clicked'] = game_vars['square_clicked'] #row_number,column_number
             square.config(bg='blue')# highlight square
             piece_clicked.possible_moves = [] # reset posible moves
@@ -102,10 +118,14 @@ def on_click(event, window, board, game_vars):
     else: # this is our second click, we are selecting the square to move to
         row, column = game_vars['old_click']
         old_piece = board[row][column]
+        print('old_piece', old_piece)
         if game_vars['square_clicked'] not in old_piece.possible_moves: # check possible move for piece
             messagebox.showinfo("Move Not Allowed", "Your piece can not move there!")
             layout_board(window, board) #reset board
             return
+        if CheckForCheck(board, old_piece.colour, game_vars): # check for check/checkmate
+            layout_board(window, board) #reset board
+            return             
         old_click = game_vars['old_click']
         board[row_number][column_number] = board[old_click[0]][old_click[1]]
         board[row_number][column_number].row = row_number
