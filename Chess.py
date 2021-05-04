@@ -37,25 +37,49 @@ def layout_board(window, board):
 
 def CheckForCheck(board, colour, game_vars):
     check_pieces = []
-    #go througheach sqaue in board chech is the piece can take the king at the sqaure with find moves
+    paths_to_king = [] # this is your blank list of lists
     for row_number in range(0, 8):
         for column_number in range(0, 8):
-            if board[row_number][column_number] != None:
-                test_piece = board[row_number][column_number]
-                if test_piece.colour != colour: # we are not taking our own piece
-                    test_piece.find_moves(board) # reset possible moves for current piece
-                    for move in test_piece.possible_moves: # go through the list
-                        row, column = move #set item to the row and column it is made of for fute use
-                        if (board[row][column] != None) and (board[row][column].piece == 'King') and (board[row][column].colour == colour):
-                            #print('test for check')
-                            #print(test_piece, test_piece.possible_moves)
-                            check_pieces.append(test_piece)
-    # this test if we can take the piece that has our king in check
-    # but we only need to run the counter_check if our king is in check
+            test_piece = board[row_number][column_number]
+            if (test_piece != None) and (test_piece.colour != colour):
+                test_piece.find_moves(board)
+                for move in test_piece.possible_moves:
+                    row, column = move # set item to the row and column it is made of for future use
+                    square = board[row][column] # set the position of the current square for future use
+                    if (square != None) and (square.piece == 'King') and (square.colour == colour):
+                        # why elif on line 60
+                        # at least one of column / row has to have a path (otherwise you're on top of the king already)
+                        # but it could be both, or just one - so you need both to be if just in case
+                        if square.column - test_piece.column != 0:
+                            column_dir = int((square.column - test_piece.column) / (abs(square.column - test_piece.column)))
+                            column_path = list(range(test_piece.column, square.column, dir))
+                        if square.row - test_piece.row != 0:
+                            row_dir = int((square.row - test_piece.row) / (abs(square.row - test_piece.row)) )
+                            row_path = list(range(test_piece.row, square.row, dir))
+                        # then we test for the condition if either column/row are zeros
+                        # you can have one or other, or neither, but not both
+                        if square.column - test_piece.column == 0:
+                            column_path = list(range(0, len(row_path)): 0 
+                        elif square_row - test_piece.row == 0:
+                            row_path = list(range(0, len(column_path)): 0) 
+                        # I think you need to work out the row / column path and dir (assuming their not zero) first, then you can work out the case if one or other is zero
+
+                            ''' #can i have two else's like if else
+                            are on the same column
+                            #dosn't this need to be a list of 0's for each move - yes, they're on the same column ?? how would i do this then 
+                            # hang on - I'm thinking it through okay 
+                            ??list(range(square.row, test_piece.column): '0') ???
+                            # we do its from the other list
+                            # can i put them togerther in on_clicke thing 
+                            # don't think so - trying to think through the logic ... 
+
+                            
+
+                            '''''
+                        
+                        if test_piece.piece != 'Knight':
+                            check_pieces.append(    )
     if check_pieces != []: #if pieces are threatening king
-        #print('check')
-        #print(board)
-        #print(check_pieces)
         counter_check = []
         for row_number in range(0, 8):
             for column_number in range(0, 8):
@@ -85,8 +109,12 @@ def CheckForCheck(board, colour, game_vars):
                 #print('defender in counter_check')
                 # now we can check if our defending piece is being moved into the proper position
                 for attacking_piece in check_pieces:
-                    #print('attcker', attacking_piece.possible_moves)
-                    # now test to see if our defender can block, or take the attacker
+                    # so here
+                    # instead of attacking_piece.possible_moves we need path_to_king
+                    # so we need something like...
+                    # need to 'find' the king and pick up their row / column
+                    #i did this up at line 48
+                    path_to_king = ((king.row, king.column), (attacking_piece.row, attacking_piece.column))
                     if (game_vars['square_clicked'] in attacking_piece.possible_moves or
                             game_vars['square_clicked'] == (attacking_piece.row, attacking_piece.column)):
                         # we have moved our piece to defendcan actually move into a suitable position
@@ -95,6 +123,8 @@ def CheckForCheck(board, colour, game_vars):
             messagebox.showinfo('Check')
         return True
     return False
+
+    def path_to_king(self, king_pos, attacker_pos)
 
 def on_click(event, window, board, game_vars):
     game_vars['onclick'] = 1 - game_vars['onclick']
