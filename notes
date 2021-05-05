@@ -23,3 +23,25 @@ we were going two have the list of pieces putting the king in check and then the
                             
 
                             '''''
+
+
+        else:
+            # first lets check if the piece we've selected to defend is one that can defend
+            row, column = game_vars['old_click']
+            defending_piece = board[row][column]
+            #print('old_piece', defending_piece)
+            #print('defending pieces', counter_check)
+            if defending_piece in counter_check:
+                #print('defender in counter_check')
+                # now we can check if our defending piece is being moved into the proper position
+                for attacking_piece in check_pieces:
+                    # so here
+                    # instead of attacking_piece.possible_moves we need path_to_king
+                    # so we need something like...
+                    # need to 'find' the king and pick up their row / column
+                    #i did this up at line 48
+                    path_to_king = ((king.row, king.column), (attacking_piece.row, attacking_piece.column))
+                    if (game_vars['square_clicked'] in attacking_piece.possible_moves or
+                            game_vars['square_clicked'] == (attacking_piece.row, attacking_piece.column)):
+                        # we have moved our piece to defendcan actually move into a suitable position
+                        return False   
