@@ -36,49 +36,37 @@ def layout_board(window, board):
         CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
 
 def CheckForCheck(board, colour, game_vars):
-    check_pieces = []
-    paths_to_king = [] # this is your blank list of lists
+    attacking_piece = []
+    paths_to_king = []
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             test_piece = board[row_number][column_number]
             if (test_piece != None) and (test_piece.colour != colour):
                 test_piece.find_moves(board)
-                for move in test_piece.possible_moves:
-                    row, column = move # set item to the row and column it is made of for future use
-                    square = board[row][column] # set the position of the current square for future use
-                    if (square != None) and (square.piece == 'King') and (square.colour == colour):
-                        # why elif on line 60
-                        # at least one of column / row has to have a path (otherwise you're on top of the king already)
-                        # but it could be both, or just one - so you need both to be if just in case
-                        if square.column - test_piece.column != 0:
-                            column_dir = int((square.column - test_piece.column) / (abs(square.column - test_piece.column)))
-                            column_path = list(range(test_piece.column, square.column, dir))
-                        if square.row - test_piece.row != 0:
-                            row_dir = int((square.row - test_piece.row) / (abs(square.row - test_piece.row)) )
-                            row_path = list(range(test_piece.row, square.row, dir))
-                        # then we test for the condition if either column/row are zeros
-                        # you can have one or other, or neither, but not both
-                        if square.column - test_piece.column == 0:
-                            column_path = list(range(0, len(row_path)): 0 
-                        elif square_row - test_piece.row == 0:
-                            row_path = list(range(0, len(column_path)): 0) 
-                        # I think you need to work out the row / column path and dir (assuming their not zero) first, then you can work out the case if one or other is zero
-
-                            ''' #can i have two else's like if else
-                            are on the same column
-                            #dosn't this need to be a list of 0's for each move - yes, they're on the same column ?? how would i do this then 
-                            # hang on - I'm thinking it through okay 
-                            ??list(range(square.row, test_piece.column): '0') ???
-                            # we do its from the other list
-                            # can i put them togerther in on_clicke thing 
-                            # don't think so - trying to think through the logic ... 
-
-                            
-
-                            '''''
-                        
+                    for move in test_piece.possible_moves:
+                        row, column = move # set item to the row and column it is made of for future use
+                        square = board[row][column] # set the position of the current square for future use
+                        if (square != None) and (square.piece == 'King') and (square.colour == colour):
+                            attacking_pieces.append(test.piece)
                         if test_piece.piece != 'Knight':
-                            check_pieces.append(    )
+                            if square.column - test_piece.column != 0:
+                                column_dir = int((square.column - test_piece.column) / (abs(square.column - test_piece.column)))
+                                column_path = list(range(test_piece.column, square.column, dir))
+                            if square.row - test_piece.row != 0:
+                                row_dir = int((square.row - test_piece.row) / (abs(square.row - test_piece.row)) )
+                                row_path = list(range(test_piece.row, square.row, dir))
+                            if square.column - test_piece.column == 0:
+                                column_path = [0] * row_path
+                            elif square_row - test_piece.row == 0:
+                                row_path = [0] * column_path
+                            
+                            for column_square in column_path:
+                                for row square in column_path:
+                                    paths_to_king.append((column_square, row_square)) #is this the right way round
+
+                        
+                        
+                            
     if check_pieces != []: #if pieces are threatening king
         counter_check = []
         for row_number in range(0, 8):
