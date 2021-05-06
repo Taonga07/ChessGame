@@ -56,10 +56,10 @@ def CheckForCheck(board, colour, game_vars):
                             row_dir = int((square.row - test_piece.row) / (abs(square.row - test_piece.row)) )
                             row_path = list(range(test_piece.row, square.row, row_dir))
                         if square.column - test_piece.column == 0:
-                            column_path = [0] * row_path
+                            column_path = [square.column] * row_path
                         elif square.row - test_piece.row == 0:
-                            row_path = [0] * column_path
-                        
+                            row_path = [square.row] * column_path
+                        print(f'row_path: {row_path}, column_path: {column_path}')
                         attacker_to_king = tuple(zip(row_path, column_path)) 
                         paths_to_king.append(attacker_to_king)
                     
