@@ -99,10 +99,10 @@ def open_board(filename):
             if len(split_arr) > 1:
                 var_name = split_arr[0].strip()
                 var_value = split_arr[1].strip()
-                print(f"DBG input comment variable: {var_name} = {var_value}")
+                #print(f"DBG input comment variable: {var_name} = {var_value}")
                 if var_name == 'version' and (var_value != OUT_VERSION):
                     ''' Handle old formats, e.g. file is '1.0' but app moved on to '1.2' '''
-                    print(f"TODO: input file variable {var_name} = {var_value} differs to supported {OUT_VERSION}")
+                    #print(f"TODO: input file variable {var_name} = {var_value} differs to supported {OUT_VERSION}")
         #print(f"DBG input_line: {input_line}")
         split_arr = input_line.split(' ')
         if len(split_arr) == 4:
@@ -114,7 +114,7 @@ def open_board(filename):
     if True:
         board_dump = dump_board(board)
         board_dump = '\n\t'.join(board_dump)
-        print(f"DBG: dump board {filename}:\n\t{board_dump}")
+        #print(f"DBG: dump board {filename}:\n\t{board_dump}")
         
     return board
 

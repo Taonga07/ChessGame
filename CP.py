@@ -12,10 +12,8 @@ class GameObject():
     
     def highlight_moves(self, window, board):
         for i in self.possible_moves:
-            print(i)
             row_number, column_number = i # get row and column of position i in board
             squarex = window.grid_slaves(row = row_number, column = column_number)
-            #print(f"squarex: {squarex}")
             if len(squarex) > 1:
                 print(f"warning, this square has more than one grid slave!!! {row_number}, {column_number}. count: {len(squarex)}")
             square = squarex[0] #returns list of widgets
@@ -26,7 +24,7 @@ class GameObject():
                 if self.colour != dest_square.colour:
                     square.config(bg='red') # highlight position i red
                 else:
-                    print(f'DBG - remove row/col {i} from possible moves as same colour {self.colour}')
+
                     self.possible_moves.remove(i) # remove from possible_moves
     
     def explore_moves(self, direction, board):
