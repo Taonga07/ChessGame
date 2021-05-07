@@ -44,21 +44,20 @@ def CheckForCheck(board, colour, game_vars):
             if (test_piece != None) and (test_piece.colour != colour):
                 test_piece.find_moves(board)
                 for move in test_piece.possible_moves:
-                    row, column = move # set item to the row and column it is made of for future use
-                    square = board[row][column] # set the position of the current square for future use
+                    square = board[move[0]][move[1]] # row, column
                     if (square != None) and (square.piece == 'King') and (square.colour == colour):
                         attacking_pieces.append(test_piece)
                     if test_piece.piece != 'Knight':
-                        if square.column - test_piece.column != 0:
-                            column_dir = int((square.column - test_piece.column) / (abs(square.column - test_piece.column)))
-                            column_path = list(range(test_piece.column, square.column, column_dir))
-                        if square.row - test_piece.row != 0:
-                            row_dir = int((square.row - test_piece.row) / (abs(square.row - test_piece.row)) )
-                            row_path = list(range(test_piece.row, square.row, row_dir))
-                        if square.column - test_piece.column == 0:
-                            column_path = [square.column] * len(row_path)
-                        elif square.row - test_piece.row == 0:
-                            row_path = [square.row] * len(column_path)
+                        if move[1] - test_piece.column != 0:
+                            column_dir = int((move[1] - test_piece.column) / (abs(move[1] - test_piece.column)))
+                            column_path = list(range(test_piece.column, move[1], column_dir))
+                        if move[0] - test_piece.row != 0:
+                            row_dir = int((move[0] - test_piece.row) / (abs(move[0] - test_piece.row)) )
+                            row_path = list(range(test_piece.row, move[0], row_dir))
+                        if move[1] - test_piece.column == 0:
+                            column_path = [move[1]] * len(row_path)
+                        elif move[0] - test_piece.row == 0:
+                            row_path = [move[0]] * len(column_path)
                         print(f'row_path: {row_path}, column_path: {column_path}')
                         attacker_to_king = tuple(zip(row_path, column_path)) 
                         paths_to_king.append(attacker_to_king)
