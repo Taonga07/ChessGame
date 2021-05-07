@@ -66,7 +66,9 @@ def CheckForCheck(board, colour, game_vars):
                         if test_piece.piece != 'Knight':
                             check_pieces.append(test_piece) # we need to append something here
     if check_pieces != []: #if pieces are threatening king
-        counter_check = []
+        # we also don't actually need this code - its the bit that was causing problems with pieces that can't be taken
+        # not getting 'seen' and thus not being able to be blocked
+        '''counter_check = []
         for row_number in range(0, 8):
             for column_number in range(0, 8):
                 if board[row_number][column_number] != None:
@@ -85,7 +87,8 @@ def CheckForCheck(board, colour, game_vars):
         if counter_check == []: # that is, we are in check, but have no pieces that can take the attacking piece
             messagebox.showinfo('Checkmate')
             print(check_pieces, counter_check)
-        elif game_vars['square_clicked'] in path_to_king:
+        el'''
+        if game_vars['square_clicked'] in path_to_king:
             return False
             # we don't actually need this code, if we have the paths to the king
             # we just need to test that our clicked square is on that path
