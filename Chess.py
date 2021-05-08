@@ -47,19 +47,19 @@ def CheckForCheck(board, colour, game_vars):
                     square = board[move[0]][move[1]] # row, column
                     if (square != None) and (square.piece == 'King') and (square.colour == colour):
                         attacking_pieces.append(test_piece)
-                    if test_piece.piece != 'Knight':
-                        if move[1] - test_piece.column != 0:
-                            column_dir = int((move[1] - test_piece.column) / (abs(move[1] - test_piece.column)))
-                            column_path = list(range(test_piece.column, move[1], column_dir))
-                        if move[0] - test_piece.row != 0:
-                            row_dir = int((move[0] - test_piece.row) / (abs(move[0] - test_piece.row)) )
-                            row_path = list(range(test_piece.row, move[0], row_dir))
-                        if move[1] - test_piece.column == 0:
-                            column_path = [move[1]] * len(row_path)
-                        elif move[0] - test_piece.row == 0:
-                            row_path = [move[0]] * len(column_path)
-                        attacker_to_king = tuple(zip(row_path, column_path)) 
-                        paths_to_king.append(attacker_to_king)
+                        if test_piece.piece != 'Knight':
+                            if move[1] - test_piece.column != 0:
+                                column_dir = int((move[1] - test_piece.column) / (abs(move[1] - test_piece.column)))
+                                column_path = list(range(test_piece.column, move[1], column_dir))
+                            if move[0] - test_piece.row != 0:
+                                row_dir = int((move[0] - test_piece.row) / (abs(move[0] - test_piece.row)) )
+                                row_path = list(range(test_piece.row, move[0], row_dir))
+                            if move[1] - test_piece.column == 0:
+                                column_path = [move[1]] * len(row_path)
+                            elif move[0] - test_piece.row == 0:
+                                row_path = [move[0]] * len(column_path)
+                            attacker_to_king = tuple(zip(row_path, column_path)) 
+                            paths_to_king.append(attacker_to_king)
                     
     if attacking_pieces != []: #if pieces are threatening king
         messagebox.showinfo('Check', 'Your in Check')
