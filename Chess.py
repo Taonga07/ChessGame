@@ -62,7 +62,6 @@ def CheckForCheck(board, colour, game_vars):
                         paths_to_king.append(attacker_to_king)
                     
     if attacking_pieces != []: #if pieces are threatening king
-        counter_check = []
         messagebox.showinfo('Check', 'Your in Check')
         for row_number in range(0, 8):
             for column_number in range(0, 8):
@@ -70,12 +69,11 @@ def CheckForCheck(board, colour, game_vars):
                     counter_piece = board[row_number][column_number]
                     if counter_piece.colour == colour: # we are not setting restrictions for the otherside
                         counter_piece.find_moves(board) # reset possible moves for current piece
+                        counter_check = (list(set(counter_piece.possible_moves) & set(attacking_pieces)))
+                        counter_check.extend(list(set(counter_piece.possible_moves) & set(paths_to_king)))
+                        print(counter_check)
                         for move in counter_piece.possible_moves: # go through the list
-                            if board[move[0]][move[1]] in attacking_pieces: 
-                                counter_check.append(counter_piece)
-                            elif board[move[0]][move[1]] in paths_to_king:
-                                counter_check.append(counter_piece) 
-                            else:
+                            if move not in counter_check:
                                 counter_piece.possible_moves.remove(move)
         if counter_check == []: # that is, we are in check, but have no pieces that can take the attacking piece
             messagebox.showinfo('Checkmate' 'End of Game')
