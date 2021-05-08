@@ -71,7 +71,6 @@ def CheckForCheck(board, colour, game_vars):
                         counter_piece.find_moves(board) # reset possible moves for current piece
                         counter_check = (list(set(counter_piece.possible_moves) & set(attacking_pieces)))
                         counter_check.extend(list(set(counter_piece.possible_moves) & set(paths_to_king)))
-                        print(counter_check)
                         for move in counter_piece.possible_moves: # go through the list
                             if move not in counter_check:
                                 counter_piece.possible_moves.remove(move)
