@@ -79,9 +79,8 @@ def dump_board(board):
 
 OUT_VERSION='1.0'   # increment version if output format changes, this allows for backward compatibility
 
-def open_board(filename):
-    board = [ [None]*8 for i in range(8)] # Avoid [[None] * 8] * 8, see [how-to-initialize-a-two-dimensional-array-in-python](https://stackoverflow.com/questions/2397141/how-to-initialize-a-two-dimensional-array-in-python) board = 
-
+def open_board(filename):#
+    board = [[None]*8]*8
     with open(filename, 'r') as input_file:
         input_data = input_file.readlines()
     for input_line in input_data:
