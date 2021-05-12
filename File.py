@@ -80,12 +80,7 @@ def dump_board(board):
 OUT_VERSION='1.0'   # increment version if output format changes, this allows for backward compatibility
 
 def open_board(filename):
-    board = []
-    for row_number in range(0, 8):
-        ColumnList = []
-        for column_number in range(0, 8):
-            ColumnList.append(None)
-        board.append(ColumnList)
+    board = [[None]*8 for _ in range(8)]
     with open(filename, 'r') as input_file:
         input_data = input_file.readlines()
     for input_line in input_data:
