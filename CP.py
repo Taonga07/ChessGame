@@ -47,9 +47,10 @@ class GameObject():
         self.possible_moves= []
         self.find_possible_moves(board)
         counter_check = list(set(self.possible_moves) & set(attacker_to_king))
-        for move in self.possible_moves:
-            if move not in counter_check:
-                self.possible_moves.remove(move)
+        if len(counter_check) > 0:
+            for move in self.possible_moves:
+                if move not in counter_check:
+                    self.possible_moves.remove(move)
 
     def find_path_to_king(self, attacker_row, attacker_column):
         if self.piece != 'Knight':
