@@ -43,28 +43,28 @@ class GameObject():
                 break
         return moves
 
-    def find_moves(self, board, attacker_to_king):
+    def find_moves(self, board, king_to_king):
         self.possible_moves= []
         self.find_possible_moves(board)
-        counter_check = list(set(self.possible_moves) & set(attacker_to_king))
+        counter_check = list(set(self.possible_moves) & set(king_to_king))
         if len(counter_check) > 0:
             for move in self.possible_moves:
                 if move not in counter_check:
                     self.possible_moves.remove(move)
 
-    def find_path_to_king(self, attacker_row, attacker_column):
+    def find_path_to_king(self, king_row, king_column):
         if self.piece != 'Knight':
-            if attacker_column - self.column != 0:
-                column_dir = int((attacker_column - self.column) / (abs(attacker_column - self.column)))
-                column_path = list(range(self.column, attacker_column, column_dir))
-            if attacker_row - self.row != 0:
-                row_dir = int((attacker_row - self.row) / (abs(attacker_row - self.row)) )
-                row_path = list(range(self.row, attacker_row, row_dir))
-            if attacker_column - self.column == 0:
-                column_path = [attacker_column] * len(row_path)
-            elif attacker_row - self.row == 0:
-                row_path = [attacker_row] * len(column_path)
-        return row_path, column_path
+            if king_column - self.column != 0:
+                column_dir = int((king_column - self.column) / (abs(king_column - self.column)))
+                column_path = list(range(self.column, king_column, column_dir))
+            if king_row - self.row != 0:
+                row_dir = int((king_row - self.row) / (abs(king_row - self.row)) )
+                row_path = list(range(self.row, king_row, row_dir))
+            if king_column - self.column == 0:
+                column_path = [king_column] * len(row_path)
+            elif king_row - self.row == 0:
+                row_path = [king_row] * len(column_path)
+        return list(zip(row_path, column_path))
 
     def __repr__(self):
         # display object as constructor string

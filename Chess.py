@@ -36,7 +36,8 @@ def layout_board(window, board):
         CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
 
 # I don't think you need to pass in window or game_vars, they don't appear to be used
-def check_agianst_check(board, window, clicked_piece, game_vars):
+def check_agianst_check(board, clicked_piece):
+    paths_to_king = []
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             if board[row_number][column_number]!= None and board[row_number][column_number]!= clicked_piece.colour:
@@ -44,15 +45,18 @@ def check_agianst_check(board, window, clicked_piece, game_vars):
                 for move in board[row_number][column_number].possible_moves:
                     square = board[move[0]][move[1]] # row, column
                     if (square != None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
-                        row_path, column_path = board[row_number][column_number].find_path_to_king(move[0], move[1])
-                        if clicked_piece.possible_moves != []:
-                            clicked_piece.find_moves(board, list(zip(row_path, column_path)))
-                            ''' this will exit the function True on the first move a piece can take
-                            your king, even if there are more than one'''
-                            return True
-                    else:
-                        # this will exit False on the first move a piece can't take your King
-                        return False
+                        paths_to_king.append(board[row_number][column_number].find_path_to_king(move[0], move[1]))
+    if  len(paths_to_king) == 0:
+        clicked_piece.find_moves(board, paths_to_king[0])
+        return True
+    else:
+        if clicked_piece.piece != 'king':
+            print('you can only move your king')
+            return False
+        else:
+            paths_to_king = [val for i in paths_to_king for val in i]
+            clicked_piece.find_moves(board, paths_to_king)
+            return True
 
 def check_for_check(board, clicked_piece): # this function is not used
     for row_number in range(0, 8):
@@ -74,7 +78,7 @@ def on_click(event, window, board, game_vars):
     piece_clicked = board[row_number][column_number]
     if game_vars['onclick'] == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((game_vars['turn'] == 0)and(piece_clicked.colour == 'White'))or((game_vars['turn'] == 1)and(piece_clicked.colour == 'Black'))):
-            if check_agianst_check(board, window, piece_clicked, game_vars):
+            if check_agianst_check(board, piece_clicked):
                 # if check_against_check returns True, you are in check
                 square.config(bg='blue')# highlight square
                 piece_clicked.highlight_moves(window, board)
@@ -82,7 +86,7 @@ def on_click(event, window, board, game_vars):
                 
             else:
                 # False means you are not in check?
-                messagebox.showinfo('Check', 'You can not move this piece: your in check')
+                messagebox.showinfo('Check', 'your in check')
                 game_vars['onclick'] = 1 - game_vars['onclick']
         else: # if there is no piece or wrong colour piece where we clicked
             messagebox.showinfo("Move Not Allowed","No/Your piece there, try again")
