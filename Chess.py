@@ -35,7 +35,7 @@ def layout_board(window, board):
             CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
         CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
 
-def CheckForCheck(board, colour, game_vars):
+def test_for_check(board, colour, game_vars):
     check_pieces = []
     path_to_king = [] # this is your blank list of lists
     for row_number in range(0, 8):
@@ -134,12 +134,12 @@ def on_click(event, window, board, game_vars):
     else: # this is our second click, we are selecting the square to move to
         row, column = game_vars['old_click']
         old_piece = board[row][column]
-        print('old_piece', old_piece)
+        #print('old_piece', old_piece)
         if game_vars['square_clicked'] not in old_piece.possible_moves: # check possible move for piece
             messagebox.showinfo("Move Not Allowed", "Your piece can not move there!")
             layout_board(window, board) #reset board
             return
-        if CheckForCheck(board, old_piece.colour, game_vars): # check for check/checkmate
+        if test_for_check(board, old_piece.colour, game_vars): # check for check/checkmate
             layout_board(window, board) #reset board
             return             
         old_click = game_vars['old_click']
