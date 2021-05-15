@@ -35,6 +35,7 @@ def layout_board(window, board):
             CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
         CD.game_vars['bttnclr_turn'] = 1 - CD.game_vars['bttnclr_turn']
 
+# I don't think you need to pass in window or game_vars, they don't appear to be used
 def check_agianst_check(board, window, clicked_piece, game_vars):
     for row_number in range(0, 8):
         for column_number in range(0, 8):
@@ -46,11 +47,14 @@ def check_agianst_check(board, window, clicked_piece, game_vars):
                         row_path, column_path = board[row_number][column_number].find_path_to_king(move[0], move[1])
                         if clicked_piece.possible_moves != []:
                             clicked_piece.find_moves(board, list(zip(row_path, column_path)))
+                            ''' this will exit the function True on the first move a piece can take
+                            your king, even if there are more than one'''
                             return True
                     else:
+                        # this will exit False on the first move a piece can't take your King
                         return False
 
-def check_for_check(board, clicked_piece):
+def check_for_check(board, clicked_piece): # this function is not used
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             if board[row_number][column_number]!= None and board[row_number][column_number]!= clicked_piece.colour:
@@ -71,11 +75,13 @@ def on_click(event, window, board, game_vars):
     if game_vars['onclick'] == 0: # this is our fist click we are selecting the piece we want to move
         if (piece_clicked != None)and(((game_vars['turn'] == 0)and(piece_clicked.colour == 'White'))or((game_vars['turn'] == 1)and(piece_clicked.colour == 'Black'))):
             if check_agianst_check(board, window, piece_clicked, game_vars):
+                # if check_against_check returns True, you are in check
                 square.config(bg='blue')# highlight square
                 piece_clicked.highlight_moves(window, board)
                 game_vars['old_click'] = game_vars['square_clicked']
                 
             else:
+                # False means you are not in check?
                 messagebox.showinfo('Check', 'You can not move this piece: your in check')
                 game_vars['onclick'] = 1 - game_vars['onclick']
         else: # if there is no piece or wrong colour piece where we clicked
