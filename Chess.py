@@ -46,7 +46,9 @@ def check_agianst_check(board, clicked_piece):
                     square = board[move[0]][move[1]] # row, column
                     if (square != None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
                         paths_to_king.append(board[row_number][column_number].find_path_to_king(move[0], move[1]))
-    if  len(paths_to_king) == 0:
+    if paths_to_king == []:
+        return True
+    elif len(paths_to_king) == 1:
         clicked_piece.find_moves(board, paths_to_king[0])
         return True
     else:
