@@ -43,11 +43,13 @@ class GameObject():
                 break
         return moves
 
-    def find_moves(self, board, king_to_king):
+    def find_moves(self, board, path_to_king):
         self.possible_moves= []
         self.find_possible_moves(board)
-        counter_check = list(set(self.possible_moves) & set(king_to_king))
-        if len(counter_check) > 0:
+        counter_check = list(set(self.possible_moves) & set(path_to_king))
+        if len(counter_check) == 0 and len(path_to_king) > 0:
+            self.possible_moves= []
+        elif len(counter_check) > 0:
             for move in self.possible_moves:
                 if move not in counter_check:
                     self.possible_moves.remove(move)
