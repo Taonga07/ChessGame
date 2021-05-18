@@ -50,6 +50,8 @@ def check_agianst_check(board, clicked_piece):
         return True
     elif len(paths_to_king) == 1:
         clicked_piece.find_moves(board, paths_to_king[0])
+        if len(clicked_piece.possible_moves) == 0:
+            return False
         return True
     else:
         if clicked_piece.piece != 'king':
