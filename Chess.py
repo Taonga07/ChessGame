@@ -58,6 +58,8 @@ def check_agianst_check(board, clicked_piece):
         else:
             paths_to_king = [val for i in paths_to_king for val in i]
             clicked_piece.find_moves(board, paths_to_king)
+            if len(clicked_piece.possible_moves) == 0:
+                return False
             return True
 
 def check_for_check(board, clicked_piece): # this function is not used
