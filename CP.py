@@ -50,9 +50,12 @@ class GameObject():
         if len(counter_check) == 0 and len(path_to_king) > 0:
             self.possible_moves= []
         elif len(counter_check) > 0:
+            self.possible_moves[:] = [tup for tup in self.possible_moves if counter_check[0] == tup]
+            '''
             for move in self.possible_moves:
                 if move not in counter_check:
                     self.possible_moves.remove(move)
+            '''
 
     def find_path_to_king(self, king_row, king_column):
         if self.piece != 'Knight':
