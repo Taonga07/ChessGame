@@ -54,8 +54,8 @@ def check_agianst_check(board, clicked_piece):
             return False
         return True
     else:
-        if clicked_piece.piece != 'king':
-            print('you can only move your king')
+        if clicked_piece.piece != 'King':
+            print('You can only move your king')
             return False
         else:
             paths_to_king = [val for i in paths_to_king for val in i]
@@ -92,7 +92,7 @@ def on_click(event, window, board, game_vars):
                 
             else:
                 # False means you are not in check?
-                messagebox.showinfo('Check', 'your in check')
+                messagebox.showinfo('Check', 'you\'re in check')
                 game_vars['onclick'] = 1 - game_vars['onclick']
         else: # if there is no piece or wrong colour piece where we clicked
             messagebox.showinfo("Move Not Allowed","No/Your piece there, try again")
@@ -101,7 +101,7 @@ def on_click(event, window, board, game_vars):
         row, column = game_vars['old_click']
         old_piece = board[row][column]
         if game_vars['square_clicked'] not in old_piece.possible_moves: # check possible move for piece
-            messagebox.showinfo("Move Not Allowed", "Your piece can not move there!")
+            messagebox.showinfo("Move Not Allowed", "Your piece cannot move there!")
             layout_board(window, board) #reset board
             return 
         old_click = game_vars['old_click']
