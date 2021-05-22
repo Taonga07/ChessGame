@@ -54,6 +54,7 @@ def check_agianst_check(board, clicked_piece):
             return False
         return True
     else:
+        print(paths_to_king)
         if clicked_piece.piece != 'King':
             print('You can only move your king')
             return False
