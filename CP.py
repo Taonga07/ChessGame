@@ -51,24 +51,22 @@ class GameObject():
             self.possible_moves= []
         elif len(counter_check) > 0:
             self.possible_moves[:] = [tup for tup in self.possible_moves if counter_check[0] == tup]
-            '''
-            for move in self.possible_moves:
-                if move not in counter_check:
-                    self.possible_moves.remove(move)
-            '''
+        if self.piece == 'Knight':
+            for move in counter_check:
+                if board[move[0]][move[1]] != None and board[move[0]][move[1]].colour != self.colour:
+                    self.possible_moves = [(move[0],move[1])]
 
     def find_path_to_king(self, king_row, king_column):
-        if self.piece != 'Knight':
-            if king_column - self.column != 0:
-                column_dir = int((king_column - self.column) / (abs(king_column - self.column)))
-                column_path = list(range(self.column, king_column, column_dir))
-            if king_row - self.row != 0:
-                row_dir = int((king_row - self.row) / (abs(king_row - self.row)) )
-                row_path = list(range(self.row, king_row, row_dir))
-            if king_column - self.column == 0:
-                column_path = [king_column] * len(row_path)
-            elif king_row - self.row == 0:
-                row_path = [king_row] * len(column_path)
+        if king_column - self.column != 0:
+            column_dir = int((king_column - self.column) / (abs(king_column - self.column)))
+            column_path = list(range(self.column, king_column, column_dir))
+        if king_row - self.row != 0:
+            row_dir = int((king_row - self.row) / (abs(king_row - self.row)) )
+            row_path = list(range(self.row, king_row, row_dir))
+        if king_column - self.column == 0:
+            column_path = [king_column] * len(row_path)
+        elif king_row - self.row == 0:
+            row_path = [king_row] * len(column_path)
         return list(zip(row_path, column_path))
 
     def __repr__(self):
