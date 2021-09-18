@@ -58,6 +58,19 @@ def check_agianst_check(board, clicked_piece):
             return True # we can't move
         return False # we can move
 
+def check_against_checkmate(board):
+    pieces_that_cant_move, piece_on_board = 0, 0
+    for row_number in range(0, 8):
+        for column_number in range(0, 8):
+            if board[row_number][column_number] != None:
+                check_agianst_check(board, board[row_number][column_number]) 
+                if len(board[row_number][column_number].possible_moves) == 0:
+                    pieces_that_cant_move += 1
+                piece_on_board += 1
+    if piece_on_board == pieces_that_cant_move:
+        return True
+    return False
+
 def on_click(event, window, board, game_vars):
     game_vars['onclick'] = 1 - game_vars['onclick']
     square = event.widget
