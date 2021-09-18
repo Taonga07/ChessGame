@@ -51,8 +51,12 @@ class GameObject():
             else: #king can not block itelf from check
                 self.possible_moves = [move for move in self.possible_moves if counter_check[0] == move]
         #remove piece in possible moves that is not your colour
-        self.possible_moves = [move for move in self.possible_moves if ((board[move[0]][move[1]] != None) and (board[move[0]][move[1]].colour != self.colour)) or board[move[0]][move[1]] == None]
-        print(f'Possible_Moves{run}:{self.possible_moves}')
+        possible_moves = []
+        for move in self.possible_moves:
+            moving_piece = board[move[0]][move[1]]
+            if ( (moving_piece != None) and (moving_piece.colour != self.colour) ) or ( moving_piece == None):
+                possible_moves.append(move)
+        self.possible_moves = possible_moves
 
     def find_path_to_king(self, king_row, king_column):
         if self.piece != 'Knight': # attcking knight can only be taken
