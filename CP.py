@@ -22,8 +22,20 @@ class GameObject():
                 square.config(bg='green') # highlight position i green
             else: # none has no attrubrite to clour this stops this error
                 square.config(bg='red') # highlight position i red
-            
-    
+
+    def remove_check_moves(self, board):
+        possible_moves = []
+        # create extra list of self.possible_moves not pinpoint too
+        for index, move in enumerate(self.possible_moves):
+            for row_number in range(0, 8):
+                for column_number in range(0, 8):
+                    if board[row_number][column_number] != None and board[row_number][column_number] != board[self.row][self.column]:
+                        board[row_number][column_number].new_func(board, [])
+                        for piece_move in board[row_number][column_number].possible_moves:
+                            if piece_move == move:
+                                possible_moves.append(index)
+        self.possible_moves = [self.possible_moves[move] for move in possible_moves]
+
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
         moves = []
@@ -42,6 +54,10 @@ class GameObject():
         return moves
 
     def find_moves(self, board, path_to_king, run='a'):
+        self.new_func(board, path_to_king, run)
+        self.remove_check_moves(board)
+
+    def new_func(self, board, path_to_king, run='a'):
         self.possible_moves = []
         self.find_possible_moves(board)
         if len(path_to_king) > 0 and len(path_to_king) > 0: #if we are in check
