@@ -58,17 +58,6 @@ def check_agianst_check(board, clicked_piece):
             return True # we can't move
         return False # we can move
 
-def check_for_check(board, clicked_piece): # this function is not used
-    # not moving into check
-    for row_number in range(0, 8):
-        for column_number in range(0, 8):
-            if board[row_number][column_number]!= None and board[row_number][column_number]!= clicked_piece.colour:
-                board[row_number][column_number].find_moves(board, [])
-                for move in board[row_number][column_number].possible_moves:
-                    square = board[move[0][move[1]]]
-                    if (square != None) and (square.piece == 'King') and (square.colour != clicked_piece.colour): #other king is in check
-                        messagebox.showinfo('Check', f'Your {board[row_number][column_number].piece} put the othe player in check')
-
 def on_click(event, window, board, game_vars):
     game_vars['onclick'] = 1 - game_vars['onclick']
     square = event.widget
