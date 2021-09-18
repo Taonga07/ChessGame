@@ -11,8 +11,8 @@ class GameObject():
         self.icon = CD.path+self.colour+'_'+self.piece+'.gif'
 
     def highlight_moves(self, window, board):
-        for i in self.possible_moves:
-            row_number, column_number = i # get row and column of position i in board
+        for row_number, column_number in self.possible_moves:
+            print('posible', self.possible_moves)
             squarex = window.grid_slaves(row = row_number, column = column_number)
             if len(squarex) > 1:
                 print(f"warning, this square has more than one grid slave!!! {row_number}, {column_number}. count: {len(squarex)}")
@@ -21,10 +21,8 @@ class GameObject():
             if dest_square == None: #if there is nothing at position i
                 square.config(bg='green') # highlight position i green
             else: # none has no attrubrite to clour this stops this error
-                if self.colour != dest_square.colour:
-                    square.config(bg='red') # highlight position i red
-                else:
-                    self.possible_moves.remove(i) # remove from possible_moves
+                square.config(bg='red') # highlight position i red
+            
     
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
@@ -43,17 +41,21 @@ class GameObject():
                 break
         return moves
 
-    def find_moves(self, board, path_to_king):
-        self.possible_moves= []
+    def find_moves(self, board, path_to_king, run='a'):
+        self.possible_moves = []
         self.find_possible_moves(board)
         counter_check = list(set(self.possible_moves) & set(path_to_king))
-        if len(counter_check) == 0 and len(path_to_king) > 0:
-            self.possible_moves= []
-        elif len(counter_check) > 0:
-            self.possible_moves[:] = [tup for tup in self.possible_moves if counter_check[0] == tup]
+        if len(counter_check) > 0 and len(path_to_king) > 0: #if we are in check
+            if self.piece == 'King': #king can move out of check
+                self.possible_moves = [move for move in self.possible_moves  if counter_check[0] != move]
+            else: #king can not block itelf from check
+                self.possible_moves = [move for move in self.possible_moves if counter_check[0] == move]
+        #remove piece in possible moves that is not your colour
+        self.possible_moves = [move for move in self.possible_moves if ((board[move[0]][move[1]] != None) and (board[move[0]][move[1]].colour != self.colour)) or board[move[0]][move[1]] == None]
+        print(f'Possible_Moves{run}:{self.possible_moves}')
 
     def find_path_to_king(self, king_row, king_column):
-        if self.piece != 'Knight':
+        if self.piece != 'Knight': # attcking knight can only be taken
             if king_column - self.column != 0:
                 column_dir = int((king_column - self.column) / (abs(king_column - self.column)))
                 column_path = list(range(self.column, king_column, column_dir))
