@@ -48,15 +48,11 @@ def check_agianst_check(board, clicked_piece):
                         atackers_pos.append((row_number, column_number))
                         paths_to_king = paths_to_king + board[row_number][column_number].find_path_to_king(move[0], move[1])
                         # code above should add to the paths_to_king it values not the whole list
-    if len(paths_to_king) == 0: # paths to king contains squares to prevent check
-        #there will alway be 1 move at the moent to end check wich is the piece itself
-        return False # so we are not in check
-    elif len(paths_to_king) > 0: # you are in check
-        ## if len(atackers_pos) > 1: # more than one piece is attacking
+    if len(paths_to_king) > 0: # you are in check
         clicked_piece.find_moves(board, paths_to_king, 'z')
         if len(clicked_piece.possible_moves) == 0:
             return True # we can't move
-        return False # we can move
+    return False
 
 def check_against_checkmate(board):
     pieces_that_cant_move, piece_on_board = 0, 0
