@@ -27,7 +27,7 @@ class GameObject():
         if self.piece == 'King':
             local_moves = []
             # create extra list of self.possible_moves not pinpoint too
-            for index, move in enumerate(self.possible_moves):
+            for move in self.possible_moves:
                 for row_number in range(0, 8):
                     for column_number in range(0, 8):
                         #if fit is not my own piece
@@ -37,7 +37,7 @@ class GameObject():
                             # go through that
                             for piece_move in board[row_number][column_number].possible_moves:
                                 #check if a move in my possible moves is in that pieces
-                                if piece_move == move:
+                                if piece_move != move:
                                     local_moves.append(move)
             self.possible_moves = local_moves
 
@@ -60,7 +60,7 @@ class GameObject():
 
     def find_moves(self, board, path_to_king, run='a'):
         self.test_moves(board, path_to_king, run)
-        self.remove_check_moves(board)
+        self.remove_kings_check_moves(board)
 
     def test_moves(self, board, path_to_king, run='a'):
         self.possible_moves = []

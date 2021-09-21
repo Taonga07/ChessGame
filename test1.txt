@@ -1,3 +1,2 @@
 Rook Black 0 4
-Bishop Black 4, 4
-King White 7 4
+King White 7 3
