@@ -12,7 +12,7 @@ class GameObject():
 
     def highlight_moves(self, window, board):
         for row_number, column_number in self.possible_moves:
-            print('posible', self.possible_moves)
+            #print('posible', self.possible_moves)
             squarex = window.grid_slaves(row = row_number, column = column_number)
             if len(squarex) > 1:
                 print(f"warning, this square has more than one grid slave!!! {row_number}, {column_number}. count: {len(squarex)}")
@@ -22,8 +22,27 @@ class GameObject():
                 square.config(bg='green') # highlight position i green
             else: # none has no attrubrite to clour this stops this error
                 square.config(bg='red') # highlight position i red
-            
-    
+
+    def remove_kings_check_moves(self, board):
+        if self.piece == 'King':
+            print(self.piece)
+            local_moves = []
+            # create extra list of self.possible_moves not pinpoint too
+            for move in self.possible_moves:
+                for row_number in range(0, 8):
+                    for column_number in range(0, 8):
+                        #if fit is not my own piece
+                        if board[row_number][column_number] != None and board[row_number][column_number] != board[self.row][self.column]:
+                            #get the piece which is not selected possible moves
+                            board[row_number][column_number].test_moves(board, [])
+                            # go through that
+                            for piece_move in board[row_number][column_number].possible_moves:
+                                #check if a move in my possible moves is in that pieces
+                                if piece_move == move:
+                                    local_moves.append(move)
+            for move in local_moves:
+                self.possible_moves.remove(move)
+
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
         moves = []
@@ -42,6 +61,10 @@ class GameObject():
         return moves
 
     def find_moves(self, board, path_to_king, run='a'):
+        self.test_moves(board, path_to_king, run)
+        self.remove_kings_check_moves(board)
+
+    def test_moves(self, board, path_to_king, run='a'):
         self.possible_moves = []
         self.find_possible_moves(board)
         if len(path_to_king) > 0 and len(path_to_king) > 0: #if we are in check

@@ -41,7 +41,7 @@ def check_agianst_check(board, clicked_piece):
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             if board[row_number][column_number]!= None and board[row_number][column_number]!= clicked_piece.colour:
-                board[row_number][column_number].find_moves(board, [],)
+                board[row_number][column_number].find_moves(board, [])
                 for move in board[row_number][column_number].possible_moves:
                     square = board[move[0]][move[1]] # row, column
                     if (square != None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
