@@ -12,7 +12,7 @@ class GameObject():
 
     def highlight_moves(self, window, board):
         for row_number, column_number in self.possible_moves:
-            print('posible', self.possible_moves)
+            #print('posible', self.possible_moves)
             squarex = window.grid_slaves(row = row_number, column = column_number)
             if len(squarex) > 1:
                 print(f"warning, this square has more than one grid slave!!! {row_number}, {column_number}. count: {len(squarex)}")
@@ -25,6 +25,7 @@ class GameObject():
 
     def remove_kings_check_moves(self, board):
         if self.piece == 'King':
+            print(self.piece)
             local_moves = []
             # create extra list of self.possible_moves not pinpoint too
             for move in self.possible_moves:
@@ -37,9 +38,10 @@ class GameObject():
                             # go through that
                             for piece_move in board[row_number][column_number].possible_moves:
                                 #check if a move in my possible moves is in that pieces
-                                if piece_move != move:
+                                if piece_move == move:
                                     local_moves.append(move)
-            self.possible_moves = local_moves
+            for move in local_moves:
+                self.possible_moves.remove(move)
 
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
