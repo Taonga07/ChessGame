@@ -2,6 +2,7 @@
 
 - [x] king think it can block itself from check
 - [x] rook does not has only one move to protect king even when more is availible
+- [ ] list x not in possible moves
 - [ ] king think pawn takes forwards
 
 ## TODO
