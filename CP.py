@@ -34,7 +34,7 @@ class GameObject():
                         #if fit is not my own piece
                         if board[row_number][column_number] != None and board[row_number][column_number] != board[self.row][self.column]:
                             #get the piece which is not selected possible moves
-                            board[row_number][column_number].test_moves(board, [])
+                            board[row_number][column_number].test_moves(board, [], override=True)
                             # go through that
                             for piece_move in board[row_number][column_number].possible_moves:
                                 #check if a move in my possible moves is in that pieces
@@ -43,7 +43,7 @@ class GameObject():
             for move in local_moves:
                 self.possible_moves.remove(move)
 
-    def explore_moves(self, direction, board):
+    def explore_moves(self, direction, board, overide):
         working_value = self.row, self.column
         moves = []
         while True:
@@ -55,7 +55,8 @@ class GameObject():
                 else:
                     if dest_square.colour != self.colour:
                         moves.append(working_value)
-                    break
+                    if not overide:
+                        break
             else:
                 break
         return moves
@@ -64,9 +65,9 @@ class GameObject():
         self.test_moves(board, path_to_king, run)
         self.remove_kings_check_moves(board)
 
-    def test_moves(self, board, path_to_king, run='a'):
+    def test_moves(self, board, path_to_king, run='a', override=False):
         self.possible_moves = []
-        self.find_possible_moves(board)
+        self.find_possible_moves(board, override)
         if len(path_to_king) > 0 and len(path_to_king) > 0: #if we are in check
             if self.piece == 'King': #king can move out of check
                 self.possible_moves = [move for move in self.possible_moves if move not in path_to_king]
@@ -105,7 +106,7 @@ class Pawn(GameObject):
         if (self.row == 1 and self.colour == 'Black') or (self.row == 6 and self.colour == 'White'):
             return True
         return False
-    def find_possible_moves(self, board):
+    def find_possible_moves(self, board, overide):
         if self.colour == 'White':
             direction = -1
         else: 
@@ -129,26 +130,27 @@ class Pawn(GameObject):
 class Rook(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Rook', colour, column, row, 4)
-    def find_possible_moves(self, board):
-        self.possible_moves.extend(self.explore_moves((-1, 0), board))# up
-        self.possible_moves.extend(self.explore_moves((0, +1), board))# right
-        self.possible_moves.extend(self.explore_moves((0, -1), board))# left
-        self.possible_moves.extend(self.explore_moves((+1, 0), board))# down
+    def find_possible_moves(self, board, overide):
+        print(overide)
+        self.possible_moves.extend(self.explore_moves((-1, 0), board, overide))# up
+        self.possible_moves.extend(self.explore_moves((0, +1), board, overide))# right
+        self.possible_moves.extend(self.explore_moves((0, -1), board, overide))# left
+        self.possible_moves.extend(self.explore_moves((+1, 0), board, overide))# down
 
 class Bishop(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Bishop', colour, column, row, 3)
-    def find_possible_moves(self, board):
-        self.possible_moves.extend(self.explore_moves((-1, -1), board))# up left
-        self.possible_moves.extend(self.explore_moves((-1, +1), board))# up right
-        self.possible_moves.extend(self.explore_moves((+1, -1), board))# down left
-        self.possible_moves.extend(self.explore_moves((+1, +1), board))# down right
+    def find_possible_moves(self, board, overide):
+        self.possible_moves.extend(self.explore_moves((-1, -1), board, overide))# up left
+        self.possible_moves.extend(self.explore_moves((-1, +1), board, overide))# up right
+        self.possible_moves.extend(self.explore_moves((+1, -1), board, overide))# down left
+        self.possible_moves.extend(self.explore_moves((+1, +1), board, overide))# down right
 
 class King(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('King', colour, column, row, 1)
         self.check_moves = []
-    def find_possible_moves(self, board):
+    def find_possible_moves(self, board, overide):
         if self.row > 0:
             self.possible_moves.append((self.row-1, self.column))
             if self.column > 0:
@@ -169,20 +171,20 @@ class King(GameObject):
 class Queen(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Queen', colour, column, row, 9)
-    def find_possible_moves(self, board):
-        self.possible_moves.extend(self.explore_moves((-1, -1), board))# up left
-        self.possible_moves.extend(self.explore_moves((-1, +1), board))# up right
-        self.possible_moves.extend(self.explore_moves((+1, -1), board))# down left
-        self.possible_moves.extend(self.explore_moves((+1, +1), board))# down right
-        self.possible_moves.extend(self.explore_moves((-1, 0), board))# up
-        self.possible_moves.extend(self.explore_moves((0, +1), board))# right
-        self.possible_moves.extend(self.explore_moves((0, -1), board))# left
-        self.possible_moves.extend(self.explore_moves((+1, 0), board))# down
+    def find_possible_moves(self, board, overide):
+        self.possible_moves.extend(self.explore_moves((-1, -1), board, overide))# up left
+        self.possible_moves.extend(self.explore_moves((-1, +1), board, overide))# up right
+        self.possible_moves.extend(self.explore_moves((+1, -1), board, overide))# down left
+        self.possible_moves.extend(self.explore_moves((+1, +1), board, overide))# down right
+        self.possible_moves.extend(self.explore_moves((-1, 0), board, overide))# up
+        self.possible_moves.extend(self.explore_moves((0, +1), board, overide))# right
+        self.possible_moves.extend(self.explore_moves((0, -1), board, overide))# left
+        self.possible_moves.extend(self.explore_moves((+1, 0), board, overide))# down
 
 class Knight(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Knight', colour, column, row, 5)
-    def find_possible_moves(self, board): 
+    def find_possible_moves(self, board, overide): 
         if self.row < 6 and self.column > 0:
             self.possible_moves.append((self.row+2, self.column-1))
         if self.row < 6 and self.column < 7:
