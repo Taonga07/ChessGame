@@ -42,7 +42,6 @@ class GameObject():
                                     if move not in local_moves:
                                         local_moves.append(move)
             for move in local_moves:
-                print(local_moves, self.possible_moves)
                 self.possible_moves.remove(move)
 
     def explore_moves(self, direction, board, overide):
@@ -69,7 +68,7 @@ class GameObject():
 
     def test_moves(self, board, path_to_king, run='a', override=False):
         self.possible_moves = []
-        self.find_possible_moves(board, override)
+        self.find_possible_moves(board, overide=override)
         if len(path_to_king) > 0 and len(path_to_king) > 0: #if we are in check
             if self.piece == 'King': #king can move out of check
                 self.possible_moves = [move for move in self.possible_moves if move not in path_to_king]
@@ -109,25 +108,30 @@ class Pawn(GameObject):
             return True
         return False
     def find_possible_moves(self, board, overide):
+        print(overide)
         if self.colour == 'White':
             direction = -1
         else: 
             direction = 1
-        if board[self.row + direction][self.column] == None: 
-            self.possible_moves.append(((self.row + direction), self.column))
-            if self.first_move():
-                if board[self.row+ (direction*2)][self.column] == None:
-                    self.possible_moves.append(((self.row + (direction*2)), self.column))
-        if self.column > 1:
-            dest_square = board[self.row + direction][self.column - 1]
-            if dest_square != None and dest_square.colour != self.colour:
-                # take left
-                self.possible_moves.append(((self.row + direction), (self.column -1)))
-        if self.column < 7:
-            dest_square = board[self.row + direction][self.column + 1]
-            if dest_square != None and dest_square.colour != self.colour:
-                # take right
-                self.possible_moves.append(((self.row + direction), (self.column + 1)))
+        if not overide:
+            if board[self.row + direction][self.column] == None: 
+                self.possible_moves.append(((self.row + direction), self.column))
+                if self.first_move():
+                    if board[self.row+ (direction*2)][self.column] == None:
+                        self.possible_moves.append(((self.row + (direction*2)), self.column))
+            if self.column > 1:
+                dest_square = board[self.row + direction][self.column - 1]
+                if dest_square != None and dest_square.colour != self.colour:
+                    # take left
+                    self.possible_moves.append(((self.row + direction), (self.column -1)))
+            if self.column < 7:
+                dest_square = board[self.row + direction][self.column + 1]
+                if dest_square != None and dest_square.colour != self.colour:
+                    # take right
+                    self.possible_moves.append(((self.row + direction), (self.column + 1)))
+        else:
+            self.possible_moves.append(((self.row + direction), (self.column + 1)))
+            self.possible_moves.append(((self.row + direction), (self.column - 1)))
 
 class Rook(GameObject):
     def __init__(self, colour, column, row):
