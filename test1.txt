@@ -1,0 +1,2 @@
+Pawn Black 5 4
+King White 7 3
