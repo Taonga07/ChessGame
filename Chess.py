@@ -54,15 +54,16 @@ def check_agianst_check(board, clicked_piece):
             return True # we can't move
     return False
 
-def check_against_checkmate(board):
+def check_for_checkmate(board, clicked_piece):
     pieces_that_cant_move, piece_on_board = 0, 0
     for row_number in range(0, 8):
         for column_number in range(0, 8):
             if board[row_number][column_number] != None:
-                check_agianst_check(board, board[row_number][column_number]) 
-                if len(board[row_number][column_number].possible_moves) == 0:
-                    pieces_that_cant_move += 1
-                piece_on_board += 1
+                if clicked_piece.colour == board[row_number][column_number].colour:
+                    if check_agianst_check(board, board[row_number][column_number]):
+                        pieces_that_cant_move += 1
+                    piece_on_board += 1
+    print(pieces_that_cant_move, piece_on_board)
     if piece_on_board == pieces_that_cant_move:
         return True
     return False
@@ -78,10 +79,14 @@ def on_click(event, window, board, game_vars):
         if (piece_clicked != None)and(((game_vars['turn'] == 0)and(piece_clicked.colour == 'White'))or((game_vars['turn'] == 1)and(piece_clicked.colour == 'Black'))):
             #check if we can still move selected piece if we are in check 
             #if we can still move the fuction should limit our moves anyway
+            if check_for_checkmate(board, piece_clicked):
+                messagebox.showinfo('Checkmate', 'Checkmate end of game')
+                while True:
+                    pass
             if check_agianst_check(board, piece_clicked):
                 # if check_against_check returns True, you selected piec can't move
-                messagebox.showinfo('Check', 'you\'re in check')
-                game_vars['onclick'] = 1 - game_vars['onclick']
+                    messagebox.showinfo('Check', 'you\'re in check')
+                    game_vars['onclick'] = 1 - game_vars['onclick']
             else: #you can move but moves will be limited if you are in check
                 square.config(bg='blue')# highlight square
                 piece_clicked.highlight_moves(window, board)
@@ -103,6 +108,9 @@ def on_click(event, window, board, game_vars):
         board[old_click[0]][old_click[1]] = None
         layout_board(window, board) #reset board
         game_vars['turn'] = 1 - game_vars['turn']
+
+def end_game(event):
+    messagebox.showinfo('Checkmate', 'Checkmate end of game')
 
 if __name__ =="__main__":
     play_chess('test1.txt')

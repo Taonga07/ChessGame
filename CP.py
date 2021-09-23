@@ -25,7 +25,6 @@ class GameObject():
 
     def remove_kings_check_moves(self, board):
         if self.piece == 'King':
-            print(self.piece)
             local_moves = []
             # create extra list of self.possible_moves not pinpoint too
             for move in self.possible_moves:
@@ -108,7 +107,6 @@ class Pawn(GameObject):
             return True
         return False
     def find_possible_moves(self, board, overide):
-        print(overide)
         if self.colour == 'White':
             direction = -1
         else: 
@@ -137,7 +135,6 @@ class Rook(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Rook', colour, column, row, 4)
     def find_possible_moves(self, board, overide):
-        print(overide)
         self.possible_moves.extend(self.explore_moves((-1, 0), board, overide))# up
         self.possible_moves.extend(self.explore_moves((0, +1), board, overide))# right
         self.possible_moves.extend(self.explore_moves((0, -1), board, overide))# left
