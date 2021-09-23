@@ -72,6 +72,7 @@ def on_click(event, window, board, game_vars):
     square = event.widget
     row_number = int(square.grid_info()["row"])
     column_number  = int(square.grid_info()["column"])
+    #print(f"on_click, row: {row_number}, column:{column_number}")
     game_vars['square_clicked'] = (row_number, column_number)
     piece_clicked = board[row_number][column_number]
     if game_vars['onclick'] == 0: # this is our fist click we are selecting the piece we want to move
@@ -92,10 +93,14 @@ def on_click(event, window, board, game_vars):
     else: # this is our second click, we are selecting the square to move to
         row, column = game_vars['old_click']
         old_piece = board[row][column]
+        #print('old_piece', old_piece)
         if game_vars['square_clicked'] not in old_piece.possible_moves: # check possible move for piece
             messagebox.showinfo("Move Not Allowed", "Your piece cannot move there!")
             layout_board(window, board) #reset board
-            return 
+            return
+        if test_for_check(board, old_piece.colour, game_vars): # check for check/checkmate
+            layout_board(window, board) #reset board
+            return             
         old_click = game_vars['old_click']
         board[row_number][column_number] = board[old_click[0]][old_click[1]]
         board[row_number][column_number].row = row_number

@@ -1,16 +1,25 @@
-# Chess2030 - current isues
+# Chess2030 - Master
 
-- [x] king think it can block itself from check
-- [x] rook does not has only one move to protect king even when more is availible
-- [x] list x not in possible moves
-- [ ] king think pawn takes forwards
+![image](https://user-images.githubusercontent.com/56770626/83164817-9336ba80-a104-11ea-97c7-289f67ee2524.png)
 
-## TODO
+This is a two player game; playing against computer is not an option yet but could be.
 
-- [ ] checkmate
-- [ ] king can move into check
-- [ ] king can do ileagal moves duing check by two attackers see tes1.txt
-- [ ] kings can be next to eachother
-- [ ] king can take atacker
-- [x] king can move away from check
-- [ ] king can't take multiple attacker can take if put out of check
+A Guide is being written so you can make this project yourself but as the game is not yet finished neither is it.
+Here is the link if you have acess to it https://docs.google.com/document/d/1YOnf6xDqEIGD04JVzfhgvXFyDlK1BxJagbxBN3dT_7Q/edit
+
+Currently the this branch holds the best code. so will be updated so all the errors and imperfections are dealt with in other branches.
+The Rules are being developed at the moment. Curently I am working on [Check and Checkmate](https://github.com/Taonga07/Chess2030/tree/Check).
+
+A list of jobs for this game can be found here.
+
+- [x] all pieces rules
+- [ ] pawn exchange
+- [x] highlight possible moves
+- [x] all pieces on board
+- [x] all pieces can move
+- [x] check / checkmate
+- [ ] ompasount
+
+[![button](https://user-images.githubusercontent.com/56770626/81318448-2f315100-9086-11ea-90e0-f983cff24e33.png)](https://repl.it/@Taonga07/Chess2030)
+
+Hope you enjoy!
