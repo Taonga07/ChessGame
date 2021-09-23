@@ -1,6 +1,6 @@
 # Chess2030 - Master
 
-![image](https://user-images.githubusercontent.com/56770626/83164817-9336ba80-a104-11ea-97c7-289f67ee2524.png)
+![image](https://i.ibb.co/DK14y3k/Screenshot-from-2021-09-23-19-17-35.png)
 
 This is a two player game; playing against computer is not an option yet but could be.
 
