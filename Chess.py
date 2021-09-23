@@ -107,4 +107,4 @@ def on_click(event, window, board, game_vars):
         game_vars['turn'] = 1 - game_vars['turn']
 
 if __name__ =="__main__":
-    play_chess('test1.txt')
+    play_chess('Test.txt')
