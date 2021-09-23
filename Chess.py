@@ -102,10 +102,7 @@ def on_click(event, window, board, game_vars):
         if game_vars['square_clicked'] not in old_piece.possible_moves: # check possible move for piece
             messagebox.showinfo("Move Not Allowed", "Your piece cannot move there!")
             layout_board(window, board) #reset board
-            return
-        if test_for_check(board, old_piece.colour, game_vars): # check for check/checkmate
-            layout_board(window, board) #reset board
-            return             
+            return           
         old_click = game_vars['old_click']
         board[row_number][column_number] = board[old_click[0]][old_click[1]]
         board[row_number][column_number].row = row_number
