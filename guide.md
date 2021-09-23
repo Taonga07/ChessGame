@@ -1,0 +1,1 @@
+Lets begin! Start a new project in VS Code, or on [repl.it](http://repl.it/).Create a new directory named Chess inside this directory save the Chess_Resources folder. This contains the images we need for this project.
