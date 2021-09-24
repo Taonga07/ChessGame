@@ -107,6 +107,7 @@ class Pawn(GameObject):
             return True
         return False
     def find_possible_moves(self, board, overide):
+        print(overide)
         if self.colour == 'White':
             direction = -1
         else: 
@@ -128,8 +129,10 @@ class Pawn(GameObject):
                     # take right
                     self.possible_moves.append(((self.row + direction), (self.column + 1)))
         else:
-            self.possible_moves.append(((self.row + direction), (self.column + 1)))
-            self.possible_moves.append(((self.row + direction), (self.column - 1)))
+            if self.column < 7:
+                self.possible_moves.append(((self.row + direction), (self.column + 1)))
+            if self.column > 1:
+                self.possible_moves.append(((self.row + direction), (self.column - 1)))
 
 class Rook(GameObject):
     def __init__(self, colour, column, row):
