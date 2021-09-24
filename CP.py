@@ -31,7 +31,7 @@ class GameObject():
                 for row_number in range(0, 8):
                     for column_number in range(0, 8):
                         #if fit is not my own piece
-                        if board[row_number][column_number] != None and board[row_number][column_number] != board[self.row][self.column]:
+                        if board[row_number][column_number] != None and board[row_number][column_number].colour != self.colour:
                             #get the piece which is not selected possible moves
                             board[row_number][column_number].test_moves(board, [], override=True)
                             # go through that
