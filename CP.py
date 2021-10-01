@@ -39,10 +39,11 @@ class GameObject():
                             for piece_move in board[row_number][column_number].possible_moves:
                                 #check if a move in my possible moves is in that pieces
                                 if piece_move == move:
-                                    local_moves.append(move)
+                                    if move not in local_moves:
+                                        local_moves.append(move)
             for move in local_moves:
+                print(local_moves, self.possible_moves)
                 self.possible_moves.remove(move)
-
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
         moves = []
