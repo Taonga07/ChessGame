@@ -49,7 +49,7 @@ def check_agianst_check(board, clicked_piece):
                         paths_to_king = paths_to_king + board[row_number][column_number].find_path_to_king(move[0], move[1])
                         # code above should add to the paths_to_king it values not the whole list
     if len(paths_to_king) > 0: # you are in check
-        clicked_piece.find_moves(board, paths_to_king, 'z')
+        clicked_piece.find_moves(board, paths_to_king)
         if len(clicked_piece.possible_moves) == 0:
             return True # we can't move
     return False

@@ -44,6 +44,7 @@ class GameObject():
             for move in local_moves:
                 print(local_moves, self.possible_moves)
                 self.possible_moves.remove(move)
+
     def explore_moves(self, direction, board):
         working_value = self.row, self.column
         moves = []
@@ -61,11 +62,11 @@ class GameObject():
                 break
         return moves
 
-    def find_moves(self, board, path_to_king, run='a'):
-        self.test_moves(board, path_to_king, run)
+    def find_moves(self, board, path_to_king):
+        self.test_moves(board, path_to_king)
         self.remove_kings_check_moves(board)
 
-    def test_moves(self, board, path_to_king, run='a'):
+    def test_moves(self, board, path_to_king):
         self.possible_moves = []
         self.find_possible_moves(board)
         if len(path_to_king) > 0 and len(path_to_king) > 0: #if we are in check
