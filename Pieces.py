@@ -1,5 +1,3 @@
-import CD
-
 class GameObject():
     def __init__(self, piece, colour, column, row, value):
         self.row = row
@@ -8,7 +6,7 @@ class GameObject():
         self.colour = colour
         self.column = column
         self.possible_moves= []
-        self.icon = CD.path+self.colour+'_'+self.piece+'.gif'
+        self.icon = 'Chess_Resources/'+self.colour+'_'+self.piece+'.gif'
 
     def highlight_moves(self, window, board):
         for row_number, column_number in self.possible_moves:
