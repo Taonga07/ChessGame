@@ -1,5 +1,6 @@
 from tkinter import messagebox, PhotoImage, Tk, Label, N, S, W, E
 from Pieces import Pawn, Rook, Bishop, Queen, King, Knight
+
 class ChessGame():
     def __init__(self, window, square_colours=('White', 'Grey'), file='New_Game.txt'):
         self.window, self.click, self.first_click = window, 1, (0, 0)
@@ -29,6 +30,10 @@ class ChessGame():
                 else:
                     img, text = PhotoImage(file = self.board[row_number][column_number].icon), None
                 square = Label(self.window, text = text, bg = square_colour, image = img)
+                grid_slaves = window.grid_slaves(row_number, column_number)
+                if len(grid_slaves) > 0:
+                    for g in grid_slaves:
+                        g.destroy()
                 square.image = img
                 square.grid(row = row_number, column = column_number, sticky = N+S+W+E)
                 square.bind("<Button-1>", self.on_click)
@@ -79,7 +84,7 @@ class ChessGame():
                 return 
             self.board[current_square[0]][current_square[1]] = self.board[self.first_click[0]][self.first_click[1]]
             self.board[current_square[0]][current_square[1]].row = current_square[0]
-            self.board[current_square[0]][current_square[1]].column, current_square[1]
+            self.board[current_square[0]][current_square[1]].column = current_square[1]
             self.board[self.first_click[0]][self.first_click[1]] = None
             self.layout_board() #reset board
             self.turn = 1 - self.turn
@@ -88,6 +93,6 @@ if __name__ =="__main__":
     window = Tk()
     window.title('chess')
     window.iconphoto(True, PhotoImage('/Chess_Resorces/Icon.png'))
-    current_game = ChessGame(window)
+    current_game = ChessGame(window, file='New_Game.txt')
     current_game.layout_board()
     current_game.window.mainloop()

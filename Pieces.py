@@ -59,7 +59,7 @@ class GameObject():
 
     def find_moves(self, board, path_to_king):
         self.test_moves(board, path_to_king)
-        self.remove_kings_check_moves(board)
+        #self.remove_kings_check_moves(board)
 
     def test_moves(self, board, path_to_king):
         self.possible_moves = []
