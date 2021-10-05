@@ -7,7 +7,6 @@ class ChessGame():
         self.board, self.turn = self.read_game_data(file)
         self.square_colours = square_colours
         self.layout_board()
-        self.window.mainloop()
 
     def read_game_data(self, file):
         board = [[None]*8 for column in range(8)]
@@ -94,5 +93,4 @@ if __name__ =="__main__":
     window.title('chess')
     window.iconphoto(True, PhotoImage('/Chess_Resorces/Icon.png'))
     current_game = ChessGame(window, file='New_Game.txt')
-    current_game.layout_board()
     current_game.window.mainloop()
