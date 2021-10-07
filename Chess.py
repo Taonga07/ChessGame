@@ -29,7 +29,7 @@ class ChessGame():
                 else:
                     img, text = PhotoImage(file = self.board[row_number][column_number].icon), None
                 square = Label(self.window, text = text, bg = square_colour, image = img)
-                grid_slaves = window.grid_slaves(row_number, column_number)
+                grid_slaves = self.window.grid_slaves(row_number, column_number)
                 if len(grid_slaves) > 0:
                     for g in grid_slaves:
                         g.destroy()
@@ -87,10 +87,3 @@ class ChessGame():
             self.board[self.first_click[0]][self.first_click[1]] = None
             self.layout_board() #reset board
             self.turn = 1 - self.turn
-
-if __name__ =="__main__":
-    window = Tk()
-    window.title('chess')
-    window.iconphoto(True, PhotoImage('/Chess_Resorces/Icon.png'))
-    current_game = ChessGame(window, file='New_Game.txt')
-    current_game.window.mainloop()

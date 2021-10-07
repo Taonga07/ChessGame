@@ -21,22 +21,22 @@ class GameObject():
                 square.config(bg='red') # highlight position i red
 
     def remove_kings_check_moves(self, board):
-        if self.piece == 'King':
-            local_moves = []
-            # create extra list of self.possible_moves not pinpoint too
-            for move in self.possible_moves:
-                for row_number in range(0, 8):
-                    for column_number in range(0, 8):
-                        #if fit is not my own piece
-                        if board[row_number][column_number] != None and board[row_number][column_number] != board[self.row][self.column]:
-                            #get the piece which is not selected possible moves
-                            board[row_number][column_number].test_moves(board, [])
-                            # go through that
-                            for piece_move in board[row_number][column_number].possible_moves:
-                                #check if a move in my possible moves is in that pieces
-                                if piece_move == move:
-                                    if move not in local_moves:
-                                        local_moves.append(move)
+        local_moves = []
+        # create extra list of self.possible_moves not pinpoint too
+        for move in self.possible_moves:
+            for row_number in range(0, 8):
+                for column_number in range(0, 8):
+                    #if fit is not my own piece
+                    if board[row_number][column_number] != None and board[row_number][column_number] != board[self.row][self.column]:
+                        #get the piece which is not selected possible moves
+                        ## FLAG ## self.god_move_access = True
+                        board[row_number][column_number].test_moves(board, [])
+                        # go through that
+                        for piece_move in board[row_number][column_number].possible_moves:
+                            #check if a move in my possible moves is in that pieces
+                            if piece_move == move:
+                                if move not in local_moves:
+                                    local_moves.append(move)
             for move in local_moves:
                 self.possible_moves.remove(move)
 
@@ -59,13 +59,15 @@ class GameObject():
 
     def find_moves(self, board, path_to_king):
         self.test_moves(board, path_to_king)
-        #self.remove_kings_check_moves(board)
+        if self.piece == 'King':
+            self.remove_kings_check_moves(board)
 
     def test_moves(self, board, path_to_king):
         self.possible_moves = []
         self.find_possible_moves(board)
-        if len(path_to_king) > 0 and len(path_to_king) > 0: #if we are in check
+        if len(path_to_king) > 0: #if we are in check
             if self.piece == 'King': #king can move out of check
+                ##flag
                 self.possible_moves = [move for move in self.possible_moves if move not in path_to_king]
             else: #king can not block itelf from check
                 self.possible_moves = list(set(self.possible_moves) & set(path_to_king))        #remove piece in possible moves that is not your colour
