@@ -9,12 +9,12 @@ class ChessGame():
         self.layout_board()
 
     def read_game_data(self, file):
-        board = [[None]*8 for column in range(8)]
+        board = [[None]*8 for row in range(8)]
         input_data = open(f'Games/{file}', 'r').readlines()
         for i, line in enumerate(input_data):
             if i == 0: turn = int(line.rstrip())
             else:
-                Piece, Colour, Column, Row = line.rstrip().split(' ')
+                Piece, Colour, Row, Column = line.rstrip().split(' ')
                 piece = eval(Piece+'(str(Colour), int(Column), int(Row))')
                 board[int(piece.row)][int(piece.column)] = piece 
         return board, turn
