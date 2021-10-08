@@ -37,8 +37,8 @@ class GameObject():
                             if piece_move == move:
                                 if move not in local_moves:
                                     local_moves.append(move)
-            for move in local_moves:
-                self.possible_moves.remove(move)
+        for move in local_moves:
+            self.possible_moves.remove(move)
 
     def explore_moves(self, direction, board):
         working_value = self.row, self.column

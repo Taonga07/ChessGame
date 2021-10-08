@@ -4,4 +4,5 @@ This Brach is currently the most up todate. Here I am working on the menubar and
 
 ## Known Issues
 
-- [ ] customising the board makes the layout gow weird and game stops working
+- [x] customising the board makes the layout gow weird and game stops working
+- [x] for move in possible moves move out of range error fixed
