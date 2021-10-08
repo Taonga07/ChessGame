@@ -1,7 +1,6 @@
 from tkinter import filedialog, messagebox, Menu, Tk, PhotoImage, colorchooser
 from os.path import split
 from Chess import ChessGame
-from os import remove
 
 class Game():
     def __init__(self, image) -> None:
@@ -58,11 +57,10 @@ class Game():
                         filehandle.write(_line)
 
     def onBoardCustormise(self):
-        self.save_file('Games/temp.txt')
         light_square_colour = colorchooser.askcolor(title ="Choose 1st color")
         dark_square_colour = colorchooser.askcolor(title ="Choose 2nd color")
-        self.root_game = ChessGame(self.root_window, file='temp.txt', square_colours=(light_square_colour[1], dark_square_colour[1]))
-        remove('Games/temp.txt')
+        self.root_game.square_colours = (light_square_colour[1], dark_square_colour[1])
+        self.root_game.layout_board()
 
 if __name__== "__main__":
     current_game = Game('/Chess_Resorces/Icon.png')
