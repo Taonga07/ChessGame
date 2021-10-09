@@ -1,3 +1,0 @@
-Rook Black 0 0
-Rook Black 0 1
-King White 7 7

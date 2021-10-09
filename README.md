@@ -1,4 +1,4 @@
-# Chess2030 - current isues
+# Chess2030 - Check
 
 - [x] king think it can block itself from check
 - [x] rook does not has only one move to protect king even when more is availible
@@ -13,6 +13,7 @@
 - [ ] better end then freezing screen
 - [x] king can't move into check
 - [ ] king can do ileagal moves duing check by two attackers see tes1.txt
+- [ ] when generatung path to king pawns are not thought of
 - [ ] kings can be next to eachother
 - [x] king can move away from check
 - [ ] king can't take multiple attacker can take if put out of check
