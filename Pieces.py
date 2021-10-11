@@ -51,6 +51,7 @@ class GameObject():
                                 moves.append(working_value)
                                 break
                             pieces_to_jump -= 1
+                        else: break
                 else:
                     break
             return moves
