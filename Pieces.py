@@ -3,6 +3,10 @@ class GameObject():
         self.row, self.value, self.piece, self.InCheck = row, value, piece, False
         self.colour, self.column, self.possible_moves = colour, column, []
         self.icon = 'Chess_Resources/'+self.colour+'_'+self.piece+'.gif'
+        self.abbrv = self.piece[0]  # first char, e.g. 'P' for Pawn
+        if self.colour == 'Black':
+            self.abbrv = self.abbrv.lower()  # e.g. 'p' for Pawn 
+        self.history = []
 
     def highlight_moves(self, window, board):
         for row_number, column_number in self.possible_moves:
@@ -97,6 +101,12 @@ class GameObject():
             if self.column < 7: return [((self.row + self.direction), (self.column + 1))]
             if self.column > 1: return [((self.row + self.direction), (self.column - 1))]
         else: return self.find_possible_moves(board)
+    
+    def __repr__(self):
+        # string representation
+        #return f"({self.__class__}){self} : {vars(self)}"
+        return f"{self.__class__} : {vars(self)}"
+
 
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
