@@ -52,8 +52,8 @@ class ChessGame():
                             atackers_pos.append((row_number, column_number))
                             paths_to_king += self.board[row_number][column_number].find_path_to_king(move[0], move[1])
                             # code above should add to the paths_to_king it values not the whole list
+        clicked_piece.find_moves(self.board, paths_to_king)
         if len(paths_to_king) > 0: # you are in check
-            clicked_piece.find_moves(self.board, paths_to_king)
             if len(clicked_piece.possible_moves) == 0:
                 return True # we can't move
         return False

@@ -61,6 +61,7 @@ class GameObject():
         self.find_possible_moves(board)
         if len(path_to_king) > 0: #if we are in check
             if self.piece == 'King': #king can move out of check
+                
                 self.possible_moves = [move for move in self.possible_moves if move not in path_to_king]
             else: #king can not block itelf from check
                 self.possible_moves = list(set(self.possible_moves) & set(path_to_king))        #remove piece in possible moves that is not your colour

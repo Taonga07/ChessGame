@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Chess2030 - Master
 
 ![image](https://i.ibb.co/DK14y3k/Screenshot-from-2021-09-23-19-17-35.png)
@@ -23,3 +24,8 @@ A list of jobs for this game can be found here.
 [![button](https://user-images.githubusercontent.com/56770626/81318448-2f315100-9086-11ea-90e0-f983cff24e33.png)](https://repl.it/@Taonga07/Chess2030)
 
 Hope you enjoy!
+=======
+# Chess2030
+
+This Brach is currently the most up todate. Here I am working on the menubar and optimizing code. So far I have placed the Game into a class to save complication with passing stuff around. And fixed the menubar. In order to run the game run Main.py. NOTE: This dise not have check/checkmate in as will work with that later in other branch.
+>>>>>>> prevent_check
