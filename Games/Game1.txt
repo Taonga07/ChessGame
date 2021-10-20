@@ -1,3 +1,4 @@
 1
-Rook Black 0 0
-King White 6 6
+Rook Black 0 1
+Rook Black 6 0
+King White 7 6
