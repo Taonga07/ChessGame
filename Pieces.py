@@ -70,7 +70,7 @@ class GameObject():
             if ( (moving_piece != None) and (moving_piece.colour != self.colour) ) or ( moving_piece == None):
                 possible_moves.append(move)
         self.possible_moves = possible_moves
-        #self.remove_check_moves(board)
+        #elf.remove_check_moves(board)
 
     def find_path_to_king(self, king_row, king_column):
         if self.piece != 'Knight': # attcking knight can only be taken
