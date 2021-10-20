@@ -22,12 +22,12 @@ class GameObject():
             for column in range(8):
                 if self.piece == 'king':
                     for move in self.possible_moves:
-                        #if fit is not my own piece
-                        if board[move[0]][move[1]] != None and board[move[0]][move[1]] != board[self.row][self.column]:
-                            # generate moves from piece we are checking to edge of board in direction of current possible move
+                        #if it is not my own piece
+                        if board[row][column] != None and board[row][column] != board[self.row][self.column]:
+                            # generate moves from piece we are checking to edge of board as if we had moved
                             if (self.row, self.column) in board[row][column].path_past_self(board, (move[0], move[1])):
                                 local_moves.append(move)
-                else: # if we are a king we check if the king is on our row
+                else: # if king not piece clicked clicked we check if the king is on our row
                     if board[row][column] != None and board[row][column].piece == 'King' and board[row][column].colour == self.colour:
                         if (row, column) in board[board[row][column].row][board[row][column].column].path_past_self(board, (self.row, self.column)):
                             self.possible_moves = []

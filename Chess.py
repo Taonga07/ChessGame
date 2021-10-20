@@ -44,7 +44,7 @@ class ChessGame():
         paths_to_king, atackers_pos = [], []
         for row_number in range(0, 8):
             for column_number in range(0, 8):
-                if self.board[row_number][column_number]!= None and self.board[row_number][column_number].colour == clicked_piece.colour:
+                if self.board[row_number][column_number]!= None and self.board[row_number][column_number].colour != clicked_piece.colour:
                     self.board[row_number][column_number].find_moves(self.board, [])
                     for move in self.board[row_number][column_number].possible_moves:
                         square = self.board[move[0]][move[1]] # row, column
@@ -52,8 +52,8 @@ class ChessGame():
                             atackers_pos.append((row_number, column_number))
                             paths_to_king += self.board[row_number][column_number].find_path_to_king(move[0], move[1])
                             # code above should add to the paths_to_king it values not the whole list
+        clicked_piece.find_moves(self.board, paths_to_king)
         if len(paths_to_king) > 0: # you are in check
-            clicked_piece.find_moves(self.board, paths_to_king)
             if len(clicked_piece.possible_moves) == 0:
                 return True # we can't move
         return False
