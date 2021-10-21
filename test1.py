@@ -113,7 +113,7 @@ def test4_invfrom(game=ChessHeadless.ChessHeadless()):
         except ChessHeadless.ChessExc as exc:
             raised_exc = exc
             if isinstance(raised_exc, ChessHeadless.InvMoveExc):
-                print(f'Expected invalid movefrom {from_pos} : {exc}')
+                print(f'test4 Expected invalid movefrom {from_pos} : {exc}')
         assert isinstance(raised_exc, ChessHeadless.InvMoveExc)
 
     # Invalid to
@@ -130,11 +130,47 @@ def test4_invfrom(game=ChessHeadless.ChessHeadless()):
         except ChessHeadless.ChessExc as exc:
             raised_exc = exc
             if isinstance(raised_exc, ChessHeadless.InvMoveExc):
-                print(f'Expected invalid moveto {to_pos} : {exc}')
+                print(f'test4 Expected invalid moveto {to_pos} : {exc}')
         assert isinstance(raised_exc, ChessHeadless.InvMoveExc)
 
     return game
 
+def test5_commands():
+    # init game and pieces
+    game = ChessHeadless.ChessHeadless(None) # no input file
+
+    (ncommands, errs) = game.commands('nonsense; Xa1; Pa9; p(8,8); !; Ki1')
+    print(f"test5 nonsense {ncommands}: {errs}")
+    assert ncommands == 6 and len(errs) == ncommands
+
+    (ncommands, errs) = game.commands('Ke1; Qc3; ra1; d') # init start, white king in check, dump
+    print(f"test5 init {ncommands}: {errs}")
+    assert ncommands == 4 and errs == []
+
+    # errors: invalid move as white move, no Q at h1, piece already (7,0), invalid to
+    (ncommands, errs) = game.commands('ra1:a2; Qh1:h2; P(7,0); Ke1:e3')
+    print(f"test5 inv {ncommands}: {errs}")
+    assert ncommands == 4 and len(errs) == 4
+
+    return game
+
+@pytest.mark.xfail
+def test6_check():
+    game = ChessHeadless.ChessHeadless(None) # no pieces
+
+    (ncommands, errs) = game.commands('Ke1; Qc3; ra1') # init start, white king in check, dump
+    print(f"test6 init {ncommands}: {errs}")
+    assert ncommands == 3 and errs == []
+
+    (ncommands, errs) = game.commands('Qc3:b2') # invalid move as white in check
+    print(f"test5 check {ncommands}: {errs}")
+    assert ncommands == 2 and len(errs) == 1
+
+    (ncommands, errs) = game.commands('Ke1:d2; ra1:a2') # white out of check
+    assert ncommands == 2 and errs == []
+
+    print(f"test6 dump: {game.dump()}")
+    return game
 
 if __name__== "__main__":
     # invoked by python and not pytest
@@ -142,6 +178,9 @@ if __name__== "__main__":
     game = test2_moveto()
     #test3_move(game)   # pytest does not preserve return values
     test4_invfrom()
+    test5_commands()
+    test6_check()
+    pass
 
 
 
