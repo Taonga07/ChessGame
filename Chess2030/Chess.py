@@ -1,6 +1,6 @@
 from tkinter import messagebox, PhotoImage, Tk, Label, N, S, W, E
 
-from ChessHeadless import ChessHeadless
+from ChessHeadless import ChessHeadless, InvMoveExc, CheckExc, CheckMateExc
 
 class ChessGame(ChessHeadless):
     def __init__(self, window, square_colours=('White', 'Grey'), file='New_Game.txt'):
@@ -40,15 +40,15 @@ class ChessGame(ChessHeadless):
             try:
                 self.movefrom(current_square[0], current_square[1])
             
-            except ChessHeadless.CheckMateExc:
+            except CheckMateExc:
                 messagebox.showinfo('Checkmate', 'Checkmate end of game')
                 while True:
                     pass
             
-            except ChessHeadless.CheckExc:
+            except CheckExc:
                 messagebox.showinfo('Check', 'you\'re in check')
 
-            except ChessHeadless.InvMoveExc:
+            except InvMoveExc:
                 messagebox.showinfo("Move Not Allowed","No/Your piece there, try again")
 
             else:
@@ -60,7 +60,7 @@ class ChessGame(ChessHeadless):
             try:
                 self.moveto(current_square[0], current_square[1])
 
-            except ChessHeadless.InvMoveExc:
+            except InvMoveExc:
                 messagebox.showinfo("Move Not Allowed", "Your piece cannot move there!")
             finally:
                 # always do this
