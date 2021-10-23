@@ -1,1 +1,5 @@
-tk==0.1.0
+tk
+twine
+build
+pyinstaller
+pyinstaller-hooks-contrib
