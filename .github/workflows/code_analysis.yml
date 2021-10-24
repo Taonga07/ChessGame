@@ -76,4 +76,4 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         shopt -s globstar  # for Bash
-    pylint ./**/*.py
+        pylint ./**/*.py
