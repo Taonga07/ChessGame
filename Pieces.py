@@ -50,7 +50,8 @@ class GameObject:
                         and (board[row][column].piece == "King")
                         and (board[row][column].colour == self.colour)
                     ):
-                        if (row, column) in board[board[row][column].row][board[row][column].column
+                        if (row, column) in board[board[row][column].row][
+                            board[row][column].column
                         ].path_past_self(board, (self.row, self.column)):
                             self.possible_moves = []
                             return
@@ -136,6 +137,7 @@ class GameObject:
                 return [((self.row + self.direction), (self.column - 1))]
         else:
             return self.find_possible_moves(board)
+
 
 class Pawn(GameObject):
     def __init__(self, colour, column, row):

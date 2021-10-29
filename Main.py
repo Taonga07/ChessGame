@@ -24,12 +24,12 @@ class Game:
         filemenu = Menu(self.menubar, tearoff=0)
         editmenu = Menu(self.menubar, tearoff=0)
 
-        filemenu.add_command(label="New", command = self.onNew)
-        filemenu.add_command(label="Open", command = self.onOpen)
-        filemenu.add_command(label="Save", command = self.onSave)
+        filemenu.add_command(label="New", command=self.onNew)
+        filemenu.add_command(label="Open", command=self.onOpen)
+        filemenu.add_command(label="Save", command=self.onSave)
         filemenu.add_separator()  # adds line between objects in filemenu dropdown
-        filemenu.add_command(label="Exit", command = self.root_window.destroy)
-        editmenu.add_command(label="custormise board", command = self.onBoardCustormise)
+        filemenu.add_command(label="Exit", command=self.root_window.destroy)
+        editmenu.add_command(label="custormise board", command=self.onBoardCustormise)
 
         self.menubar.add_cascade(label="File", menu=filemenu)
         self.menubar.add_cascade(label="Edit", menu=editmenu)
@@ -75,6 +75,7 @@ class Game:
         dark_square_colour = colorchooser.askcolor(title="Choose 2nd color")
         self.root_game.square_colours = (light_square_colour[1], dark_square_colour[1])
         self.root_game.layout_board()
+
 
 if __name__ == "__main__":
     current_game = Game("/Chess2030/Chess_Resorces/Icon.png")

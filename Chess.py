@@ -51,10 +51,8 @@ class ChessGame:
         paths_to_king, atackers_pos = [], []
         for row_number in range(0, 8):
             for column_number in range(0, 8):
-                if (
-                    (self.board[row_number][column_number] is not None)
-                    and (self.board[row_number][column_number].colour
-                    != clicked_piece.colour)
+                if (self.board[row_number][column_number] is not None) and (
+                    self.board[row_number][column_number].colour != clicked_piece.colour
                 ):
                     self.board[row_number][column_number].find_moves(self.board, [])
                     for move in self.board[row_number][column_number].possible_moves:

@@ -1,3 +1,4 @@
+cd ..
 case "$(uname -s)" in
     Linux*)     machine=Linux;;
     Mac*)    machine=Mac;;
