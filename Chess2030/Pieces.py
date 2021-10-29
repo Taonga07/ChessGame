@@ -3,9 +3,9 @@ class GameObject():
         self.row, self.value, self.piece, self.InCheck = row, value, piece, False
         self.colour, self.column, self.possible_moves = colour, column, []
         self.icon = 'Chess_Resources/'+self.colour+'_'+self.piece+'.gif'
-        self.abbrv = self.piece[0]  # first char, e.g. 'P' for Pawn
+        self.abbrv = 'N' if self.piece == 'Knight' else self.piece[0]  # first char, e.g. 'P' for Pawn
         if self.colour == 'Black':
-            self.abbrv = self.abbrv.lower()  # e.g. 'p' for Pawn 
+            self.abbrv = self.abbrv.lower()  # e.g. 'p' for Pawn, or 'n' for black knight 
         self.history = []
 
     def highlight_moves(self, window, board):
@@ -107,7 +107,6 @@ class GameObject():
         # string representation
         #return f"({self.__class__}){self} : {vars(self)}"
         return f"{self.__class__} : {vars(self)}"
-
 
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
