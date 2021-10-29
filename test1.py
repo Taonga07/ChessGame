@@ -3,11 +3,18 @@ Auto python tests.
 To run all tests:       pytest test1.py
 To list avalable tests: pytest test1.py --collect-only  
 To run specific test:   pytest test1.py -k test2_moveto
+
+If Chess2030 module not installed, add PYTHONPATH prefix e.g.:
+PYTHONPATH=$PWD/Chess2030/ pytest test1.py
+
+TODO: I want to move this file into a subdirectory but could not get the import
+to work, e.g. PYTHONPATH=$PWD/../Chess2030 pytest test1.py 
+
 '''
 
 import pytest
-from ChessHeadless import ChessHeadless, ChessExc, InvMoveExc, ChessErrs
-import Pieces
+from Chess2030 import ChessHeadless, ChessExc, InvMoveExc, ChessErrs, \
+        Pawn, Rook, Knight, Bishop, Queen, King
 
 '''
 Sanity test board layout. Depends on implementation details which is
@@ -24,23 +31,23 @@ def test1_layout(game=ChessHeadless()):
         assert r == [None]*8
 
     for sq in board[1] + board[6]:
-        assert isinstance(sq, Pieces.Pawn) 
+        assert isinstance(sq, Pawn) 
     
     for r in (0, 7):
         colour = 'Black' if r == 0 else 'White'
 
         for sq in list(board[r][c] for c in (0, 7)):
-            assert isinstance(sq, Pieces.Rook)
+            assert isinstance(sq, Rook)
             assert sq.colour == colour
     
         for sq in list(board[r][c] for c in (1, 6)):
-            assert isinstance(sq, Pieces.Knight)
+            assert isinstance(sq, Knight)
 
         for sq in list(board[r][c] for c in (2, 5)):
-            assert isinstance(sq, Pieces.Bishop)
+            assert isinstance(sq, Bishop)
     
-        assert isinstance(board[r][3], Pieces.Queen)
-        assert isinstance(board[r][4], Pieces.King)
+        assert isinstance(board[r][3], Queen)
+        assert isinstance(board[r][4], King)
 
         print(f"test1 dump: {game.dump()}")
         return game
