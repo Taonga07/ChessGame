@@ -41,14 +41,14 @@ class Game():
         self.root_game.layout_board()
 
     def onOpen(self):
-        filename = filedialog.askopenfilename(initialdir=expanduser("~"), title='Open file',
+        filename = filedialog.askopenfilename(initialdir=join(expanduser("~"), '.Chess_Games'), title='Open file',
                             filetypes=(("main files","*txt*"),("All files","*.*")))
         board, turn = self.root_game.read_game_data(split(filename)[1])
         self.root_game.board, self.root_game.turn = board, turn
         self.root_game.layout_board()
 
     def onSave(self):
-        filename = filedialog.asksaveasfilename(initialdir=expanduser("~"), title='Save as',
+        filename = filedialog.asksaveasfilename(initialdir=join(expanduser("~"), '.Chess_Games'), title='Save as',
                             filetypes=(("main files","*txt*"),("All files","*.*")))
         self.save_file(filename)
 
