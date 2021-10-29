@@ -1,23 +1,35 @@
 import re
 from Pieces import Pawn, Rook, Bishop, Queen, King, Knight
 
-class ChessExc(Exception):
-    pass
+class ChessErrs():
+    ErrCheckMate = -1
+    ErrCheck = -2
+    ErrInvMove = -3
+    ErrInvCommand = -4  ## invalid command token
+    ErrInvCommandMove = -5  ## invalid move command
 
-class CheckExc(ChessExc):
-    def __init__(self, msg='Checkmate: end of game'):
-        super(CheckExc, self).__init__(msg)
+class ChessExc(Exception):
+    def __init__(self, msg=None, err=0):
+        super(ChessExc, self).__init__(msg)
+        self.err = err
 
 class CheckMateExc(ChessExc):
-    def __init__(self, msg="Check: you're in check"):
-        super(CheckMateExc, self).__init__(msg)
+    def __init__(self, msg='Checkmate: end of game', err=ChessErrs.ErrCheckMate):
+        super(CheckMateExc, self).__init__(msg, err)
+
+class CheckExc(ChessExc):
+    def __init__(self, msg="Check: you're in check", err=ChessErrs.ErrCheck):
+        super(CheckExc, self).__init__(msg, err)
 
 class InvMoveExc(ChessExc):
-    def __init__(self, msg='Invalid move'):
-        super(InvMoveExc, self).__init__(msg)
+    def __init__(self, msg='Invalid move', err=ChessErrs.ErrInvMove):
+        super(InvMoveExc, self).__init__(msg, err)
 
 class ChessHeadless():
-    def __init__(self, file='New_Game.txt'):
+    def __init__(self, savedir='Games', file='New_Game.txt'):
+        self.savedir = savedir
+        if file:
+            file = f'{self.savedir}/{file}' if file and self.savedir else None
         self.board, self.turn = self.read_game_data(file) # file maybe None
         self.click, self.first_click = 1, (0, 0)
     
@@ -161,7 +173,7 @@ class ChessHeadless():
             #print(f"DBG token {token} == {groups}")
             if groups == None or (groups[0] == None and groups[-1] == None):
                 err_mess = f"invalid command token index [{indext}]:{token}"
-                errs.append((indext, err_mess))
+                errs.append((indext, ChessErrs.ErrInvCommand, err_mess))
                 continue
 
             np = self.notation_piece(groups[0])
@@ -180,10 +192,10 @@ class ChessHeadless():
                         self.move(from_pos, to_pos)
                     except ChessExc as exc:
                         err_mess = f"command token index [{indext}]:{token} move({from_pos}, {to_pos}) raised an exception {exc}"
-                        errs.append((indext, err_mess))
+                        errs.append((indext, exc.err, err_mess))
                 else:
                     err_mess = f"invalid command token index [{indext}]:{token} mismatch move {piece} ({from_pos}, {to_pos}"
-                    errs.append((indext, err_mess))
+                    errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
             else:
                 np = None
                 if piece == None:
@@ -195,15 +207,15 @@ class ChessHeadless():
                         np[0](np[1], from_pos[1], from_pos[0])
                 else:
                     err_mess = f"invalid command token index [{indext}]:{token}, existing piece {piece.piece} {from_pos}"
-                    errs.append((indext, err_mess))
+                    errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
 
         return (ncommands, errs)
 
-    def read_game_data(self, file):
+    def read_game_data(self, filename=None):
         turn = 0
         board = self.new_board()
-        if file:
-            input_data = open(f'Games/{file}', 'r').readlines()
+        if filename:
+            input_data = open(f'{filename}', 'r').readlines()
             for i, line in enumerate(input_data):
                 if i == 0: turn = int(line.rstrip())
                 else:
@@ -211,13 +223,24 @@ class ChessHeadless():
                     piece = eval(Piece+'(str(Colour), int(Column), int(Row))')
                     board[int(piece.row)][int(piece.column)] = piece 
         return board, turn
+
+    def save_file(self, filename):
+        with open(filename, 'w') as filehandle:
+            filehandle.write(f'{str(self.turn)}\n')
+            for row_number in range(0, 8):
+                for column_number in range(0,8):
+                    if self.board[row_number][column_number] != None:
+                        _piece = self.board[row_number][column_number].piece
+                        _colour = self.board[row_number][column_number].colour
+                        _line = f"{_piece} {_colour} {row_number} {column_number}\n"
+                        filehandle.write(_line)
     
     def check_against_check(self, clicked_piece):
         # if you are in check get out of it
         paths_to_king, atackers_pos = [], []
         for row_number in range(0, 8):
             for column_number in range(0, 8):
-                if self.board[row_number][column_number]!= None and self.board[row_number][column_number].colour == clicked_piece.colour:
+                if self.board[row_number][column_number]!= None and self.board[row_number][column_number].colour != clicked_piece.colour:
                     self.board[row_number][column_number].find_moves(self.board, [])
                     for move in self.board[row_number][column_number].possible_moves:
                         square = self.board[move[0]][move[1]] # row, column
@@ -225,8 +248,8 @@ class ChessHeadless():
                             atackers_pos.append((row_number, column_number))
                             paths_to_king += self.board[row_number][column_number].find_path_to_king(move[0], move[1])
                             # code above should add to the paths_to_king it values not the whole list
+        clicked_piece.find_moves(self.board, paths_to_king)
         if len(paths_to_king) > 0: # you are in check
-            clicked_piece.find_moves(self.board, paths_to_king)
             if len(clicked_piece.possible_moves) == 0:
                 return True # we can't move
         return False
