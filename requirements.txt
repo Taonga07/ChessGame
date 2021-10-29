@@ -1,5 +1,0 @@
-tk
-twine
-build
-pyinstaller
-pyinstaller-hooks-contrib

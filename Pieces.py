@@ -1,8 +1,12 @@
+from os.path import dirname, abspath, join
+import sys
+
 class GameObject():
     def __init__(self, piece, colour, column, row, value):
         self.row, self.value, self.piece, self.InCheck = row, value, piece, False
         self.colour, self.column, self.possible_moves = colour, column, []
-        self.icon = 'Chess_Resources/'+self.colour+'_'+self.piece+'.gif'
+        base_path = getattr(sys,'_MEIPASS', dirname(abspath(__file__)))
+        self.icon = join(base_path, 'Chess_Resources', self.colour+'_'+self.piece+'.gif')
 
     def highlight_moves(self, window, board):
         for row_number, column_number in self.possible_moves:
@@ -91,9 +95,7 @@ class GameObject():
     def path_past_self(self, board, square_to_move_to):
         square_row, square_column = square_to_move_to
         if self.piece != 'Knight' and  self.piece != 'Pawn':
-            #neend more checking
-            direction = (abs(square_row-self.row), abs(square_column-self.column))
-            return self.explore_moves(direction, board, pieces_to_jump=1)
+           return self.find_possible_moves(board, pieces_to_jump=1)
         elif self.piece == 'Pawn':
             if self.column < 7: return [((self.row + self.direction), (self.column + 1))]
             if self.column > 1: return [((self.row + self.direction), (self.column - 1))]
@@ -108,7 +110,7 @@ class Pawn(GameObject):
         if (self.row == 1 and self.colour == 'Black') or (self.row == 6 and self.colour == 'White'):
             return True
         return False
-    def find_possible_moves(self, board):
+    def find_possible_moves(self, board, pieces_to_jump=0):
         if board[self.row + self.direction][self.column] == None: 
             self.possible_moves.append(((self.row + self.direction), self.column))
             if self.first_move():
@@ -128,26 +130,26 @@ class Pawn(GameObject):
 class Rook(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Rook', colour, column, row, 4)
-    def find_possible_moves(self, board):
-        self.possible_moves.extend(self.explore_moves((-1, 0), board))# up
-        self.possible_moves.extend(self.explore_moves((0, +1), board))# right
-        self.possible_moves.extend(self.explore_moves((0, -1), board))# left
-        self.possible_moves.extend(self.explore_moves((+1, 0), board))# down
+    def find_possible_moves(self, board, pieces_to_jump=0):
+        self.possible_moves.extend(self.explore_moves((-1, 0), board, pieces_to_jump))# up
+        self.possible_moves.extend(self.explore_moves((0, +1), board, pieces_to_jump))# right
+        self.possible_moves.extend(self.explore_moves((0, -1), board, pieces_to_jump))# left
+        self.possible_moves.extend(self.explore_moves((+1, 0), board, pieces_to_jump))# down
 
 class Bishop(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Bishop', colour, column, row, 3)
-    def find_possible_moves(self, board):
-        self.possible_moves.extend(self.explore_moves((-1, -1), board))# up left
-        self.possible_moves.extend(self.explore_moves((-1, +1), board))# up right
-        self.possible_moves.extend(self.explore_moves((+1, -1), board))# down left
-        self.possible_moves.extend(self.explore_moves((+1, +1), board))# down right
+    def find_possible_moves(self, board, pieces_to_jump=0):
+        self.possible_moves.extend(self.explore_moves((-1, -1), board, pieces_to_jump))# up left
+        self.possible_moves.extend(self.explore_moves((-1, +1), board, pieces_to_jump))# up right
+        self.possible_moves.extend(self.explore_moves((+1, -1), board, pieces_to_jump))# down left
+        self.possible_moves.extend(self.explore_moves((+1, +1), board, pieces_to_jump))# down right
 
 class King(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('King', colour, column, row, 1)
         self.check_moves = []
-    def find_possible_moves(self, board):
+    def find_possible_moves(self, board, pieces_to_jump=0):
         if self.row > 0:
             self.possible_moves.append((self.row-1, self.column))
             if self.column > 0:
@@ -168,20 +170,20 @@ class King(GameObject):
 class Queen(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Queen', colour, column, row, 9)
-    def find_possible_moves(self, board):
-        self.possible_moves.extend(self.explore_moves((-1, -1), board))# up left
-        self.possible_moves.extend(self.explore_moves((-1, +1), board))# up right
-        self.possible_moves.extend(self.explore_moves((+1, -1), board))# down left
-        self.possible_moves.extend(self.explore_moves((+1, +1), board))# down right
-        self.possible_moves.extend(self.explore_moves((-1, 0), board))# up
-        self.possible_moves.extend(self.explore_moves((0, +1), board))# right
-        self.possible_moves.extend(self.explore_moves((0, -1), board))# left
-        self.possible_moves.extend(self.explore_moves((+1, 0), board))# down
+    def find_possible_moves(self, board, pieces_to_jump=0):
+        self.possible_moves.extend(self.explore_moves((-1, -1), board, pieces_to_jump))# up left
+        self.possible_moves.extend(self.explore_moves((-1, +1), board, pieces_to_jump))# up right
+        self.possible_moves.extend(self.explore_moves((+1, -1), board, pieces_to_jump))# down left
+        self.possible_moves.extend(self.explore_moves((+1, +1), board, pieces_to_jump))# down right
+        self.possible_moves.extend(self.explore_moves((-1, 0), board, pieces_to_jump))# up
+        self.possible_moves.extend(self.explore_moves((0, +1), board, pieces_to_jump))# right
+        self.possible_moves.extend(self.explore_moves((0, -1), board, pieces_to_jump))# left
+        self.possible_moves.extend(self.explore_moves((+1, 0), board, pieces_to_jump))# down
 
 class Knight(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Knight', colour, column, row, 5)
-    def find_possible_moves(self, board): 
+    def find_possible_moves(self, board, pieces_to_jump=0): 
         if self.row < 6 and self.column > 0:
             self.possible_moves.append((self.row+2, self.column-1))
         if self.row < 6 and self.column < 7:

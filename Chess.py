@@ -1,5 +1,7 @@
 from tkinter import messagebox, PhotoImage, Tk, Label, N, S, W, E
 from Pieces import Pawn, Rook, Bishop, Queen, King, Knight
+from os.path import join, expanduser
+import sys
 
 class ChessGame():
     def __init__(self, window, square_colours=('White', 'Grey'), file='New_Game.txt'):
@@ -10,7 +12,7 @@ class ChessGame():
 
     def read_game_data(self, file):
         board = [[None]*8 for row in range(8)]
-        input_data = open(f'Games/{file}', 'r').readlines()
+        input_data = open(join(expanduser("~"), '.Chess_Games', file), 'r').readlines()
         for i, line in enumerate(input_data):
             if i == 0: turn = int(line.rstrip())
             else:

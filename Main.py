@@ -1,14 +1,21 @@
 from tkinter import filedialog, Menu, Tk, PhotoImage, colorchooser
+from os.path import split, expanduser, isdir, join
+from shutil import copytree
 from Chess import ChessGame
-from os.path import split
+from errno import EEXIST
 
 class Game():
     def __init__(self, image) -> None:
         self.root_window = Tk()
+        self.create_game_save_folder()
         self.root_window.title('ChessGame')
         self.root_window.iconphoto(True, PhotoImage(image))
         self.root_game = ChessGame(self.root_window)
         self.create_menu_bar(self)
+
+    def create_game_save_folder(self):
+        if not isdir(join(expanduser("~"), '.Chess_Games')):
+            copytree('Games', join(expanduser("~"), '.Chess_Games'))
 
     def create_menu_bar(self, board):
         self.menubar = Menu(self.root_window)
@@ -34,14 +41,14 @@ class Game():
         self.root_game.layout_board()
 
     def onOpen(self):
-        filename = filedialog.askopenfilename(initialdir='Games', title='Open file',
+        filename = filedialog.askopenfilename(initialdir=expanduser("~"), title='Open file',
                             filetypes=(("main files","*txt*"),("All files","*.*")))
         board, turn = self.root_game.read_game_data(split(filename)[1])
         self.root_game.board, self.root_game.turn = board, turn
         self.root_game.layout_board()
 
     def onSave(self):
-        filename = filedialog.asksaveasfilename(initialdir='Games', title='Save as',
+        filename = filedialog.asksaveasfilename(initialdir=expanduser("~"), title='Save as',
                             filetypes=(("main files","*txt*"),("All files","*.*")))
         self.save_file(filename)
 
@@ -63,5 +70,5 @@ class Game():
         self.root_game.layout_board()
 
 if __name__== "__main__":
-    current_game = Game('/Chess_Resorces/Icon.png')
+    current_game = Game('/Chess2030/Chess_Resorces/Icon.png')
     current_game.root_window.mainloop()
