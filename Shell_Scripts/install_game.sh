@@ -1,4 +1,3 @@
-cd ..
 case "$(uname -s)" in
     Linux*)     machine=Linux;;
     Mac*)    machine=Mac;;
@@ -8,7 +7,7 @@ esac
 echo "begining installation of program for "${machine}
 if [ "${machine}" = "Linux" ]; then
     
-    pyinstaller Main.py --onefile -w --windowed --noconsole --icon="Chess_Ressources/Icon.ico" --add-data="/home/taonga07/Documents/DigiLocal/Chess2030*:."
+    pyinstaller ../ChessGame/Main.py --onefile -w --windowed --noconsole --icon="../ChessGame/Chess_Ressources/Icon.ico" --add-data="/home/taonga07/Documents/DigiLocal/Chess2030/ChessGame*:."
     BASEDIR=$(pwd $0)
     rm -f ~/.local/share/applications/Chess2030.desktop
     touch ~/.local/share/applications/Chess2030.desktop
@@ -20,5 +19,5 @@ if [ "${machine}" = "Linux" ]; then
     echo "Terminal=false" >> ~/.local/share/applications/Chess2030.desktop
     echo "Type=Application" >> ~/.local/share/applications/Chess2030.desktop
 else
-pyinstaller Main.py --onefile -w --windowed --noconsole --icon="Chess_Ressources/Icon.ico" --add-data="/home/taonga07/Documents/DigiLocal/Chess2030*;."
+pyinstaller ../ChessGame/Main.py --onefile -w --windowed --noconsole --icon="../ChessGame/Chess_Ressources/Icon.ico" --add-data="/home/taonga07/Documents/DigiLocal/Chess2030/ChessGame*;."
 fi
