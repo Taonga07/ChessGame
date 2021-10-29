@@ -32,19 +32,19 @@ jobs:
   build:
     name: Build packages
     needs: createrelease
-    runs-on: [macos-os]
+    runs-on:  ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - os: macos-latest
             TARGET: macos
-            CMD_BUILD: pyinstaller -F -w -n clipster -i resources/clipster.icns cli.py && cd dist/ && zip -r9 clipster clipster.app/
-            OUT_FILE_NAME: clipster.zip
-            ASSET_MIME: application/zip
+            CMD_BUILD:  pyinstaller Main.py --onefile -w --windowed --noconsole --icon="Chess_Ressources/Icon.ico" --add-data="/home/taonga07/Documents/DigiLocal/Chess2030*:."
+            OUT_FILE_NAME: Chess2030
+            ASSET_MIME: application/exe
           - os: windows-latest
             TARGET: windows
-            CMD_BUILD: pyinstaller -F -w -n clipster -i resources/clipster.ico cli.py
-            OUT_FILE_NAME: clipster.exe
+            CMD_BUILD:  pyinstaller Main.py --onefile -w --windowed --noconsole --icon="Chess_Ressources/Icon.ico" --add-data="/home/taonga07/Documents/DigiLocal/Chess2030*;."
+            OUT_FILE_NAME: Chess2030.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
     steps:
     - uses: actions/checkout@v1
