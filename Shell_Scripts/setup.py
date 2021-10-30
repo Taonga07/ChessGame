@@ -9,7 +9,7 @@ setup(
     author="taonga07",
     author_email="taongaws07@gmail.com",
     url="https://github.com/Taonga07/Chess2030",
-    download_url="https://github.com/Taonga07/Chess2030/archive/refs/tags/v_1.tar.gz",
+    download_url="https://github.com/Taonga07/Chess2030/archive/refs/tags/v_1.0.0.tar.gz",
     keywords=["Chess", "Python3", "tkinter"],
     install_requires=[],
     classifiers=[

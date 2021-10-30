@@ -127,14 +127,14 @@ class GameObject:
             return list(zip(row_path, column_path))
         return [(self.row, self.column)]
 
-    def path_past_self(self, board):
+    def path_past_self(self, board): # pylint: disable=R1710
         if (self.piece != "Knight") and (self.piece != "Pawn"):
             return self.find_possible_moves(board, pieces_to_jump=1)
         elif self.piece == "Pawn":
             if self.column < 7:
-                return [((self.row + self.direction), (self.column + 1))]
+                return [((self.row + self.direction), (self.column + 1))] # pylint: disable=E1101
             if self.column > 1:
-                return [((self.row + self.direction), (self.column - 1))]
+                return [((self.row + self.direction), (self.column - 1))] # pylint: disable=E1101
         else:
             return self.find_possible_moves(board)
 

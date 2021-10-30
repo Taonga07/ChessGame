@@ -3,3 +3,14 @@ disable=
     C0114, # missing-module-docstring
     C0115, # missing-class-docstring
     C0116, # missing-function-docstring
+    C0103, # snake_case naming style (invalid-name)
+    C0103, # PascalCase naming style (invalid-name)
+    E1121, # too many function arguments
+    C0411, # wrong import order
+    R1705, # unesary else after return
+    w0201, # define self outside init
+    r0201, # class dose not call a function 
+    C0301, # line too long
+    R0913, # to many arguments
+    R0902, # to many instance arguments
+    R1702, # to many nested loops
