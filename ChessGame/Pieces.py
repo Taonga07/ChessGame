@@ -50,9 +50,7 @@ class GameObject:
                         and (board[row][column].piece == "King")
                         and (board[row][column].colour == self.colour)
                     ):
-                        if (row, column) in board[board[row][column].row][
-                            board[row][column].column
-                        ].path_past_self(board, (self.row, self.column)):
+                        if (row, column) in board[row][column].path_past_self(board, (self.row, self.column)):
                             self.possible_moves = []
                             return
         # remove moves

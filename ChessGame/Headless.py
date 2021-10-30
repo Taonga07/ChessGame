@@ -104,10 +104,12 @@ class Headless_ChessGame:
 
     def check_piece_colour_against_turn(self, piece_clicked):
         if piece_clicked is not None:  # We have clicked a piece
-            if self.turn == 0 and piece_clicked.colour == "white":
+            if self.turn == 0 and piece_clicked.colour == "White":
                 return True
             elif self.turn == 1 and piece_clicked.colour == "Black":
                 return True
+            else:
+                raise ValueError('error when checking colour')
         return False
 
     def move_selected_piece(self, square_clicked):
