@@ -111,6 +111,7 @@ class Gui_ChessGame:
             if not Allowed_to_select[0]:
                 messagebox.showinfo(Allowed_to_select[1][0], Allowed_to_select[1][1])
                 self.click = 1 - self.click
+                self.layout_board()
                 return
             event.widget.config(bg="blue")  # highlight clicked square
             piece_clicked = self.Game.board[square_clicked[0]][square_clicked[1]]
