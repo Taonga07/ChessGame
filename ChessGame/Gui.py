@@ -20,13 +20,14 @@ class Gui_ChessGame:
         self.square_colours = square_colours
         self.Game = Headless_ChessGame
         self.create_root_window()
+        self.layout_board()
 
     def create_root_window(self):
         self.root_window = Tk()
         self.root_window.title = "ChessGame"
         image = "ChessGame/Chess_Resources/Icon.png"
         self.root_window.iconphoto(True, PhotoImage(image))
-        self.create_menu_bar(self)
+        self.create_menu_bar()
 
     def create_menu_bar(self):
         self.menubar = Menu(self.root_window)
@@ -49,7 +50,7 @@ class Gui_ChessGame:
     def onNew(self):
         board, turn = self.Game.read_game_data("New_Game.txt")
         self.Game.board, self.Game.turn = board, turn
-        self.Game.layout_board()
+        self.layout_board()
 
     def onOpen(self):
         filename = filedialog.askopenfilename(
