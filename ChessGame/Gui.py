@@ -24,7 +24,7 @@ class Gui_ChessGame:
 
     def create_root_window(self):
         self.root_window = Tk()
-        self.root_window.title = "ChessGame"
+        self.root_window.title("ChessGame")
         image = "ChessGame/Chess_Resources/Icon.png"
         self.root_window.iconphoto(True, PhotoImage(image))
         self.create_menu_bar()
@@ -119,4 +119,4 @@ class Gui_ChessGame:
             alowed_to_move = self.Game.move_selected_piece(square_clicked)
             if not alowed_to_move[0]:
                 messagebox.showinfo(alowed_to_move[1][0], alowed_to_move[1][1])
-            self.layout_board(self.Game.board)  # reset board
+            self.layout_board()  # reset board

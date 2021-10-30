@@ -40,19 +40,17 @@ class GameObject:
                         ):
                             # generate moves from piece we are checking to edge
                             # of board as if we had moved
-                            if (self.row, self.column) in board[row][
-                                column
-                            ].path_past_self(board, (move[0], move[1])):
+                            if (self.row, self.column) in board[row][column].path_past_self(board):
                                 local_moves.append(move)
-                else:  # if king not piece clicked clicked we check if the king is on our row
-                    if (
-                        (board[row][column] is not None)
-                        and (board[row][column].piece == "King")
-                        and (board[row][column].colour == self.colour)
-                    ):
-                        if (row, column) in board[row][column].path_past_self(board, (self.row, self.column)):
-                            self.possible_moves = []
-                            return
+                # else:  # if king not piece clicked clicked we check if the king is on our row
+                    # if (
+                    #     (board[row][column] is not None)
+                    #     and (board[row][column].piece == "King")
+                    #     and (board[row][column].colour == self.colour)
+                    # ):
+                    #     if (row, column) in board[row][column].path_past_self(board, (self.row, self.column)):
+                    #         self.possible_moves = []
+                    #         return
         # remove moves
         for move in local_moves:
             self.possible_moves.remove(move)
