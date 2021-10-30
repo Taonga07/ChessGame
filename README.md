@@ -1,4 +1,11 @@
 # Chess2030 - Master
+![Analysis](https://github.com/Taonga07/Chess2030/actions/workflows/code_analysis.yml/badge.svg)
+[![Run on Repl.it](https://repl.it/badge/github/Taonga07/Chess2030)](https://repl.it/github/Taonga07/Chess2030)
+![open issues](https://img.shields.io/github/issues-raw/Taonga07/Chess2030)
+![closed issues](https://img.shields.io/github/issues-closed-raw/Taonga07/Chess2030)
+![open pull requets](https://img.shields.io/github/issues-pr/taonga07/Chess2030)
+![closed pullrequests](https://img.shields.io/github/issues-pr-closed-raw/taonga07/chess2030)
+![activity](https://img.shields.io/github/commit-activity/y/taonga07/Chess2030)
 
 ![image](https://i.ibb.co/DK14y3k/Screenshot-from-2021-09-23-19-17-35.png)
 
