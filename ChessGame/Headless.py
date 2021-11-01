@@ -1,4 +1,11 @@
-from Pieces import (Pawn, Rook, Bishop, Queen, King, Knight) # pylint: disable=W0611, import-error
+from Pieces import ( # pylint: disable=W0611, import-error
+    Pawn,
+    Rook,
+    Bishop,
+    Queen,
+    King,
+    Knight,
+)  # pylint: enable=W0611, import-error
 from os.path import expanduser, isdir, join, abspath
 from os import chdir, getcwd
 from shutil import copytree
@@ -15,9 +22,14 @@ class Headless_ChessGame:
             join(expanduser("~"), ".Chess_Games")
         ):  # check if homepath of user + folder exists
             # if folder dosen't create and copy templates across
-            copytree(abspath(join("ChessGame", "Games")), join(expanduser("~"), ".Chess_Games"))
+            copytree(
+                abspath(join("ChessGame", "Games")),
+                join(expanduser("~"), ".Chess_Games"),
+            )
 
-    def read_game_data(self, Game_File, Game_Folder=abspath(join("ChessGame", "Games"))):
+    def read_game_data(
+        self, Game_File, Game_Folder=abspath(join("ChessGame", "Games"))
+    ):
         board = [[None] * 8 for row in range(8)]
         input_data = open(join(Game_Folder, Game_File), "r").readlines()
         for i, line in enumerate(input_data):
@@ -25,7 +37,8 @@ class Headless_ChessGame:
                 turn = int(line.rstrip())
             else:
                 Piece, Colour, Row, Column = line.rstrip().split(" ")  # pylint: disable=W0612
-                piece = eval(Piece + "(str(Colour), int(Column), int(Row))")  # pylint: disable=W0123
+                # pylint: enable=W0612
+                piece = eval(Piece + "(str(Colour), int(Column), int(Row))")
                 board[int(piece.row)][int(piece.column)] = piece
         return board, turn
 
@@ -109,7 +122,7 @@ class Headless_ChessGame:
             elif self.turn == 1 and piece_clicked.colour == "Black":
                 return True
             else:
-                raise ValueError('error when checking colour')
+                raise ValueError("error when checking colour")
         return False
 
     def move_selected_piece(self, square_clicked):

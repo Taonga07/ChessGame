@@ -40,17 +40,19 @@ class GameObject:
                         ):
                             # generate moves from piece we are checking to edge
                             # of board as if we had moved
-                            if (self.row, self.column) in board[row][column].path_past_self(board):
+                            if (self.row, self.column) in board[row][
+                                column
+                            ].path_past_self(board):
                                 local_moves.append(move)
                 # else:  # if king not piece clicked clicked we check if the king is on our row
-                    # if (
-                    #     (board[row][column] is not None)
-                    #     and (board[row][column].piece == "King")
-                    #     and (board[row][column].colour == self.colour)
-                    # ):
-                    #     if (row, column) in board[row][column].path_past_self(board, (self.row, self.column)):
-                    #         self.possible_moves = []
-                    #         return
+                # if (
+                #     (board[row][column] is not None)
+                #     and (board[row][column].piece == "King")
+                #     and (board[row][column].colour == self.colour)
+                # ):
+                #     if (row, column) in board[row][column].path_past_self(board, (self.row, self.column)):
+                #         self.possible_moves = []
+                #         return
         # remove moves
         for move in local_moves:
             self.possible_moves.remove(move)
@@ -123,14 +125,15 @@ class GameObject:
             return list(zip(row_path, column_path))
         return [(self.row, self.column)]
 
-    def path_past_self(self, board): # pylint: disable=R1710
+    def path_past_self(self, board):  # pylint: disable=R1710
         if (self.piece != "Knight") and (self.piece != "Pawn"):
             return self.find_possible_moves(board, pieces_to_jump=1)
         elif self.piece == "Pawn":
-            if self.column < 7:
-                return [((self.row + self.direction), (self.column + 1))] # pylint: disable=E1101
+            if self.column < 7: 
+                return [((self.row + self.direction), (self.column + 1))] # pylint: disable=E1101 
             if self.column > 1:
-                return [((self.row + self.direction), (self.column - 1))] # pylint: disable=E1101
+                return [((self.row + self.direction), (self.column - 1))] # pylint: disable=E1101 
+            #pylint: enable=E1101
         else:
             return self.find_possible_moves(board)
 

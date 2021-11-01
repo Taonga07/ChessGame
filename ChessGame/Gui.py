@@ -73,8 +73,8 @@ class Gui_ChessGame:
     def onBoardCustormise(self):
         light_square_colour = colorchooser.askcolor(title="Choose 1st color")
         dark_square_colour = colorchooser.askcolor(title="Choose 2nd color")
-        self.Game.square_colours = (light_square_colour[1], dark_square_colour[1])
-        self.Game.layout_board()
+        self.square_colours = (light_square_colour[1], dark_square_colour[1])
+        self.layout_board()
 
     def layout_board(self):
         bttnclr_turn = 0

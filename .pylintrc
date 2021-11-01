@@ -14,3 +14,5 @@ disable=
     R0913, # to many arguments
     R0902, # to many instance arguments
     R1702, # to many nested loops
+    W0123, # use of eval#
+    trailing-whitespace, 
