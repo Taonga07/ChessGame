@@ -1,0 +1,1 @@
+PYTHONPATH=/home/taonga07/Documents/DigiLocal/Chess2030/ChessGame python3 /home/taonga07/Documents/DigiLocal/Chess2030/Main.py
