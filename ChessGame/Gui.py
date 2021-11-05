@@ -116,10 +116,8 @@ class Gui_ChessGame:
             event.widget.config(bg="blue")  # highlight clicked square
             piece_clicked = self.Game.board[square_clicked[0]][square_clicked[1]]
             piece_clicked.highlight_moves(self.root_window, self.Game.board)
-            print(self.Game.board)
         else:  # this is our second click, we are selecting the square to move to
             alowed_to_move = self.Game.move_selected_piece(square_clicked)
             if not alowed_to_move[0]:
                 messagebox.showinfo(alowed_to_move[1][0], alowed_to_move[1][1])
-            print(self.Game.board)
             self.layout_board()  # reset board
