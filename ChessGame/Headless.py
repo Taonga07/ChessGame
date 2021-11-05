@@ -127,18 +127,15 @@ class Headless_ChessGame:
 
     def move_selected_piece(self, square_clicked):
         clicked_row, clicked_cloumn = square_clicked
+        piece_to_move = self.selected_piece_to_move
         if (
             clicked_row,
             clicked_cloumn,
-        ) not in self.selected_piece_to_move.possible_moves:
+        ) not in piece_to_move.possible_moves:
             return False, ("Move Not Allowed", "Your piece cannot move there!")
-        self.board[clicked_row][clicked_cloumn] = self.board[
-            self.selected_piece_to_move.row
-        ][self.selected_piece_to_move.column]
-        self.board[clicked_row][clicked_cloumn].row = clicked_row
-        self.board[clicked_row][clicked_cloumn].column = clicked_cloumn
-        self.board[self.selected_piece_to_move.row][
-            self.selected_piece_to_move.column
-        ] = None
+        self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][piece_to_move.column]
+        self.board[piece_to_move.row][piece_to_move.column] = None
+        piece_to_move.row = clicked_row
+        piece_to_move.column = clicked_cloumn
         self.turn = 1 - self.turn
         return True, ("Move Allowed", "You can move here")
