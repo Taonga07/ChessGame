@@ -11,7 +11,7 @@ from tkinter import (
     W,
     E,
 )
-from os.path import split, join, expanduser
+from os.path import split, join, expanduser, dirname
 
 
 class Gui_ChessGame:
@@ -25,8 +25,9 @@ class Gui_ChessGame:
     def create_root_window(self):
         self.root_window = Tk()
         self.root_window.title("ChessGame")
-        image = "ChessGame/Chess_Resources/Icon.png"
-        self.root_window.iconphoto(True, PhotoImage(image))
+        image =  '/home/taonga07/Documents/DigiLocal/Chess2030/ChessGame/Chess_Resources/Icon.png'
+        #join(dirname(__file__), 'ChessGame', 'Chess_Resources', 'Icon.png')
+        self.root_window.iconphoto(True, PhotoImage(file=image))
         self.create_menu_bar()
 
     def create_menu_bar(self):
