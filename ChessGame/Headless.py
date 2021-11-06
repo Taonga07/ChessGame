@@ -6,14 +6,12 @@ from Pieces import ( # pylint: disable=W0611, import-error
     King,
     Knight,
 )  # pylint: enable=W0611, import-error
-from os.path import expanduser, isdir, join, abspath
-from os import chdir, getcwd
+from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
 
 
 class Headless_ChessGame:
     def __init__(self) -> None:
-        chdir(join(getcwd(), "ChessGame"))  # set working directory
         self.create_game_save_folder()  # give user template game_files
         self.board, self.turn = self.read_game_data("New_Game.txt")
 
@@ -28,7 +26,7 @@ class Headless_ChessGame:
             )
 
     def read_game_data(
-        self, Game_File, Game_Folder=abspath(join("ChessGame", "Games"))
+        self, Game_File, Game_Folder=abspath(join(dirname(__file__), "Games"))
     ):
         board = [[None] * 8 for row in range(8)]
         input_data = open(join(Game_Folder, Game_File), "r").readlines()
