@@ -25,7 +25,7 @@ class Gui_ChessGame:
     def create_root_window(self):
         self.root_window = Tk()
         self.root_window.title("ChessGame")
-        image = join(dirname(__file__), 'Chess_Resources', 'Icon.png')
+        image = join(dirname(__file__), "Chess_Resources", "Icon.png")
         self.root_window.iconphoto(True, PhotoImage(file=image))
         self.create_menu_bar()
 

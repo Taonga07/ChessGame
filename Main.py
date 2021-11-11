@@ -2,7 +2,8 @@
 from ChessGame import *
 from os.path import join, dirname
 import sys
-sys.path.append(join(dirname(__file__), 'ChessGame'))
+
+sys.path.append(join(dirname(__file__), "ChessGame"))
 
 if __name__ == "__main__":
     Gui = Gui_ChessGame(Headless_ChessGame())
