@@ -1,19 +1,19 @@
-from Pieces import ( # pylint: disable=W0611, import-error
-    Pawn,
-    Rook,
-    Bishop,
-    Queen,
-    King,
-    Knight,
-)  # pylint: enable=W0611, import-error
+from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
 
+from API import ChessAPI
 
-class Headless_ChessGame:
-    def __init__(self) -> None:
+class Headless_ChessGame(ChessAPI):
+    def __init__(self, file="New_Game.txt") -> None:
+        super(ChessAPI, self).__init__()
+
         self.create_game_save_folder()  # give user template game_files
-        self.board, self.turn = self.read_game_data("New_Game.txt")
+        self.from_pos = (0, 0) # previously 'first_click'
+        if file:
+            self.board, self.turn = self.read_game_data(file)
+        else:
+            self.board = self.new_board()
 
     def create_game_save_folder(self):
         if not isdir(
@@ -115,9 +115,7 @@ class Headless_ChessGame:
 
     def check_piece_colour_against_turn(self, piece_clicked):
         if piece_clicked is not None:  # We have clicked a piece
-            if self.turn == 0 and piece_clicked.colour == "White":
-                return True
-            elif self.turn == 1 and piece_clicked.colour == "Black":
+            if self.test_turn(piece_clicked.colour):
                 return True
             else:
                 raise ValueError("error when checking colour")
@@ -135,5 +133,5 @@ class Headless_ChessGame:
         self.board[piece_to_move.row][piece_to_move.column] = None
         piece_to_move.row = clicked_row
         piece_to_move.column = clicked_cloumn
-        self.turn = 1 - self.turn
+        self.toggle_turn()
         return True, ("Move Allowed", "You can move here")
