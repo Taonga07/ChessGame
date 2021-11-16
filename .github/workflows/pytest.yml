@@ -16,7 +16,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        git remote set-url origin https://taonga07:${{ secrets.GITHUB_TOKEN }}@github.com/taonga07/Chess2030.git
         python -m pip install --upgrade pip
         pip3 install pytest
     - name: Running tests
@@ -31,4 +30,8 @@ jobs:
     - name: Undo Push
       run: |
         git reset --hard 'HEAD~1'
-        git push --force
+      uses: EndBug/add-and-commit@v7
+      with:     
+        default_author: github_actions
+        committer_name: GitHub Actions
+        committer_email: actions@github.com
