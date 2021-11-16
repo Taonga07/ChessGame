@@ -18,7 +18,11 @@ jobs:
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
     - name: Running tests
-      run: PYTHONPATH=$PWD/ChessGame pytest test1.py -vv
+      run: |
+      PYTHONPATH=$PWD/ChessGame pytest test1.py --param=$exit_code
+      if [ $exit_code -gt 0 ]; then
+        exit 1
+      fi
     - name: reverting commit
       if: ${{ failure() }}
       run: |
