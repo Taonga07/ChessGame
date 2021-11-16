@@ -22,17 +22,17 @@ jobs:
       run: |
         PYTHONPATH=$PWD/ChessGame pytest test1.py -exitfirst --verbose --failed-first
     - name: Checkout
-      if: failure()
+      if: ${{ failure() }}
       uses: actions/checkout@v2
       with:
          ref: ${{ github.event.inputs.branch }}
          fetch-depth: 0 
     - name: reset head
-      if: failure()
+      if: ${{ failure() }}
       run: |
         git reset --hard 'HEAD~1'
     - name: push head
-      if: failure()
+      if: ${{ failure() }}
       uses: EndBug/add-and-commit@v7
       with:     
         default_author: github_actions
