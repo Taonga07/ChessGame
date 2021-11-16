@@ -19,18 +19,16 @@ jobs:
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
     - name: Running tests
-      run: |
-        PYTHONPATH=$PWD/ChessGame pytest test1.py -exitfirst --verbose --failed-first
+      run: PYTHONPATH=$PWD/ChessGame pytest test1.py -vv
     - name: Checkout
       if: ${{ failure() }}
       uses: actions/checkout@v2
       with:
-         ref: ${{ github.event.inputs.branch }}
-         fetch-depth: 0 
+        ref: ${{ github.event.inputs.branch }}
+        fetch-depth: 0 
     - name: reset head
       if: ${{ failure() }}
-      run: |
-        git reset --hard 'HEAD~1'
+      run: git reset --hard 'HEAD~1'
     - name: push head
       if: ${{ failure() }}
       uses: EndBug/add-and-commit@v7
