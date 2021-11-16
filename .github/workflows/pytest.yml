@@ -20,7 +20,7 @@ jobs:
         pip3 install -r requirements.txt
     - name: Running tests
       run: |
-        PYTHONPATH=$PWD/ChessGame pytest test1.py -exitfirst --verbose --failed-first \
+        PYTHONPATH=$PWD/ChessGame pytest test1.py -exitfirst --verbose --failed-first
     - name: Checkout
       if: failure()
       uses: actions/checkout@v2
