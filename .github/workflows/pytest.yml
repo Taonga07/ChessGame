@@ -21,8 +21,8 @@ jobs:
     - name: Running tests
       run: |
         PYTHONPATH=$PWD/ChessGame pytest test1.py -vv
+    if: failure()
     - name: Checkout
-      if: always()
       uses: actions/checkout@v2
       with:
          ref: ${{ github.event.inputs.branch }}
