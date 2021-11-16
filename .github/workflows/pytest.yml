@@ -27,9 +27,10 @@ jobs:
       with:
          ref: ${{ github.event.inputs.branch }}
          fetch-depth: 0 
-    - name: Undo Push
+    - name: reset head
       run: |
         git reset --hard 'HEAD~1'
+    - name: push head
       uses: EndBug/add-and-commit@v7
       with:     
         default_author: github_actions
