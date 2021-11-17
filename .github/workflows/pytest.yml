@@ -24,6 +24,15 @@ jobs:
         if [ $exit_code -gt 0 ]; then
           exit 1
         fi
+    - name: set up git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+    - name: Checkout code
+      if: ${{ failure() }}
+      uses: actions/checkout@v2
+      with: 
+        ref: ${{ github.event.inputs.branch }}
     - name: reverting commit
       if: ${{ failure() }}
       run: |
