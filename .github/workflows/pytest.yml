@@ -27,10 +27,10 @@ jobs:
       if: ${{ failure() }}
       uses: actions/checkout@v2
       with:
-          ref: ${GITHUB_REF}
+          ref: ${GITHUB_REF#refs/heads/}
           fetch-depth: 0 
     - name: Undo Push
       if: ${{ failure() }}
       uses: exions/undo-push@v1
       with:
-        branch: ${GITHUB_REF}
+        branch: ${GITHUB_REF#refs/heads/}
