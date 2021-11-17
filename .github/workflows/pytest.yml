@@ -16,9 +16,6 @@ jobs:
     - name: Install dependencies
       run: |
         git init
-        git add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        git pull github ${GITHUB_REF} --ff-only
-        git checkout ${{ github.event.inputs.branch }}
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
     - name: Running tests
