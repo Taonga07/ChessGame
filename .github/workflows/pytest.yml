@@ -16,7 +16,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-          ref: ${GITHUB_REF#refs/heads/}
+          ref: ${{ GITHUB_REF#refs/heads/ }}
           fetch-depth: 0 
     - name: Install dependencies
       run: |
@@ -32,4 +32,4 @@ jobs:
       if: ${{ failure() }}
       uses: exions/undo-push@v1
       with:
-        branch: ${GITHUB_REF#refs/heads/}
+        branch: ${{ GITHUB_REF#refs/heads/ }}
