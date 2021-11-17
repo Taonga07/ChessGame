@@ -13,6 +13,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          ref: ${GITHUB_REF#refs/heads/}
+          fetch-depth: 0 
+  - name: print
+    run: echo ${GITHUB_REF#refs/heads/}
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
@@ -23,12 +30,6 @@ jobs:
         if [ $exit_code -gt 0 ]; then
           exit 1
         fi
-    - name: Checkout
-      if: ${{ failure() }}
-      uses: actions/checkout@v2
-      with:
-          ref: ${GITHUB_REF#refs/heads/}
-          fetch-depth: 0 
     - name: Undo Push
       if: ${{ failure() }}
       uses: exions/undo-push@v1
