@@ -36,5 +36,5 @@ jobs:
     - name: reverting commit
       if: ${{ failure() }}
       run: |
-        git reset --hard 'HEAD~1'
+        git reset HEAD~1
         git push -f
