@@ -14,13 +14,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Checkout
-      if: ${{ failure() }}
       uses: actions/checkout@v2
       with:
           ref: ${GITHUB_REF#refs/heads/}
           fetch-depth: 0 
-    - name: print
-      run: echo ${GITHUB_REF#refs/heads/}
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
