@@ -254,7 +254,8 @@ class ChessAPI(ChessTurn):
                         errs.append((indext, exc.err, err_mess))
                 else:
                     err_mess = f"invalid command token index [{indext}]:{token} mismatch move {piece} ({from_pos}, {to_pos}"
-                    errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
+                    errs.append(
+                        (indext, ChessErrs.ErrInvCommandMove, err_mess))
             else:
                 np = None
                 if piece == None:
@@ -267,7 +268,8 @@ class ChessAPI(ChessTurn):
                     )
                 else:
                     err_mess = f"invalid command token index [{indext}]:{token}, existing piece {piece.piece} {from_pos}"
-                    errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
+                    errs.append(
+                        (indext, ChessErrs.ErrInvCommandMove, err_mess))
 
         return (ncommands, errs)
 
