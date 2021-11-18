@@ -33,6 +33,7 @@ jobs:
           exit 1
         fi
     - name: test
+      if: ${{ failure() }}
       run: git tabs
     - name: Undo Push
       if: ${{ failure() }}
