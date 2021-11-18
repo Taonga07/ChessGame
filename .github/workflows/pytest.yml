@@ -34,7 +34,7 @@ jobs:
         fi
     - name: test
       if: ${{ failure() }}
-      run: git tabs
+      run: git tags
     - name: Undo Push
       if: ${{ failure() }}
       uses: exions/undo-push@v1
