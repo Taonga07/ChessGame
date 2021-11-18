@@ -107,8 +107,7 @@ def test2_moveto(game=Headless_ChessGame()):
 
     print(f"to_pos[{to_pos}]: {to_piece}")
     assert to_piece == from_piece
-    assert len(to_piece.history) == 1 and to_piece.history[0] == (
-        from_pos, to_pos)
+    assert len(to_piece.history) == 1 and to_piece.history[0] == (from_pos, to_pos)
 
     print(f"test3 dump: {game.dump()}")
     return game
@@ -184,8 +183,7 @@ def test6_check():
     # invalid move as white in check
     (ncommands, errs) = game.commands("Qc3:b3")
     print(f"test6 Queen {ncommands}: {errs}")
-    assert ncommands == 1 and len(
-        errs) == 1 and errs[0][1] == ChessErrs.ErrInvMove
+    assert ncommands == 1 and len(errs) == 1 and errs[0][1] == ChessErrs.ErrInvMove
 
     """
     I was surprised that 'check' state is not reported.
@@ -205,14 +203,12 @@ def test6_check():
     # invalid move as white in check
     (ncommands, errs) = game.commands("Ba3:b4")
     print(f"test6 Bishop {ncommands}: {errs}")
-    assert ncommands == 1 and len(
-        errs) == 1 and errs[0][1] == ChessErrs.ErrInvMove
+    assert ncommands == 1 and len(errs) == 1 and errs[0][1] == ChessErrs.ErrInvMove
 
     # invalid move as white in check
     (ncommands, errs) = game.commands("Ke2:d2")
     print(f"test6 King {ncommands}: {errs}")
-    assert ncommands == 1 and len(
-        errs) == 1 and errs[0][1] == ChessErrs.ErrInvMove
+    assert ncommands == 1 and len(errs) == 1 and errs[0][1] == ChessErrs.ErrInvMove
 
     return game
 
