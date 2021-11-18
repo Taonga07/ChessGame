@@ -42,7 +42,7 @@ class InvMoveExc(ChessExc):
 
 
 class ChessTurn:
-    """ChessGame turn i.e. 'white' or 'black' """
+    """ChessGame turn i.e. 'white' or 'black'"""
 
     turn_dict = {"white": 0, "black": 1}
 
