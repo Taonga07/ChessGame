@@ -29,9 +29,6 @@ jobs:
     - name: Running tests
       run: |
         PYTHONPATH=$PWD/ChessGame pytest test1.py
-    - name: test
-      if: ${{ failure() }}
-      run: git tag
     - name: Undo Push
       if: ${{ failure() }}
       uses: taonga07/undo-push@v2
