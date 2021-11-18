@@ -1,0 +1,36 @@
+name: Pytest
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          ref: ${{ steps.extract_branch.outputs.branch }}
+          fetch-depth: 0 
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+    - name: Running tests
+      run: |
+        PYTHONPATH=$PWD/ChessGame pytest test1.py
+    - name: Undo Push
+      if: ${{ failure() }}
+      uses: taonga07/undo-push@v2
+      with:
+        branch: ${{ steps.extract_branch.outputs.branch }}
