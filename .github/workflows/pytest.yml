@@ -29,9 +29,6 @@ jobs:
     - name: Running tests
       run: |
         PYTHONPATH=$PWD/ChessGame pytest test1.py
-        if [ $? -gt 0 ]; then
-          exit 1
-        fi
     - name: test
       if: ${{ failure() }}
       run: git tag
