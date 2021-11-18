@@ -1,56 +1,68 @@
 import re
-from Pieces import  Pawn, Rook, Knight, Bishop, Queen, King
+from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
+
 
 class ChessErrs():
     ''' ChessGame error values '''
     ErrCheckMate = -1
     ErrCheck = -2
     ErrInvMove = -3
-    ErrInvCommand = -4  ## invalid command token
-    ErrInvCommandMove = -5  ## invalid move command
+    ErrInvCommand = -4  # invalid command token
+    ErrInvCommandMove = -5  # invalid move command
+
 
 class ChessExc(Exception):
     ''' ChessGame base exception '''
+
     def __init__(self, msg=None, err=0):
         super(ChessExc, self).__init__(msg)
         self.err = err
 
+
 class CheckMateExc(ChessExc):
     ''' ChessGame "check mate" exception '''
+
     def __init__(self, msg='Checkmate: end of game', err=ChessErrs.ErrCheckMate):
         super(CheckMateExc, self).__init__(msg, err)
 
+
 class CheckExc(ChessExc):
     ''' ChessGame "check" exception '''
+
     def __init__(self, msg="Check: you're in check", err=ChessErrs.ErrCheck):
         super(CheckExc, self).__init__(msg, err)
 
+
 class InvMoveExc(ChessExc):
     ''' ChessGame "invalid move" exception '''
+
     def __init__(self, msg='Invalid move', err=ChessErrs.ErrInvMove):
         super(InvMoveExc, self).__init__(msg, err)
+
 
 class ChessTurn():
     ''' ChessGame turn i.e. 'white' or 'black' '''
     turn_dict = {
-        'white' : 0,
-        'black' : 1
+        'white': 0,
+        'black': 1
     }
+
     def __init__(self, colour='white') -> None:
         colour = colour.lower()
         assert colour in self.turn_dict
         self.turn = self.turn_dict[colour]
-    
+
     def toggle_turn(self):
         ''' Change turn to other '''
         if self.turn == self.turn_dict['black']:
             self.turn = self.turn_dict['white']
         else:
             self.turn = self.turn_dict['black']
-    
+
     def test_turn(self, colour):
         ''' Return True if turn is colour '''
         return self.turn_dict[colour.lower()] == self.turn
+
 
 class ChessAPI(ChessTurn):
     ''' ChessGame functions that can be invoked from cmdline e.g:
@@ -62,30 +74,31 @@ class ChessAPI(ChessTurn):
     game.dump()
     game.save_file('test.txt')
     '''
+
     def __init__(self):
         super(ChessTurn, self).__init__()
 
     def get_piece(self, row, col):
         ''' Return GameObject at (row, col) '''
         return self.board[row][col]
-    
+
     def get_from_piece(self):
         ''' Return GameObject at previously selected from_pos '''
         return self.get_piece(*self.from_pos)
-    
+
     def movefrom(self, row, col):
         ''' Select (row, col) to move from '''
         from_square = self.get_piece(row, col)
 
-        if (from_square != None) and (self.test_turn(from_square.colour)): 
+        if (from_square != None) and (self.test_turn(from_square.colour)):
             if self.check_for_checkmate(from_square):
                 raise CheckMateExc
-            if self.check_against_check(from_square): # we are in check
+            if self.check_against_check(from_square):  # we are in check
                 self.toggle_turn()
                 raise CheckExc
-            else: # limit moves if in check else normal moves
+            else:  # limit moves if in check else normal moves
                 self.from_pos = (row, col)
-        else: # if there is no piece or wrong colour piece where we clicked
+        else:  # if there is no piece or wrong colour piece where we clicked
             self.toggle_turn()
             raise InvMoveExc
 
@@ -96,7 +109,7 @@ class ChessAPI(ChessTurn):
         from_square = self.get_from_piece()
         from_pos = (from_square.row, from_square.column)
 
-        if (row, col) not in from_square.possible_moves: # check possible move for piece
+        if (row, col) not in from_square.possible_moves:  # check possible move for piece
             raise InvMoveExc
 
         self.board[row][col] = from_square
@@ -104,22 +117,22 @@ class ChessAPI(ChessTurn):
 
         to_square = self.get_piece(row, col)
         to_square.history.append((from_pos, (row, col)))
-        to_square.row = row 
+        to_square.row = row
         to_square.column = col
         self.toggle_turn()
         return to_square
-    
+
     def move(self, from_pos, to_pos):
         ''' Move piece at from_pos to to_pos '''
         from_piece = self.movefrom(*from_pos)
         to_piece = self.moveto(*to_pos)
         return to_piece
-    
+
     def new_board(self):
         ''' Clear board of all pieces '''
         board = [[None]*8 for row in range(8)]
         return board
-    
+
     def notation_pos(self, token):
         ''' Return tuple (row, col) from parsed token, else None
         String fmt :: '(<row>, <col>)' | '[a-h][1-8]'
@@ -127,11 +140,12 @@ class ChessAPI(ChessTurn):
              eg. 'a8' == (0,0), 'a1' == (7,0), 'h1' == (7,7), 'h8' == (0,7)
         '''
         pos = None
-        row = -1; col = -1
+        row = -1
+        col = -1
 
         if len(token) == 2:
             token = token.lower()
-            col = ord(token[0]) - ord('a') # col 'a' is table column 0
+            col = ord(token[0]) - ord('a')  # col 'a' is table column 0
             row = 8 - int(token[1])          # row 1 is table row 7
         else:
             if re.match(r'\([0-7],[0-7]\)$', token):
@@ -140,7 +154,7 @@ class ChessAPI(ChessTurn):
         if row >= 0 and row < 8 and col >= 0 and col < 8:
             pos = (row, col)
         return pos
-    
+
     def notation_piece(self, token):
         ''' Return tuple (<class>, colour) if token starts with a piece abbrv, else None. 
         one char abbrv of piece (R N B Q K P) or 'D' for board.dump, 
@@ -148,13 +162,13 @@ class ChessAPI(ChessTurn):
         '''
         piece = None
         pieces = {
-            'R' : Rook, 
-            'N' : Knight, 
-            'B' : Bishop, 
-            'Q' : Queen,
-            'K' : King, 
-            'P' : Pawn,
-            'D' : 'dump'
+            'R': Rook,
+            'N': Knight,
+            'B': Bishop,
+            'Q': Queen,
+            'K': King,
+            'P': Pawn,
+            'D': 'dump'
         }
         if len(token) == 1:
             p = token[0]
@@ -167,7 +181,7 @@ class ChessAPI(ChessTurn):
                 else:
                     piece = (pieces[p], colour)
         return piece
-    
+
     def commands(self, command):
         ''' Run command string fmt:: [<piece_creations>] <piece_moves> 
         Returns tuple (ncommands, errs) where:
@@ -202,7 +216,7 @@ class ChessAPI(ChessTurn):
         tokens = command.split(';')
         ncommands = len(tokens)
         for (indext, token) in enumerate(tokens):
-            token = re.sub(r'\s+', '', token) # remove whitespace
+            token = re.sub(r'\s+', '', token)  # remove whitespace
             m = re.match(r'[Dd]$', token)
             if m:
                 print(f"Notation dump: {self.dump()}")
@@ -213,7 +227,7 @@ class ChessAPI(ChessTurn):
             pos_fmt = r'\([0-7],[0-7]\)|[A-ha-h][1-8]'
             m = re.match(f'({pieces_fmt})({pos_fmt})\:?({pos_fmt})?$', token)
             groups = m.groups() if m else None
-            #print(f"DBG token {token} == {groups}")
+            # print(f"DBG token {token} == {groups}")
             if groups == None or (groups[0] == None and groups[-1] == None):
                 err_mess = f"invalid command token index [{indext}]:{token}"
                 errs.append((indext, ChessErrs.ErrInvCommand, err_mess))
@@ -238,7 +252,8 @@ class ChessAPI(ChessTurn):
                         errs.append((indext, exc.err, err_mess))
                 else:
                     err_mess = f"invalid command token index [{indext}]:{token} mismatch move {piece} ({from_pos}, {to_pos}"
-                    errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
+                    errs.append(
+                        (indext, ChessErrs.ErrInvCommandMove, err_mess))
             else:
                 np = None
                 if piece == None:
@@ -250,7 +265,8 @@ class ChessAPI(ChessTurn):
                         np[0](np[1], from_pos[1], from_pos[0])
                 else:
                     err_mess = f"invalid command token index [{indext}]:{token}, existing piece {piece.piece} {from_pos}"
-                    errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
+                    errs.append(
+                        (indext, ChessErrs.ErrInvCommandMove, err_mess))
 
         return (ncommands, errs)
 
@@ -259,7 +275,7 @@ class ChessAPI(ChessTurn):
         with open(filename, 'w') as filehandle:
             filehandle.write(f'{str(self.turn)}\n')
             for row_number in range(0, 8):
-                for column_number in range(0,8):
+                for column_number in range(0, 8):
                     if self.board[row_number][column_number] != None:
                         _piece = self.board[row_number][column_number].piece
                         _colour = self.board[row_number][column_number].colour
@@ -270,7 +286,7 @@ class ChessAPI(ChessTurn):
         ''' text summary of board '''
         str = ''
         for row_number in range(0, 8):
-            linebuff = '' 
+            linebuff = ''
             for column_number in range(0, 8):
                 piece = self.board[row_number][column_number]
                 c = '.' if piece == None else piece.abbrv
