@@ -28,8 +28,8 @@ jobs:
         pip3 install -r requirements.txt
     - name: Running tests
       run: |
-        PYTHONPATH=$PWD/ChessGame pytest test1.py --param=$exit_code
-        if [ $exit_code -gt 0 ]; then
+        PYTHONPATH=$PWD/ChessGame pytest test1.py
+        if [ $? -gt 0 ]; then
           exit 1
         fi
     - name: test
