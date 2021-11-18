@@ -34,6 +34,6 @@ jobs:
       run: git tag
     - name: Undo Push
       if: ${{ failure() }}
-      uses: exions/undo-push@v1
+      uses: taonga07/undo-push@v2
       with:
         branch: ${{ steps.extract_branch.outputs.branch }}
