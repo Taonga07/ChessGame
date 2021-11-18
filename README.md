@@ -1,5 +1,5 @@
 # Chess2030 - Master
-![Analysis](https://github.com/Taonga07/Chess2030/actions/workflows/code_analysis.yml/badge.svg)
+[![Pylint](https://github.com/Taonga07/Chess2030/actions/workflows/pylint.yml/badge.svg)](https://github.com/Taonga07/Chess2030/actions/workflows/pylint.yml)
 [![Run on Repl.it](https://repl.it/badge/github/Taonga07/Chess2030)](https://repl.it/github/Taonga07/Chess2030)
 ![open issues](https://img.shields.io/github/issues-raw/Taonga07/Chess2030)
 ![closed issues](https://img.shields.io/github/issues-closed-raw/Taonga07/Chess2030)

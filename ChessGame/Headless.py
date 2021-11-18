@@ -1,4 +1,11 @@
-from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
+from Pieces import (  # pylint: disable=W0611, import-error
+    Pawn,
+    Rook,
+    Bishop,
+    Queen,
+    King,
+    Knight,
+)  # pylint: enable=W0611, import-error
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
 
@@ -35,7 +42,9 @@ class Headless_ChessGame(ChessAPI):
             if i == 0:
                 turn = int(line.rstrip())
             else:
-                Piece, Colour, Row, Column = line.rstrip().split(" ")  # pylint: disable=W0612
+                Piece, Colour, Row, Column = line.rstrip().split(
+                    " "
+                )  # pylint: disable=W0612
                 # pylint: enable=W0612
                 piece = eval(Piece + "(str(Colour), int(Column), int(Row))")
                 board[int(piece.row)][int(piece.column)] = piece
@@ -130,7 +139,9 @@ class Headless_ChessGame(ChessAPI):
             clicked_cloumn,
         ) not in piece_to_move.possible_moves:
             return False, ("Move Not Allowed", "Your piece cannot move there!")
-        self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][piece_to_move.column]
+        self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][
+            piece_to_move.column
+        ]
         self.board[piece_to_move.row][piece_to_move.column] = None
         piece_to_move.row = clicked_row
         piece_to_move.column = clicked_cloumn
