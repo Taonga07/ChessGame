@@ -25,5 +25,6 @@ A list of jobs for this game can be found here.
 - [x] highlight possible moves
 - [x] all pieces on board
 - [x] all pieces can move
+- [x] tests
 - [ ] check / checkmate
 - [ ] ompasount
