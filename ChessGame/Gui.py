@@ -13,7 +13,6 @@ from tkinter import (
 )
 from os.path import split, join, expanduser, dirname
 
-
 class Gui_ChessGame:
     def __init__(self, Headless_ChessGame, square_colours=("White", "Grey")) -> None:
         self.click, self.first_click = 1, (0, 0)
@@ -108,7 +107,7 @@ class Gui_ChessGame:
         if self.click == 0:  # on fist click we are select a piece
             # first bit of return states true or false second bit the error
             Allowed_to_select = self.Game.select_piece_to_move(square_clicked)
-            if not Allowed_to_select[0]:
+            if Allowed_to_select[0]:
                 messagebox.showinfo(Allowed_to_select[1][0], Allowed_to_select[1][1])
                 self.click = 1 - self.click
                 self.layout_board()
@@ -118,6 +117,6 @@ class Gui_ChessGame:
             piece_clicked.highlight_moves(self.root_window, self.Game.board)
         else:  # this is our second click, we are selecting the square to move to
             alowed_to_move = self.Game.move_selected_piece(square_clicked)
-            if not alowed_to_move[0]:
+            if alowed_to_move[0]:
                 messagebox.showinfo(alowed_to_move[1][0], alowed_to_move[1][1])
             self.layout_board()  # reset board

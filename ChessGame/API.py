@@ -5,11 +5,13 @@ from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
 class ChessErrs:
     """ChessGame error values"""
 
+    ErrNone = 0 # no error
     ErrCheckMate = -1
     ErrCheck = -2
     ErrInvMove = -3
-    ErrInvCommand = -4  # invalid command token
-    ErrInvCommandMove = -5  # invalid move command
+    ErrInvColour = -4
+    ErrInvCommand = -5  # invalid command token
+    ErrInvCommandMove = -6  # invalid move command
 
 
 class ChessExc(Exception):
@@ -39,6 +41,13 @@ class InvMoveExc(ChessExc):
 
     def __init__(self, msg="Invalid move", err=ChessErrs.ErrInvMove):
         super(InvMoveExc, self).__init__(msg, err)
+
+
+class InvColourExc(ChessExc):
+    """ChessGame "invalid colour" exception"""
+
+    def __init__(self, msg="Invalid colour", err=ChessErrs.ErrInvColour):
+        super(InvColourExc, self).__init__(msg, err)
 
 
 class ChessTurn:
@@ -76,6 +85,19 @@ class ChessAPI(ChessTurn):
 
     def __init__(self):
         super(ChessTurn, self).__init__()
+    
+    def raise_exc(self, err):
+        exc = None
+        if err == ChessErrs.ErrCheckMate:
+            exc = CheckMateExc
+        elif err == ChessErrs.ErrCheck:
+            exc = CheckExc
+        elif err == ChessErrs.ErrInvMove:
+            exc = InvMoveExc
+        elif err == ChessErrs.ErrInvColour:
+            exc = InvColourExc
+        if exc:
+            raise exc
 
     def get_piece(self, row, col):
         """Return GameObject at (row, col)"""
@@ -83,45 +105,31 @@ class ChessAPI(ChessTurn):
 
     def get_from_piece(self):
         """Return GameObject at previously selected from_pos"""
-        return self.get_piece(*self.from_pos)
+        return self.selected_piece_to_move ## self.get_piece(*self.from_pos)
+    
+    def get_from_pos(self):
+        from_piece = self.get_from_piece()
+        return (from_piece.row, from_piece.column)
 
     def movefrom(self, row, col):
         """Select (row, col) to move from"""
-        from_square = self.get_piece(row, col)
+        Allowed_to_select = self.select_piece_to_move((row, col))
+        if Allowed_to_select[0]:
+            err = Allowed_to_select[0]
+            self.raise_exc(err)
 
-        if (from_square != None) and (self.test_turn(from_square.colour)):
-            if self.check_for_checkmate(from_square):
-                raise CheckMateExc
-            if self.check_against_check(from_square):  # we are in check
-                self.toggle_turn()
-                raise CheckExc
-            else:  # limit moves if in check else normal moves
-                self.from_pos = (row, col)
-        else:  # if there is no piece or wrong colour piece where we clicked
-            self.toggle_turn()
-            raise InvMoveExc
-
-        return from_square
+        return self.get_piece(row,  col)
 
     def moveto(self, row, col):
         """Select (row, col) to move too"""
-        from_square = self.get_from_piece()
-        from_pos = (from_square.row, from_square.column)
-
-        if (
-            row,
-            col,
-        ) not in from_square.possible_moves:  # check possible move for piece
-            raise InvMoveExc
-
-        self.board[row][col] = from_square
-        self.board[from_pos[0]][from_pos[1]] = None
+        from_pos = self.get_from_pos()
+        Allowed_to_select = self.move_selected_piece((row, col))
+        if Allowed_to_select[0]:
+            err = Allowed_to_select[0]
+            self.raise_exc(err)
 
         to_square = self.get_piece(row, col)
         to_square.history.append((from_pos, (row, col)))
-        to_square.row = row
-        to_square.column = col
-        self.toggle_turn()
         return to_square
 
     def move(self, from_pos, to_pos):

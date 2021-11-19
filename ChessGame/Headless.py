@@ -9,8 +9,7 @@ from Pieces import (  # pylint: disable=W0611, import-error
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
 
-from API import ChessAPI
-
+from API import *
 
 class Headless_ChessGame(ChessAPI):
     def __init__(self, file="New_Game.txt") -> None:
@@ -111,14 +110,14 @@ class Headless_ChessGame(ChessAPI):
         piece_clicked = self.board[square_clicked[0]][square_clicked[1]]
         if self.check_piece_colour_against_turn(piece_clicked):
             if self.check_for_checkmate(piece_clicked):
-                return False, ("Checkmate", "End of Game")
+                return ChessErrs.ErrCheckMate, ("Checkmate", "End of Game")
             if self.check_against_check(piece_clicked):
-                return False, ("Check", "You can not move this piece")
+                return ChessErrs.ErrCheck, ("Check", "You can not move this piece")
             else:
                 self.selected_piece_to_move = piece_clicked
-                return True, ("Move Allowed", "You can move this piece")
+                return ChessErrs.ErrNone, ("Move Allowed", "You can move this piece")
         else:
-            return False, (
+            return ChessErrs.ErrInvMove, (
                 "Move Not Allowed",
                 "You Have not selected one of your pieces",
             )
@@ -128,7 +127,7 @@ class Headless_ChessGame(ChessAPI):
             if self.test_turn(piece_clicked.colour):
                 return True
             else:
-                raise ValueError("error when checking colour")
+                raise InvColourExc
         return False
 
     def move_selected_piece(self, square_clicked):
@@ -138,7 +137,7 @@ class Headless_ChessGame(ChessAPI):
             clicked_row,
             clicked_cloumn,
         ) not in piece_to_move.possible_moves:
-            return False, ("Move Not Allowed", "Your piece cannot move there!")
+            return ChessErrs.ErrInvMove, ("Move Not Allowed", "Your piece cannot move there!")
         self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][
             piece_to_move.column
         ]
@@ -146,4 +145,4 @@ class Headless_ChessGame(ChessAPI):
         piece_to_move.row = clicked_row
         piece_to_move.column = clicked_cloumn
         self.toggle_turn()
-        return True, ("Move Allowed", "You can move here")
+        return ChessErrs.ErrNone, ("Move Allowed", "You can move here")
