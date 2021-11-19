@@ -13,6 +13,7 @@ from tkinter import (
 )
 from os.path import split, join, expanduser, dirname
 
+
 class Gui_ChessGame:
     def __init__(self, Headless_ChessGame, square_colours=("White", "Grey")) -> None:
         self.click, self.first_click = 1, (0, 0)

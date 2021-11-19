@@ -11,6 +11,7 @@ from shutil import copytree
 
 from API import *
 
+
 class Headless_ChessGame(ChessAPI):
     def __init__(self, file="New_Game.txt") -> None:
         super(ChessAPI, self).__init__()
@@ -137,7 +138,10 @@ class Headless_ChessGame(ChessAPI):
             clicked_row,
             clicked_cloumn,
         ) not in piece_to_move.possible_moves:
-            return ChessErrs.ErrInvMove, ("Move Not Allowed", "Your piece cannot move there!")
+            return ChessErrs.ErrInvMove, (
+                "Move Not Allowed",
+                "Your piece cannot move there!",
+            )
         self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][
             piece_to_move.column
         ]

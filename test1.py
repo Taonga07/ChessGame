@@ -125,7 +125,10 @@ def test4_invfrom(game=Headless_ChessGame()):
     raised_exc = None
 
     # Invalid from
-    for from_pos_exc in (((0, 0), InvColourExc), ((3, 7), InvMoveExc)):  # (black rook, none)
+    for from_pos_exc in (
+        ((0, 0), InvColourExc),
+        ((3, 7), InvMoveExc),
+    ):  # (black rook, none)
         from_pos = from_pos_exc[0]
         exp = from_pos_exc[1]
         try:

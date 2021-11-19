@@ -5,7 +5,7 @@ from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
 class ChessErrs:
     """ChessGame error values"""
 
-    ErrNone = 0 # no error
+    ErrNone = 0  # no error
     ErrCheckMate = -1
     ErrCheck = -2
     ErrInvMove = -3
@@ -85,7 +85,7 @@ class ChessAPI(ChessTurn):
 
     def __init__(self):
         super(ChessTurn, self).__init__()
-    
+
     def raise_exc(self, err):
         exc = None
         if err == ChessErrs.ErrCheckMate:
@@ -105,8 +105,8 @@ class ChessAPI(ChessTurn):
 
     def get_from_piece(self):
         """Return GameObject at previously selected from_pos"""
-        return self.selected_piece_to_move ## self.get_piece(*self.from_pos)
-    
+        return self.selected_piece_to_move  # self.get_piece(*self.from_pos)
+
     def get_from_pos(self):
         from_piece = self.get_from_piece()
         return (from_piece.row, from_piece.column)
@@ -118,7 +118,7 @@ class ChessAPI(ChessTurn):
             err = Allowed_to_select[0]
             self.raise_exc(err)
 
-        return self.get_piece(row,  col)
+        return self.get_piece(row, col)
 
     def moveto(self, row, col):
         """Select (row, col) to move too"""
