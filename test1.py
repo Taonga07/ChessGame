@@ -1,14 +1,21 @@
 """
-Auto python tests. 
+Auto python tests using 'pytest' (`pip3 install pytest`) 
 To run all tests:       pytest test1.py
 To list avalable tests: pytest test1.py --collect-only  
 To run specific test:   pytest test1.py -k test2_moveto
 
 If Chess2030 module not installed, add PYTHONPATH prefix e.g.:
-PYTHONPATH=$PWD/Chess2030/ pytest test1.py
+$ PYTHONPATH=$PWD/ChessGame/ pytest test1.py
+
+Generate report of test coverage (`pip3 install coverage`):
+$ PYTHONPATH=$PWD/ChessGame coverage run  -m pytest test1.py
+$ coverage report # basic report
+$ coverage html && firefox htmlcov/index.html # html to zoom into source lines
+Note: a test objective is to visit all source lines, so use coverage report
+to identify tests to add.
 
 TODO: I want to move this file into a subdirectory but could not get the import
-to work, e.g. PYTHONPATH=$PWD/../Chess2030 pytest test1.py 
+to work, e.g. PYTHONPATH=$PWD/../ChessGame pytest test1.py 
 
 """
 # fmt: off
@@ -123,14 +130,18 @@ def test4_invfrom(game=Headless_ChessGame()):
     raised_exc = None
 
     # Invalid from
-    for from_pos in ((0, 0), (3, 7)):  # (black rook, none)
+    for from_pos_exc in (
+        ((0, 0), InvColourExc),
+        ((3, 7), InvMoveExc),
+    ):  # (black rook, none)
+        from_pos = from_pos_exc[0]
+        exp = from_pos_exc[1]
         try:
             from_piece = game.movefrom(*from_pos)
         except ChessExc as exc:
             raised_exc = exc
-            if isinstance(raised_exc, InvMoveExc):
-                print(f"test4 Expected invalid movefrom {from_pos} : {exc}")
-        assert isinstance(raised_exc, InvMoveExc)
+            print(f"test4 Expected invalid movefrom {from_pos} : {exc}, {exc.err} ")
+        assert isinstance(raised_exc, exp)
 
     # Invalid to
     from_pos = (6, 3)  # valid white pawn
