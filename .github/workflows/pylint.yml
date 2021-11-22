@@ -22,7 +22,7 @@ jobs:
         pip install pylint
     - name: Cleaning Code
       run: |
-        find . -name '*.py' -exec autopep8 --in-place '{}' \;
+        find . -name '*.py' -exec autopep8 --in-place --ignore="E402" '{}' \;
         find . -name '*.py' -exec black '{}' \;
     - name: Comitting Cleaned Code
       uses: EndBug/add-and-commit@v7
