@@ -12,13 +12,13 @@ to work, e.g. PYTHONPATH=$PWD/../Chess2030 pytest test1.py
 
 """
 
+from ChessGame import *
 import pytest
 from os.path import join, dirname
 import sys
 
 sys.path.append(join(dirname(__file__), "ChessGame"))
 
-from ChessGame import *
 
 """
 Sanity test board layout. Depends on implementation details which is
