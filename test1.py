@@ -218,7 +218,7 @@ def test6_check():
     return game
 
 
-# @pytest.mark.xfail
+@pytest.mark.xfail
 def test7_mate(game=Headless_ChessGame()):
     command = "Pe2:e4; pf7:f5; Pe4:f5; pg7:g5; Qd1:h5"
     (ncommands, errs) = game.commands(command)
