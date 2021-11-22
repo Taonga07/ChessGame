@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8"]
     steps:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -28,9 +28,5 @@ jobs:
         pip3 install -r requirements.txt
     - name: Running tests
       run: |
-        PYTHONPATH=$PWD/ChessGame pytest test1.py
-    - name: Undo Push
-      if: ${{ failure() }}
-      uses: taonga07/undo-push@v2
-      with:
-        branch: ${{ steps.extract_branch.outputs.branch }}
+        pytest test1.py
+
