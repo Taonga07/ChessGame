@@ -29,4 +29,10 @@ jobs:
     - name: Running tests
       run: |
         pytest test1.py
+    - name: Reset and Push Head
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git reset --hard HEAD~1
+        git push --force --quiet "https://github-actions[bot]:${{ secrets.GITHUB_TOKEN }}@github.com/taonga07/testa.git"
 
