@@ -8,6 +8,7 @@ from Pieces import (  # pylint: disable=W0611, import-error
 )  # pylint: enable=W0611, import-error
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
+from requests import get
 
 from API import *
 
@@ -15,39 +16,19 @@ from API import *
 class Headless_ChessGame(ChessAPI):
     def __init__(self, file="New_Game.txt") -> None:
         super(ChessAPI, self).__init__()
-
-        self.create_game_save_folder()  # give user template game_files
         self.from_pos = (0, 0)  # previously 'first_click'
         if file:
-            self.board, self.turn = self.read_game_data(file)
+            self.board, self.turn = self.read_game_data()
         else:
-            self.board = self.new_board()
+            self.board, self.board, self.turn = self.new_board()
 
-    def create_game_save_folder(self):
-        if not isdir(
-            join(expanduser("~"), ".Chess_Games")
-        ):  # check if homepath of user + folder exists
-            # if folder dosen't create and copy templates across
-            copytree(
-                abspath(join("ChessGame", "Games")),
-                join(expanduser("~"), ".Chess_Games"),
-            )
-
-    def read_game_data(
-        self, Game_File, Game_Folder=abspath(join(dirname(__file__), "Games"))
-    ):
-        board = [[None] * 8 for row in range(8)]
-        input_data = open(join(Game_Folder, Game_File), "r").readlines()
-        for i, line in enumerate(input_data):
-            if i == 0:
-                turn = int(line.rstrip())
-            else:
-                Piece, Colour, Row, Column = line.rstrip().split(
-                    " "
-                )  # pylint: disable=W0612
-                # pylint: enable=W0612
-                piece = eval(Piece + "(str(Colour), int(Column), int(Row))")
-                board[int(piece.row)][int(piece.column)] = piece
+    def read_game_data(self):
+        GameData = get(url="https://api.jsonbin.io/b/619d31d201558c731cc7cd18/1").json()
+        turn, board =  GameData["turn"], [[None] * 8 for row in range(8)]
+        for PieceData in GameData["board"]:
+            Piece, Colour, Row, Column = PieceData
+            piece = eval(Piece + "(Colour, Column, Row)")
+            board[int(piece.row)][int(piece.column)] = piece
         return board, turn
 
     def save_game_data(self, Path_to_save_in):
