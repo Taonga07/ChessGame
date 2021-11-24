@@ -1,0 +1,7 @@
+# This tip keeps the image around, otherwise it doesnt display properly
+# Found it by a Google: http://effbot.org/pyfaq/why-do-my-tkinter-images-not-appear.htm
+# Thomas: If you want to use "pack" here and then also use a grid later when you create the board
+    #         then we need to remove all widgets from the window before we draw the board - see destroy_all_widgets
+    #         or you can use "w.grid(column=0, row=0)" instead of the pack
+#
+# https://stackoverflow.com/questions/15781802/python-tkinter-clearing-a-frame

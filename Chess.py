@@ -6,15 +6,18 @@ def set_up_window():
     window.tk.call('wm', 'iconphoto', window._w, tkinter.PhotoImage(file = Rules.path +'icon.gif'))
     #play_chess(window)
     start(window)
+    menu(window)
+    return window
 
 def start(window):
-    board = reset_board()
     photo = tkinter.PhotoImage(file = Rules.path + "Intro.gif")
     w = tkinter.Label(window, image = photo)
+    w.image = photo
     w.pack()
-    ent = tkinter.Entry(window)
-    ent.pack()
-    ent.focus_set() 
+
+def menu(window):
+    board = reset_board()
+
     menubar = tkinter.Menu(window)
 
     filemenu = tkinter.Menu(menubar, tearoff = 0)
@@ -23,12 +26,28 @@ def start(window):
     toolmenu = tkinter.Menu(menubar, tearoff = 0)
     helpmenu = tkinter.Menu(menubar, tearoff = 0)
 
-    filemenu.add_command(label="New", command = play_chess(window))
-    filemenu.add_command(label="Open", command = Files.onOpen(window, board))
-    filemenu.add_command(label="Save", command = Files.onSave(board)
-    filemenu.add_command(label="Exit", command = window.destroy())
+    filemenu.add_command(label="New", command = lambda: play_chess(window))
+    filemenu.add_command(label="Open", command = lambda: Files.onOpen(window, board))
+    filemenu.add_command(label="Save", command = lambda: Files.onSave(board))
+    filemenu.add_separator()
+    filemenu.add_command(label="Exit", command = lambda: window.destroy())
 
-    helpmenu.add_command(label="Open Guide", command = Files.openGuide())
+    editmenu.add_command(label="custormise pieces", command = lambda: Files.openGuide())
+    editmenu.add_command(label="custormise board", command = lambda: Files.openGuide())
+    editmenu.add_checkbutton(label='Blindfold Chess', command = lambda: Files.openGuide())
+    
+    viewmenu.add_checkbutton(label='points', command = lambda: Files.openGuide())
+    viewmenu.add_checkbutton(label='pieces taken', command = lambda: Files.openGuide())
+    viewmenu.add_checkbutton(label='computer evaluation', command = lambda: Files.openGuide())
+    viewmenu.add_command(label="game history", command = lambda: Files.openGuide())
+
+    toolmenu.add_command(label="takeback", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="flip board", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="Request stalemate", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="Resighn", command = lambda: Files.openGuide())
+    toolmenu.add_command(label="hint", command = lambda: Files.openGuide())
+
+    helpmenu.add_command(label="Open Guide", command = lambda: Files.openGuide())
 
     menubar.add_cascade(label="File", menu = filemenu)
     menubar.add_cascade(label="Edit", menu = editmenu)
@@ -36,12 +55,23 @@ def start(window):
     menubar.add_cascade(label="Tools", menu = toolmenu)
     menubar.add_cascade(label="Help", menu = helpmenu)
 
+#    img1 = tkinter.PhotoImage(Rules.path+'icon.png')
+#    b = tkinter.Button(menubar, image=img1, width=6)
+#    b.image = img1
+#    b.pack(side=tkinter.RIGHT)
+
     window.config(menu = menubar)
 
+def destroy_all_widgets(window):
+    for widget in window.winfo_children():
+        if widget.winfo_class() != 'menubar':
+            widget.destroy()
+
 def play_chess(window):
+    destroy_all_widgets(window)
+    menu(window)
     board = reset_board()
     create_board(window, board)
-    window.mainloop()
 
 def reset_board():
     board = []
@@ -85,4 +115,5 @@ def create_board(window, board):
 
 
 if __name__ =="__main__":
-    set_up_window()
+    window = set_up_window()
+    window.mainloop()
