@@ -3,6 +3,8 @@ import sys
 
 
 class GameObject:
+    uni_pieces = {'R':'♜', 'N':'♞', 'B':'♝', 'Q':'♛', 'K':'♚', 'P':'♟',
+                  'r':'♖', 'n':'♘', 'b':'♗', 'q':'♕', 'k':'♔', 'p':'♙', '.':'·'}
     def __init__(self, piece, colour, column, row, value):
         self.row, self.value, self.piece, self.InCheck = row, value, piece, False
         self.colour, self.column, self.possible_moves = colour, column, []
@@ -17,6 +19,7 @@ class GameObject:
                 self.abbrv.lower()
             )  # e.g. 'p' for Pawn, or 'n' for black knight
         self.history = []
+
 
     def find_possible_moves(self, board, pieces_to_jump=0):
         pass

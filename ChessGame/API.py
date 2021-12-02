@@ -235,7 +235,7 @@ class ChessAPI(ChessTurn):
             pieces = "RNBQKP"
             pieces_fmt = f"[{pieces}{pieces.lower()}]"
             pos_fmt = r"\([0-7],[0-7]\)|[A-ha-h][1-8]"
-            m = re.match(f"({pieces_fmt})({pos_fmt})\:?({pos_fmt})?$", token)
+            m = re.match(f"({pieces_fmt})({pos_fmt}):?({pos_fmt})?$", token)
             groups = m.groups() if m else None
             # print(f"DBG token {token} == {groups}")
             if groups == None or (groups[0] == None and groups[-1] == None):
@@ -291,7 +291,7 @@ class ChessAPI(ChessTurn):
                         _line = f"{_piece} {_colour} {row_number} {column_number}\n"
                         filehandle.write(_line)
 
-    def dump(self):
+    def dump(self, unicode=False):
         """text summary of board"""
         str = ""
         for row_number in range(0, 8):
@@ -299,7 +299,9 @@ class ChessAPI(ChessTurn):
             for column_number in range(0, 8):
                 piece = self.board[row_number][column_number]
                 c = "." if piece == None else piece.abbrv
-                linebuff = f"{linebuff}{c} "
+                if unicode:
+                    c = Pawn.uni_pieces[c]
+                linebuff = f"{linebuff}{c}"
             str = f"{str}\n{linebuff}"
         return str
 

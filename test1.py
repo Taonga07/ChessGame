@@ -62,7 +62,7 @@ def test1_layout(game=Headless_ChessGame()):
         assert isinstance(board[r][3], Queen)
         assert isinstance(board[r][4], King)
 
-        print(f"test1 dump: {game.dump()}")
+        print(f"test1 dump: {game.dump(unicode=True)}")
         return game
 
 
@@ -104,7 +104,7 @@ def test2_moveto(game=Headless_ChessGame()):
     print(f"to_square[{to_pos}]: {to_square}")
     assert game.get_piece(*from_pos) == None  # check from cleared
 
-    print(f"test2 dump: {game.dump()}")
+    print(f"test2 dump: {game.dump(unicode=True)}")
 
     ########################
     # test3_move(): 2nd move black pawn
@@ -121,7 +121,7 @@ def test2_moveto(game=Headless_ChessGame()):
     assert to_piece == from_piece
     assert len(to_piece.history) == 1 and to_piece.history[0] == (from_pos, to_pos)
 
-    print(f"test3 dump: {game.dump()}")
+    print(f"test3 dump: {game.dump(unicode=True)}")
     return game
 
 
@@ -190,7 +190,7 @@ def test6_check():
 
     # white king in check
     (ncommands, errs) = game.commands("ke8; Ke2; Ba3; Qc3; ra2")
-    print(f"test6 init {ncommands}: {errs}, {game.dump()}")
+    print(f"test6 init {ncommands}: {errs}, {game.dump(unicode=True)}")
     # game.save_file('test6.txt')
     assert errs == []
 
@@ -234,7 +234,7 @@ def test7_mate(game=Headless_ChessGame()):
     command = "Pe2:e4; pf7:f5; Pe4:f5; pg7:g5; Qd1:h5"
     (ncommands, errs) = game.commands(command)
     print(
-        f"test7 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump()}"
+        f"test7 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}"
     )
     game.save_file("test7.txt")
 
@@ -251,7 +251,7 @@ def test8_check2(game=Headless_ChessGame()):
     command = "Pe2:e4; pd7:d5; Bf1:b5; ph7:h5"
     (ncommands, errs) = game.commands(command)
     print(
-        f"test8 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump()}"
+        f"test8 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}"
     )
     game.save_file("test8.txt")
 
