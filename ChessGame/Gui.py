@@ -10,8 +10,10 @@ from tkinter import (
     S,
     W,
     E,
+    IntVar,
 )
 from os.path import split, join, expanduser, dirname
+from sunfish_interface import auto_move
 
 
 class Gui_ChessGame:
@@ -21,6 +23,7 @@ class Gui_ChessGame:
         self.Game = Headless_ChessGame
         self.create_root_window()
         self.layout_board()
+        self.auto = 0
 
     def create_root_window(self):
         self.root_window = Tk()
@@ -34,16 +37,23 @@ class Gui_ChessGame:
 
         filemenu = Menu(self.menubar, tearoff=0)
         editmenu = Menu(self.menubar, tearoff=0)
+        automenu = Menu(self.menubar, tearoff=0)
+
 
         filemenu.add_command(label="New", command=self.onNew)
         filemenu.add_command(label="Open", command=self.onOpen)
         filemenu.add_command(label="Save", command=self.onSave)
         filemenu.add_separator()  # adds line between objects in filemenu dropdown
         filemenu.add_command(label="Exit", command=self.root_window.destroy)
-        editmenu.add_command(label="custormise board", command=self.onBoardCustormise)
+
+        editmenu.add_command(label="customise board", command=self.onBoardCustormise)
+
+        sunfish_opt = IntVar()
+        automenu.add_checkbutton(label="Sunfish", variable=sunfish_opt, command=self.onAutoSunfish)
 
         self.menubar.add_cascade(label="File", menu=filemenu)
         self.menubar.add_cascade(label="Edit", menu=editmenu)
+        self.menubar.add_cascade(label="Auto", menu=automenu)
 
         self.root_window.config(menu=self.menubar)
 
@@ -69,6 +79,12 @@ class Gui_ChessGame:
             filetypes=(("main files", "*txt*"), ("All files", "*.*")),
         )
         self.Game.save_game_data(filename)
+    
+    def onAutoSunfish(self):
+        # toggle auto
+        # Todo: get access to add_checkbutton() variable
+        self.auto = not self.auto
+        print(f"Auto toggled, new value = {self.auto}")
 
     def onBoardCustormise(self):
         light_square_colour = colorchooser.askcolor(title="Choose 1st color")
@@ -100,6 +116,10 @@ class Gui_ChessGame:
                 square.bind("<Button-1>", self.on_click)
                 bttnclr_turn = 1 - bttnclr_turn
             bttnclr_turn = 1 - bttnclr_turn
+    
+    def highlight_square(self, row_number, column_number, bg='yellow'):
+        square = self.root_window.grid_slaves(row=row_number, column=column_number)[0]
+        square.config(bg=bg)  # highlight position
 
     def on_click(self, event):
         self.click = 1 - self.click
@@ -120,4 +140,10 @@ class Gui_ChessGame:
             alowed_to_move = self.Game.move_selected_piece(square_clicked)
             if alowed_to_move[0]:
                 messagebox.showinfo(alowed_to_move[1][0], alowed_to_move[1][1])
+            elif self.auto:
+                to, taken = auto_move(self.Game)
+                pos = self.Game.notation_pos(to)
+                self.highlight_square(*pos)
             self.layout_board()  # reset board
+
+

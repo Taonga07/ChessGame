@@ -295,14 +295,16 @@ class ChessAPI(ChessTurn):
         """text summary of board"""
         str = ""
         for row_number in range(0, 8):
-            linebuff = ""
+            linebuff = f" {8-row_number}" if unicode else ""
             for column_number in range(0, 8):
                 piece = self.board[row_number][column_number]
                 c = "." if piece == None else piece.abbrv
                 if unicode:
-                    c = Pawn.uni_pieces[c]
+                    c = f" {Pawn.uni_pieces[c]}"
                 linebuff = f"{linebuff}{c}"
             str = f"{str}\n{linebuff}"
+        if unicode:
+            str = f"{str}\n   a b c d e f g h \n"
         return str
 
     def __repr__(self):
