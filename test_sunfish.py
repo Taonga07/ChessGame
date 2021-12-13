@@ -134,13 +134,31 @@ def test6(game=Headless_ChessGame(), testname="test6"):
             break
         index = index+1
 
+def test7(game=Headless_ChessGame(), testname="test7"):
+    index=0
+    while True:
+        from_pos, to_pos, taken = random_auto_move(game)
+
+        print(f"\t{testname} move number {index} {game.get_turn_colour()}, {from_pos}, {to_pos}, {taken}") 
+
+        if taken.lower() == 'k':
+            print(f"Checkmate {game.get_turn_colour()} takes {taken}")
+            return
+
+        if index > 100:
+            break
+        index = index+1
+
 if __name__ == "__main__":
     # invoked by python and not pytest
     if True:
-        #test1()
-        #test2()
-        #test4() # easier to sanity check
-        #test3()
-        #test5()
+        test1()
+        test2()
+        test4() # easier to sanity check
+        test3()
+        test5()
         test6()
+    if True:
+        test7()
+    pass
 

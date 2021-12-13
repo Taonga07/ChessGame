@@ -11,4 +11,5 @@ from API import (
     CheckMateExc,
     ChessErrs,
 )
-from sunfish_interface import SunFishModel, board_to_sunfish, auto_move
+from sunfish_interface import SunFishModel, board_to_sunfish, sunfish_auto_move
+from calculate_move import RandomMove, random_auto_move

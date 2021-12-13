@@ -12,9 +12,11 @@ from tkinter import (
     E,
     IntVar,
 )
+import time
 from os.path import split, join, expanduser, dirname
-from sunfish_interface import auto_move
-
+from sunfish_interface import sunfish_auto_move
+from calculate_move import random_auto_move
+from API import ChessExc
 
 class Gui_ChessGame:
     def __init__(self, Headless_ChessGame, square_colours=("White", "Grey")) -> None:
@@ -23,7 +25,7 @@ class Gui_ChessGame:
         self.Game = Headless_ChessGame
         self.create_root_window()
         self.layout_board()
-        self.auto = 0
+        self.auto = None
 
     def create_root_window(self):
         self.root_window = Tk()
@@ -49,7 +51,9 @@ class Gui_ChessGame:
         editmenu.add_command(label="customise board", command=self.onBoardCustormise)
 
         sunfish_opt = IntVar()
+        random_opt = IntVar()
         automenu.add_checkbutton(label="Sunfish", variable=sunfish_opt, command=self.onAutoSunfish)
+        automenu.add_checkbutton(label="Random", variable=random_opt, command=self.onAutoRandom)
 
         self.menubar.add_cascade(label="File", menu=filemenu)
         self.menubar.add_cascade(label="Edit", menu=editmenu)
@@ -80,11 +84,21 @@ class Gui_ChessGame:
         )
         self.Game.save_game_data(filename)
     
-    def onAutoSunfish(self):
+    def auto_change(self, fn):
         # toggle auto
         # Todo: get access to add_checkbutton() variable
-        self.auto = not self.auto
+        if self.auto == None:
+            self.auto = fn
+        else:
+            self.auto = None
+
         print(f"Auto toggled, new value = {self.auto}")
+    
+    def onAutoSunfish(self):
+        self.auto_change(sunfish_auto_move)
+
+    def onAutoRandom(self):
+        self.auto_change(random_auto_move)
 
     def onBoardCustormise(self):
         light_square_colour = colorchooser.askcolor(title="Choose 1st color")
@@ -117,9 +131,13 @@ class Gui_ChessGame:
                 bttnclr_turn = 1 - bttnclr_turn
             bttnclr_turn = 1 - bttnclr_turn
     
-    def highlight_square(self, row_number, column_number, bg='yellow'):
+    def highlight_square(self, row_number, column_number, delay=0, colour='blue'):
+        # highlight a square for duration 
         square = self.root_window.grid_slaves(row=row_number, column=column_number)[0]
-        square.config(bg=bg)  # highlight position
+        square.config(bg=colour)  # highlight position
+        if delay > 0:
+            self.root_window.update()
+            time.sleep(delay) # TODO dodgy sleep in mainloop
 
     def on_click(self, event):
         self.click = 1 - self.click
@@ -140,10 +158,21 @@ class Gui_ChessGame:
             alowed_to_move = self.Game.move_selected_piece(square_clicked)
             if alowed_to_move[0]:
                 messagebox.showinfo(alowed_to_move[1][0], alowed_to_move[1][1])
-            elif self.auto:
-                to, taken = auto_move(self.Game)
-                pos = self.Game.notation_pos(to)
-                self.highlight_square(*pos)
             self.layout_board()  # reset board
+            if self.auto:
+                try:
+                    from_pos, to_pos, taken = self.auto(self.Game)
+                except ChessExc as exc:
+                    messagebox.showinfo(f"Chess exception {exc}, {exc.err} ")
+
+                if taken.lower() == 'k':
+                    messagebox.showinfo(f"Checkmate {'Black' if taken.islower() else 'White'} takes {taken}")
+                elif from_pos == None:
+                    messagebox.showinfo(f"Error in {self.Game.get_turn_colour()} auto")
+                if from_pos:
+                    self.highlight_square(*self.Game.notation_pos(from_pos), delay=0, colour='blue')
+                    self.highlight_square(*self.Game.notation_pos(to_pos), delay=3, colour='green' if taken == '.' else 'red')
+                    self.layout_board()  # reset board
+
 
 

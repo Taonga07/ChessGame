@@ -236,7 +236,7 @@ class Bishop(GameObject):
 
 class King(GameObject):
     def __init__(self, colour, column, row):
-        super().__init__("King", colour, column, row, 1)
+        super().__init__("King", colour, column, row, 10)
         self.check_moves = []
 
     def find_possible_moves(self, board, pieces_to_jump=0):

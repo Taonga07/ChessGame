@@ -1,7 +1,6 @@
 import re
 from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
 
-
 class ChessErrs:
     """ChessGame error values"""
 
@@ -70,6 +69,14 @@ class ChessTurn:
     def test_turn(self, colour):
         """Return True if turn is colour"""
         return self.turn_dict[colour.lower()] == self.turn
+    
+    def get_turn_colour(self):
+        colour = ''
+        for k in self.turn_dict:
+            if self.turn_dict[k] == self.turn:
+                colour=k
+                break
+        return colour
 
 
 class ChessAPI(ChessTurn):
@@ -153,12 +160,17 @@ class ChessAPI(ChessTurn):
         row = -1
         col = -1
 
+        if not isinstance(token, str):
+            if len(token) == 2:
+                pos = token # assume list or tuple
+            return pos
+
         if len(token) == 2:
             token = token.lower()
             col = ord(token[0]) - ord("a")  # col 'a' is table column 0
             row = 8 - int(token[1])  # row 1 is table row 7
         else:
-            if re.match(r"\([0-7],[0-7]\)$", token):
+            if re.match(r"\([0-7]\s*,[0-7]\)$", token):
                 row = int(token[1])
                 col = int(token[3])
         if row >= 0 and row < 8 and col >= 0 and col < 8:
