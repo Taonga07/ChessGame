@@ -3,7 +3,14 @@ import pytest
 from os.path import join, dirname
 import sys
 
-sys.path.append(join(dirname(__file__), "ChessGame"))
+# import cProfile
+# python -m cProfile -s cumtime test_sufish.py
+#
+# python -m cProfile -o fart.cprof test_sunfish.py
+# pip3 install  pyprof2calltree
+# pyprof2calltree -k -i fart.cprof
+
+#sys.path.append(join(dirname(__file__), "ChessGame"))
 
 from ChessGame import *
 
@@ -137,13 +144,20 @@ def test6(game=Headless_ChessGame(), testname="test6"):
 def test7(game=Headless_ChessGame(), testname="test7"):
     index=0
     while True:
-        from_pos, to_pos, taken = random_auto_move(game)
+        colour = game.get_turn_colour()
+        perm = -1 if colour == 'white' else -1  # white take, dodge; black is random
+        try:
+            abbrv, from_pos, to_pos, taken = random_auto_move(game, perm)
+        except ChessExc as exc:
+            print(f"{testname} {colour} {index} {exc}, {exc.err} ")
+            break
 
-        print(f"\t{testname} move number {index} {game.get_turn_colour()}, {from_pos}, {to_pos}, {taken}") 
+        0 and print(f"\t{testname} move number {index} {colour}, " +
+            f"{abbrv}{from_pos}:{to_pos}{'' if taken == '.' else ' takes ' + taken}") 
 
         if taken.lower() == 'k':
-            print(f"Checkmate {game.get_turn_colour()} takes {taken}")
-            return
+            print(f"{testname} checkmate move {index}  {colour} takes {taken}")
+            # break # DBG allow to play next move to check exception raised
 
         if index > 100:
             break
@@ -159,6 +173,9 @@ if __name__ == "__main__":
         test5()
         test6()
     if True:
-        test7()
+        if False:
+            cProfile.run('test7()')
+        else:
+            test7()
     pass
 

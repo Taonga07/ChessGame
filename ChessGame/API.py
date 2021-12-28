@@ -1,5 +1,5 @@
 import re
-from Pieces import Pawn, Rook, Knight, Bishop, Queen, King
+from ChessGame.Pieces import Pawn, Rook, Knight, Bishop, Queen, King
 
 class ChessErrs:
     """ChessGame error values"""
@@ -11,7 +11,6 @@ class ChessErrs:
     ErrInvColour = -4
     ErrInvCommand = -5  # invalid command token
     ErrInvCommandMove = -6  # invalid move command
-
 
 class ChessExc(Exception):
     """ChessGame base exception"""
@@ -78,8 +77,95 @@ class ChessTurn:
                 break
         return colour
 
+class Position():
 
-class ChessAPI(ChessTurn):
+    pos_fmt = r"\([0-7]\s*,\s*[0-7]\)"
+    notation_fmt = r"[A-Ha-h][1-8]"
+    pos_or_not_fmt = f"{pos_fmt}|{notation_fmt}"
+
+    # (row, col) position tuple or notation
+    def __init__(self, pos_or_not=None):
+        self.set_pos(pos_or_not)
+    
+    def set_pos(self, pos_or_not):
+        (self.position, self.notation) = \
+                    Position.pos_or_notation(pos_or_not)
+    
+    def get_pos(self):
+        # return tuple (pos, notation)
+        return (self.position, self.notation)
+
+    def pos(self):
+        return self.position
+    
+    def notation(self):
+        return self.notation
+    
+    def __repr__(self):
+        return f"{self.position}:{self.notation}"
+
+    @staticmethod
+    def pos_or_notation(pos_or_not):
+        # Return (pos, notation), input can be pos or notation
+        res = (None, None)
+        pos = Position.notation_pos(pos_or_not)
+        if pos:
+            res = (pos, pos_or_not)
+        else:
+            _not = Position.pos_notation(pos_or_not)
+            if _not:
+                res = (pos_or_not, _not)
+        return res
+
+    @staticmethod
+    def pos_notation(pos):
+        # pos to notation, return None if invalid
+        res = None
+        if pos and len(pos) == 2:
+            (row, col) = pos
+            if row >= 0 and row < 8 and col >= 0 and col < 8:
+                res = f"{chr(ord('a') + col)}{8 - row}" 
+        return res
+
+    @staticmethod
+    def notation_pos(notation):
+        # notation  [a-h][1-8] to tuple (row, col), return if invalid
+        pos = None
+        if isinstance(notation, str) and len(notation) == 2:
+            token = notation.lower()
+            col = ord(token[0]) - ord("a")  # col 'a' is table column 0
+            row = 8 - int(token[1])  # row 1 is table row 7
+            if row >= 0 and row < 8 and col >= 0 and col < 8:
+                pos = (row, col)
+        return pos
+
+    @staticmethod
+    def position_token(token):
+        """Return tuple (row, col) from parsed token, else None
+        String fmt :: '(<row>, <col>)' | '[a-h][1-8]'
+           first char row:[a-h], second char col:[1-8]
+             eg. 'a8' == (0,0), 'a1' == (7,0), 'h1' == (7,7), 'h8' == (0,7)
+        """
+        pos = None
+        row = -1
+        col = -1
+
+        if not token or (not isinstance(token, str)):
+            if len(token) == 2:
+                pos = token # assume list or tuple eg. (0, 0)
+            return pos
+
+        if len(token) == 2:
+            (row, col) = Position.notation_pos(token)
+        else:
+            if re.match(Position.pos_fmt, token):
+                row = int(token[1])
+                col = int(token[3])
+        if row >= 0 and row < 8 and col >= 0 and col < 8:
+            pos = (row, col)
+        return pos 
+
+class ChessAPI(ChessTurn, Position):
     """ChessGame functions that can be invoked from cmdline e.g:
     from ChessGame import *
     game=Headless_ChessGame():
@@ -109,6 +195,14 @@ class ChessAPI(ChessTurn):
     def get_piece(self, row, col):
         """Return GameObject at (row, col)"""
         return self.board[row][col]
+    
+    def get_piece_notation(self, pos_or_not):
+        """Return GameObject at algebraic notation e.g. e4"""
+        res = None
+        pos = Position(pos_or_not).pos()
+        if pos:
+            res = self.get_piece(*pos)
+        return res
 
     def get_from_piece(self):
         """Return GameObject at previously selected from_pos"""
@@ -145,38 +239,12 @@ class ChessAPI(ChessTurn):
         to_piece = self.moveto(*to_pos)
         return to_piece
 
-    def new_board(self):
+    @staticmethod
+    def new_board():
         """Clear board of all pieces"""
         board = [[None] * 8 for row in range(8)]
         return board
-
-    def notation_pos(self, token):
-        """Return tuple (row, col) from parsed token, else None
-        String fmt :: '(<row>, <col>)' | '[a-h][1-8]'
-           first char row:[a-h], second char col:[1-8]
-             eg. 'a8' == (0,0), 'a1' == (7,0), 'h1' == (7,7), 'h8' == (0,7)
-        """
-        pos = None
-        row = -1
-        col = -1
-
-        if not isinstance(token, str):
-            if len(token) == 2:
-                pos = token # assume list or tuple
-            return pos
-
-        if len(token) == 2:
-            token = token.lower()
-            col = ord(token[0]) - ord("a")  # col 'a' is table column 0
-            row = 8 - int(token[1])  # row 1 is table row 7
-        else:
-            if re.match(r"\([0-7]\s*,[0-7]\)$", token):
-                row = int(token[1])
-                col = int(token[3])
-        if row >= 0 and row < 8 and col >= 0 and col < 8:
-            pos = (row, col)
-        return pos
-
+    
     def notation_piece(self, token):
         """Return tuple (<class>, colour) if token starts with a piece abbrv, else None.
         one char abbrv of piece (R N B Q K P) or 'D' for board.dump,
@@ -246,7 +314,7 @@ class ChessAPI(ChessTurn):
 
             pieces = "RNBQKP"
             pieces_fmt = f"[{pieces}{pieces.lower()}]"
-            pos_fmt = r"\([0-7],[0-7]\)|[A-ha-h][1-8]"
+            pos_fmt = Position.pos_or_not_fmt
             m = re.match(f"({pieces_fmt})({pos_fmt}):?({pos_fmt})?$", token)
             groups = m.groups() if m else None
             # print(f"DBG token {token} == {groups}")
@@ -258,11 +326,11 @@ class ChessAPI(ChessTurn):
             np = self.notation_piece(groups[0])
             if np == None:
                 continue
-            from_pos = self.notation_pos(groups[1])
+            from_pos = Position.position_token(groups[1])
             piece = self.get_piece(*from_pos)
             to_pos = None
             if groups[2]:
-                to_pos = self.notation_pos(groups[2])
+                to_pos = Position.position_token(groups[2])
 
             if to_pos:
                 if piece and piece.abbrv == groups[0]:

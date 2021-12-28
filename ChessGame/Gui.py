@@ -14,9 +14,9 @@ from tkinter import (
 )
 import time
 from os.path import split, join, expanduser, dirname
-from sunfish_interface import sunfish_auto_move
-from calculate_move import random_auto_move
-from API import ChessExc
+from ChessGame.sunfish_interface import sunfish_auto_move
+from ChessGame.calculate_move import random_auto_move
+from ChessGame.API import ChessExc
 
 class Gui_ChessGame:
     def __init__(self, Headless_ChessGame, square_colours=("White", "Grey")) -> None:
@@ -156,23 +156,26 @@ class Gui_ChessGame:
             piece_clicked.highlight_moves(self.root_window, self.Game.board)
         else:  # this is our second click, we are selecting the square to move to
             alowed_to_move = self.Game.move_selected_piece(square_clicked)
+            self.layout_board()  # reset board
             if alowed_to_move[0]:
                 messagebox.showinfo(alowed_to_move[1][0], alowed_to_move[1][1])
-            self.layout_board()  # reset board
+                return
             if self.auto:
+                (abbrv, from_pos, to_pos, taken) = ".", None, None, "."
                 try:
-                    from_pos, to_pos, taken = self.auto(self.Game)
+                    abbrv, from_pos, to_pos, taken = self.auto(self.Game)
                 except ChessExc as exc:
                     messagebox.showinfo(f"Chess exception {exc}, {exc.err} ")
 
-                if taken.lower() == 'k':
-                    messagebox.showinfo(f"Checkmate {'Black' if taken.islower() else 'White'} takes {taken}")
-                elif from_pos == None:
+                if from_pos == None:
                     messagebox.showinfo(f"Error in {self.Game.get_turn_colour()} auto")
-                if from_pos:
+                else:
                     self.highlight_square(*self.Game.notation_pos(from_pos), delay=0, colour='blue')
                     self.highlight_square(*self.Game.notation_pos(to_pos), delay=3, colour='green' if taken == '.' else 'red')
+                    if taken.lower() == 'k':
+                        messagebox.showinfo(f"Checkmate {'Black' if taken.islower() else 'White'} takes {taken}")
                     self.layout_board()  # reset board
+
 
 
 

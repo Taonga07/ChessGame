@@ -1,15 +1,8 @@
-from Pieces import (  # pylint: disable=W0611, import-error
-    Pawn,
-    Rook,
-    Bishop,
-    Queen,
-    King,
-    Knight,
-)  # pylint: enable=W0611, import-error
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
 
-from API import *
+from ChessGame.Pieces import Pawn, Rook, Knight, Bishop, Queen, King
+from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
 
 
 class Headless_ChessGame(ChessAPI):
@@ -22,6 +15,7 @@ class Headless_ChessGame(ChessAPI):
             self.board, self.turn = self.read_game_data(file)
         else:
             self.board = self.new_board()
+        self.nturn = 0  # number of turns
 
     def create_game_save_folder(self):
         if not isdir(
@@ -148,5 +142,6 @@ class Headless_ChessGame(ChessAPI):
         self.board[piece_to_move.row][piece_to_move.column] = None
         piece_to_move.row = clicked_row
         piece_to_move.column = clicked_cloumn
+        self.nturn += 1
         self.toggle_turn()
         return ChessErrs.ErrNone, ("Move Allowed", "You can move here")

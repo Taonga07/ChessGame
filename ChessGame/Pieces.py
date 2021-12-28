@@ -1,7 +1,6 @@
 from os.path import dirname, abspath, join
 import sys
 
-
 class GameObject:
     uni_pieces = {'R':'♜', 'N':'♞', 'B':'♝', 'Q':'♛', 'K':'♚', 'P':'♟',
                   'r':'♖', 'n':'♘', 'b':'♗', 'q':'♕', 'k':'♔', 'p':'♙', '.':'·'}
@@ -14,12 +13,13 @@ class GameObject:
         )
         # first char, e.g. 'P' for Pawn
         self.abbrv = "N" if self.piece == "Knight" else self.piece[0]
+        self.direction = -1
         if self.colour == "Black":
+            self.direction = 1
             self.abbrv = (
                 self.abbrv.lower()
             )  # e.g. 'p' for Pawn, or 'n' for black knight
         self.history = []
-
 
     def find_possible_moves(self, board, pieces_to_jump=0):
         pass
@@ -151,19 +151,21 @@ class GameObject:
         else:
             return self.find_possible_moves(board)
 
+    def pos(self):
+        # (row, column) tuple
+        return (self.row, self.column)
+
     def __repr__(self):
         # string representation
-        # return f"({self.__class__}){self} : {vars(self)}"
-        return f"{self.__class__} : {vars(self)}"
-
+        #return f"{self.__class__} : {vars(self)}"
+        pos = (self.row, self.column)
+        return f"{self.colour}, {pos}, " + \
+            f"{self.abbrv}, value={self.value},  possible_move[{len(self.possible_moves)}] = " + \
+            f"{self.possible_moves}"
 
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
         super().__init__("Pawn", colour, column, row, 1)
-        if self.colour == "White":
-            self.direction = -1
-        else:
-            self.direction = 1
 
     def first_move(self):
         if ((self.row == 1) and (self.colour == "Black")) or (
@@ -173,26 +175,31 @@ class Pawn(GameObject):
         return False
 
     def find_possible_moves(self, board, pieces_to_jump=0):
-        if board[self.row + self.direction][self.column] is None:
-            self.possible_moves.append(((self.row + self.direction), self.column))
+        dest_row = self.row + self.direction
+        dest_row_first = dest_row + self.direction  # first move can move two rows
+        if not (dest_row >= 0 and (dest_row <= 7)):
+            # pawn cannot go further
+            # TODO: pawn promotion when it reaches other base line
+            return
+
+        if board[dest_row][self.column] is None:
+            self.possible_moves.append(((dest_row), self.column))
             if self.first_move():
-                if board[self.row + (self.direction * 2)][self.column] is None:
-                    self.possible_moves.append(
-                        ((self.row + (self.direction * 2)), self.column)
-                    )
+                if board[dest_row_first][self.column] is None:
+                    self.possible_moves.append((dest_row_first, self.column))
         if self.column > 1:
-            dest_square = board[self.row + self.direction][self.column - 1]
+            dest_square = board[dest_row][self.column - 1]
             if (dest_square is not None) and (dest_square.colour != self.colour):
                 # take left
                 self.possible_moves.append(
-                    ((self.row + self.direction), (self.column - 1))
+                    ((dest_row), (self.column - 1))
                 )
         if self.column < 7:
-            dest_square = board[self.row + self.direction][self.column + 1]
+            dest_square = board[dest_row][self.column + 1]
             if (dest_square is not None) and (dest_square.colour != self.colour):
                 # take right
                 self.possible_moves.append(
-                    ((self.row + self.direction), (self.column + 1))
+                    ((dest_row), (self.column + 1))
                 )
 
 

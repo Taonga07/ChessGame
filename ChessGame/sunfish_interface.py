@@ -1,13 +1,15 @@
 from os.path import exists
-import requests
 import time
 
-from calculate_move import log # share logging
+from ChessGame.calculate_move import log # share logging
+
 
 path_to_sunfish='sunfish.py'
 url = "https://raw.githubusercontent.com/thomasahle/sunfish/master/sunfish.py"
 
 def url_download(path_to_file, url):
+    import requests
+
     # curl  https://raw.githubusercontent.com/thomasahle/sunfish/master/sunfish.py -o sunfish.py 
     log(f"{path_to_file} does not exist, downloading from {url}")
     r = requests.get(url)
@@ -166,7 +168,7 @@ def sunfish_auto_move(game):
         (ncommands, errs) = game.commands(moved)    # will toggle_turn
         log(f"{SunFishModel.COLOUR[colour]} command={moved}, from_pos={from_pos}, to_pos={to_pos}, taken={taken}, ncommands={ncommands}, errs={errs}, {game.dump(True)}")
 
-    return from_pos, to_pos, taken   # moves and taken piece
+    return moved, from_pos, to_pos, taken   # moves and taken piece
 
 def test1():
     # sanity check layout

@@ -1,22 +1,144 @@
 import random, copy, inspect, logging
 from tkinter import Toplevel
 from collections import defaultdict
-from API import CheckMateExc
+from ChessGame.API import ChessExc, CheckMateExc, ChessAPI, Position
 
+LOG_FLAG = True # set false to disable logging
 logger = logging
-if True:
+if LOG_FLAG:
     # import logger in other modules to share same log config
     logger.basicConfig(filename='chess_game.log', filemode='w', \
         level = logging.DEBUG, format= "%(message)s")
 
+def indent_spaces(indent=0):
+    return f"{' ':<4}"*indent
+
 def log(mess, indent=0):
-    # prefix start with indent number of tabs, right justify caller name 
-    caller = inspect.stack()[1][3]  # name of caller function
-    logger.debug(("\t"*indent) + f"{caller:>16}: {mess}")
+    # Output to logging, prefix start with indent number of tabs, right justify caller name.
+    # `LOG_FLAG and log(expr)` idiom used to avoid overhead of evaluation expr when no logging
+    if LOG_FLAG: 
+        caller = inspect.stack()[1][3]  # name of caller function
+        str = indent_spaces(indent) + f"{caller:>16}: {mess}"
+        logger.debug(str)
+
+def dict_str(name, dict_or_list, indent=0):
+    # convert list/dict to string. Used list.join() as only way I could find
+    # to get embedded newlines to work with logging
+    nitems = len(dict_or_list)
+    prefix = f"\n{indent_spaces(indent)}{name}[{nitems}] = "
+    str_list = []
+    str = ""
+    if isinstance(dict_or_list, dict):
+        if nitems > 0:
+            str_list = [f"{k} : {v}" for (k,v) in dict_or_list.items()]
+        str_list.insert(0, prefix + "{")
+        str_list[-1] += "}"
+        str = ("\n" + indent_spaces(indent+1)).join(str_list)
+    else:
+        str = prefix + "["
+        if nitems > 0:
+            str_list = [f"{v}" for v in dict_or_list]
+            str += ", ".join(str_list)
+        str += "]"
+    return str
+
+class Pieces():
+    # All the current turn pieces
+    def __init__(self, game, nest_level=1):
+        self.game = game
+        self.nest_level = nest_level
+        self.pieces = {} # dict of all pieces; key=(row, col), value=GameObject()
+        self.moves = {} # pos (row,col) that can move; value=list of destinations 
+        self.takes = {} # pos that can take; value=list of black pieces
+        self.take_moves = {} # dict of moves (pos, dest) :: take_value 
+        self.destinations = set()   # set of destinations to test if black can take
+        not_pawn_destinations = set() # same but excluding pawns as they can take diagonally
+        pawn_take_destinations = set() # possible pawn takes
+        self.kill_zone = set()  # non-pawn moves plus hypothetical pawn takes
+        self.move_vals = [] # moves list sorted on white piece value
+        self.take_vals = [] # take list sorted on black take value
+        self.king = None # king (row, col) location
+        self.total_value = 0 # value of all pieces
+        self.check_mate = False
+        self.check = False
+
+        for row_number in range(0, 8):
+            for column_number in range(0, 8):
+                # visit all squares to find pieces
+                row_col = (row_number, column_number) # from position
+                piece = game.get_piece_notation(row_col)
+                if piece != None and game.test_turn(piece.colour):
+                    game.select_piece_to_move(row_col) # update possible moves
+                    pos = game.pos_notation(row_col)
+                    self.pieces[pos] = piece
+                    (abbrv, value) = (piece.abbrv, piece.value)
+                    self.total_value += value
+                    if abbrv.lower() == 'k':
+                        self.king = pos
+
+                    if len(piece.possible_moves) > 0:
+                        self.moves[pos] = [game.pos_notation(_row_col) for _row_col in piece.possible_moves]
+                        self.destinations.update(self.moves[pos])
+                        if abbrv.lower() == 'p':
+                            # hmm .. tricky as pawn move changes to diagonal if a take
+                            dest_row = [row_number + piece.direction]
+                            dest_col = []
+                            if column_number < 7:
+                                dest_col.append(column_number+1)
+                            if column_number > 0:
+                                dest_col.append(column_number-1)
+                            pawn_take_destinations.update(
+                                [game.pos_notation((_r, _c)) 
+                                        for _r in dest_row for _c in dest_col])
+                        else:
+                            not_pawn_destinations.update(self.moves[pos])
+                        self.kill_zone = pawn_take_destinations | \
+                                            not_pawn_destinations
+
+                        moves = [(pos, dest, abbrv, value) for dest in self.moves[pos]]
+                        self.move_vals.extend(moves)
+
+                        takes = [op for op in 
+                            [game.get_piece_notation(dest) for dest in self.moves[pos]] 
+                                                    if op != None]
+                        if len(takes) > 0:
+                            self.takes[pos] = takes
+
+        self.move_vals.sort(key=lambda x: x[3], reverse=True) # sort on piece value, shuffle king to top
+        self.check_mate = True if self.king == None else False # king taken so checkmate
+        if self.check_mate:
+            raise CheckMateExc
+        
+        for pos in self.takes:
+            # list of take moves (pos, dest) in take value order
+            _p = self.pieces[pos]
+            for _t in self.takes[pos]:
+                self.take_moves[(pos, game.pos_notation(_t.pos()))] = \
+                                    (_p.abbrv, _p.value, _t.abbrv, _t.value)
+                self.take_vals.append(((pos, _p.abbrv, _p.value), \
+                    (game.pos_notation(_t.pos()), _t.abbrv, _t.value)))
+        self.take_vals.sort(key=lambda x: x[1][2], reverse=True) # sort on _t.value
+    
+    def __repr__(self):
+        indent = self.nest_level + 1
+        str = ""
+        str += f"Pieces() : {self.game.get_turn_colour()} total_value={self.total_value} king={self.king}"
+        str += f"{dict_str('pieces', self.pieces, indent)} "
+        str += f"{dict_str('moves', self.moves, indent)} "
+        str += f"{dict_str('takes', self.takes, indent)} "
+        str += f"{dict_str('take_moves', self.take_moves, indent)} "
+        str += f"{dict_str('move_vals', self.move_vals, indent)} "
+        str += f"{dict_str('take_vals', self.take_vals, indent)} "
+        str += f"{dict_str('destinations', self.destinations, indent)} "
+        str += f"{dict_str('kill_zone', self.kill_zone, indent)} "
+
+
+        return str
 
 class RandomMove():
-    PERM_TAKE_BIT = 0 # take()
-    PERM_DODGE_BIT = 1 # dodge()
+    PERM_SEMI_RANDOM_BIT = 0  # semi-random, avoid king moves and moving into kill zone
+    PERM_TAKE_BIT = 1 # take()
+    PERM_DODGE_BIT = 2 # dodge()
 
     class CheckMate(Exception):
         pass
@@ -26,110 +148,75 @@ class RandomMove():
         self.permutations = perm # bit msk of functions to run before random_move()
         self.nest_level = nest_level # debug nesting level, useful when try_move()
 
-        log('#'*16, indent=self.nest_level)
-        log(f"RandomMove: {game.get_turn_colour()} perm={self.permutations}, level={self.nest_level}", indent=self.nest_level)
-
-        # abstract name this colour variables white, but may actually be black move
-        # this colours moves
-        self.white_moves, self.white_takes, self.white_king, self.total_value = self.get_moves()
-        self.white_checkmate = True if self.white_king == None else False
-   
+        self.white = Pieces(game, nest_level+1) # this colours pieces
         game.toggle_turn() # swap turn
-        self.black_moves, self.black_takes, self.black_king, self.total_value = self.get_moves()   # other colours moves
-        self.black_checkmate = True if self.black_king == None else False
-        game.toggle_turn() # swap back
+        self.black = Pieces(game, nest_level+1) # other colour pieces
+        game.toggle_turn() # swap turn back
 
-        # (to, from) move that can take
-        self.white_take_moves, self.white_take_target = self.take_moves_targets(self.white_takes)
-        self.black_take_moves, self.black_take_target = self.take_moves_targets(self.black_takes)
+        self.white.check = True if not self.white.check_mate and \
+                (self.white.king in self.black.destinations) else False
+        self.black.check = True if not self.black.check_mate and \
+                (self.black.king in self.white.destinations) else False
 
-        self.white_check = True if not self.white_checkmate and (self.white_king in self.black_take_target) else False
-        self.black_check = True if not self.black_checkmate and (self.black_king in self.white_take_target) else False
-
-        self.white_dests = set([ v for k in self.white_moves.keys() for v in self.white_moves[k][1] ])
-        self.black_dests = set([ v for k in self.black_moves.keys() for v in self.black_moves[k][1] ])
-        self.shared_dest = self.white_dests & self.black_dests # intersect
         # white move that can be followed by black take
-        # TODO: Pawn diagonal take so not part of intersect
-        self.white_moves_black_take = {(k, v): (self.white_moves[k][0][0], self.white_moves[k][0][1]) \
-                    for k in self.white_moves.keys() for v in self.white_moves[k][1] if v in self.shared_dest}
+        # intersect (in both sets)
+        shared_dest = self.white.destinations & self.black.kill_zone
+        self.white_moves_black_take = {(pos, dest): game.get_piece_notation(pos)
+                    for pos in self.white.moves
+                        for dest in self.white.moves[pos] if dest in shared_dest}
+        
+        LOG_FLAG and log(self.__repr__())
 
-    def take_moves_targets(self, takes):
-        take_moves = {(_pos, _pm):(_a_v, _taken, _val) \
-                    for (_pos, _pm, _a_v, _taken, _val) in takes}
-        take_targets = defaultdict(list)
-        for k in take_moves.keys():
-            (_pos, _pm) = k 
-            take_targets[_pm].append((_pos, *take_moves[k]))
-        return take_moves, take_targets
+    def __repr__(self):
+        indent = self.nest_level
+        str = ""
+        str += f"RandomMove(): {self.game.get_turn_colour()} perm={self.permutations}"
+        str += "\n" + indent_spaces(indent) + f"white: check={self.white.check} pieces={self.white}"
+        str += "\n" + indent_spaces(indent) + f"black: check={self.black.check} pieces={self.black}"
+        str += f"{dict_str('white_moves_black_take', self.white_moves_black_take, indent)} "
+        return str
 
-    def get_moves(self):
-        all_moves = {}  # this colours moves
-        take_moves = [] # pieces this colour can take
-        king_pos = None # king location
-        total_value = 0 
-        game = self.game
-
-        for row_number in range(0, 8):
-            for column_number in range(0, 8):
-                # visit all pieces, my colour and other colour
-                pos = (row_number, column_number) # from
-                piece = game.get_piece(*pos)
-                if piece != None and game.test_turn(piece.colour):
-                    game.select_piece_to_move(pos) # update possible moves
-                    a_v = (piece.abbrv, piece.value)
-                    if a_v[0][0].lower() == 'k':
-                        king_pos = pos
-                    total_value =+ a_v[1]
-                    if len(piece.possible_moves) == 0:
-                        continue
-                    all_moves[pos] = (a_v, tuple(piece.possible_moves))
-                    for pm in piece.possible_moves:
-                        # iterate to moves and record what can be taken
-                        op = game.get_piece(*pm) # destination
-                        if op != None:
-                            take_moves.append((pos, pm, a_v, op.abbrv, op.value))
-
-        take_moves.sort(key=lambda x: x[4], reverse=True) # sort on value
-        log(f"{game.get_turn_colour()} " + 
-            f"all_moves[{len(all_moves)}] take_moves[{len(take_moves)}]={take_moves} " +
-                f"king_pos={king_pos}, total_value={total_value}", indent=self.nest_level)
-        return all_moves, take_moves, king_pos, total_value
+    def dest_then_black_take(self, dest):
+        res = dest in self.black.kill_zone
+        LOG_FLAG and log(f"{res} dest={dest}", indent=self.nest_level+1)
+        return res
 
     def take(self, val=-1):
         # PERM_TAKE, best value take greater than val
         move = None
         taken = '.'
         val = -1
-        for _take in self.white_takes:
+        for _take in self.white.take_vals:
             # first in list has (joint) highest value
-            (pos, pm, a_v, taken, _val) = _take
-            if _val < val:
-                break
-            _move = (pos, pm)
-            if _move in self.white_moves_black_take:
-                log(f"skipped _move={_move} in white_moves_black_take[{len(self.white_moves_black_take)}]={self.white_moves_black_take}", \
-                    indent=self.nest_level )
+            ((pos, p_abbrv, p_value), (t_pos, t_abbrv, t_value)) = _take
+            LOG_FLAG and log(f"piece={(pos, p_abbrv, p_value)}, take={(t_pos, t_abbrv, t_value)}", indent=self.nest_level+1)
+            if t_value < val:
+                break   
+            if self.dest_then_black_take(t_pos):
+                continue    # avoid as can be taken by black
             else:
-                move = (pos, pm, a_v[0])
-                val = _val
+                move = (pos, t_pos, p_abbrv)
+                taken = t_abbrv
+                val = t_value
                 break
-        log(f"move={move}, taken={taken}, val={val}", indent=self.nest_level)
+        LOG_FLAG and log(f"move={move}, taken={taken}, val={val}", indent=self.nest_level)
         return move, taken, val
     
     def dodge_list(self, val):
         # Check if I can be taken, have a value greater than val and 
         # there is a move that can be made
         froms = []
-        for dp in self.black_takes:
-            (pos, to, a_v, taken, defend_val) = dp # pos,to is the from,to of other colour
-            if defend_val <= val: 
+        for take_val in self.black.take_vals:
+            # take_val[0] is black, take_val[1] is white
+            (_tpos, _tabbrv, _tvalue) = take_val[1]
+            if _tvalue < val: 
                 # stop looking as attack better than defence
                 break
-            if to in self.white_moves:
-                froms.append((to, defend_val))
-        froms.sort(key=lambda x: x[1], reverse=True) # sort on value
-        log(f"froms={froms}", indent=self.nest_level+1)
+            if _tpos in self.white.moves:
+                # possible escape
+                froms.append(take_val[1])
+        froms.sort(key=lambda x: x[2], reverse=True) # sort on value
+        LOG_FLAG and log(f"froms={froms}", indent=self.nest_level+1)
         return froms
     
     def dodge(self, val):
@@ -141,55 +228,68 @@ class RandomMove():
 
         dodges = [] # escape moves that could be made
         takers = [] # escape moves that can take
-        black_dests = self.black_dests
-        white_take_moves = self.white_take_moves
 
-        for (pos, _pval) in froms:
-            for dest in self.white_moves[pos][1]:
+        for (pos, p_abbrv, p_value) in froms:
+            for dest in self.white.moves[pos]:
                 # loop through all possible (pos, dest) moves
-                if dest in black_dests:
+                if self.dest_then_black_take(dest):
                     # takeable so keep looking
                     continue
-                a_v = self.white_moves[pos][0]
-                _move = (pos, dest, a_v[0])
-                if (pos, dest) in white_take_moves:
+                _move = (pos, dest, p_abbrv)
+                move_val = (_move, p_value)
+                if (pos, dest) in self.white.take_moves:
                     # this move is a taker
-                    (_a_v, _taken, _val) = white_take_moves[(pos, dest)]
-                    takers.append((_move, _taken, _val)) # value of piece taken
-                dodges.append((_move, a_v[1])) # value of piece moving
+                    (pabbrv, pvalue_, taken, tvalue)= self.white.take_moves[(pos, dest)] # e.g. ('r', 4, 'P', 1)
+                    if tvalue > p_value: 
+                        # value of black piece taken gt white piece
+                        takers.append((move_val, taken, tvalue))
+                dodges.append(move_val) # value of piece moving
 
-        takers.sort(key=lambda x: x[2], reverse=True) # sort on value
+        # sort takers on dest value, dodges already sorted on from value
+        takers.sort(key=lambda x: x[2], reverse=True) 
+        LOG_FLAG and log(f"dodge takers [{len(takers)}]={takers}", indent=self.nest_level)
+        LOG_FLAG and log(f"dodges[{len(dodges)}]={dodges}", indent=self.nest_level)
+
+        pval = 0
         if len(takers):
-            (move, taken, val) = takers[0] # best value take move
-            log(f"takers move={move}, taken={taken}, val={val}, takers[{len(takers)}]={takers}", indent=self.nest_level)
-        if len(dodges):
-            log(f"dodges[{len(dodges)}]={dodges}", indent=self.nest_level)
-            _val = dodges[0][1] # dodges sorted on from value
-            if _val >= val:
-                # this piece value as good as any dodge take
-                move, taken, val = dodges[0][0], '.', _val
-                log(f"dodges move={move}, taken={taken}, val={val}", indent=self.nest_level+1)
+            # best value take move
+            ((move, pval), taken, val) = takers[0] 
+            LOG_FLAG and log(f"takers move={move}, piece_value={pval}, taken={taken}, taken_val={val}, takers[{len(takers)}]={takers}", indent=self.nest_level)
+        
+        # list of more valuable piece than taker
+        better_dodges = [(_move, _pval) for (_move, _pval) in dodges if _pval > pval]
+        if len(better_dodges):
+            move, taken, val = _move, '.', 0
+            LOG_FLAG and log(f"dodges move={move}, taken={taken}, val={val}", indent=self.nest_level+1)
 
         return move, taken, val
 
     def random_move(self):
-        # any move
+        # avoid moving king to reduce check jeopardy
         move = None
-        all_moves = []
-        white_moves = self.white_moves
-        if len(list(white_moves.keys())) > 0:
-            all_moves = [(k,v, white_moves[k][0][0]) \
-                            for k in list(white_moves.keys()) \
-                                for v in white_moves[k][1]]
-            move = random.choice(all_moves)
-        log(f"move={move}", indent=self.nest_level)
+        moves = self.white.move_vals # fmt: (pos, dest, abbrv, value)
+
+        if len(moves) > 0:
+            if self.permutations & (1 << RandomMove.PERM_SEMI_RANDOM_BIT):
+                avoid_take = [_m for _m in moves if not self.dest_then_black_take(_m[1])]
+                if len(avoid_take):
+                    moves = avoid_take  # avoid a move that is then taken
+                non_king = [_m for _m in moves if _m[2].lower() != 'k']
+                if len(non_king):
+                    moves = non_king   # avoid king going on a suicide run
+            move = random.choice(moves)[:3]
+        LOG_FLAG and log(f"move={move}", indent=self.nest_level)
         return move
     
     def get_move(self, perm=-1):
-        from_pos, to_pos, taken = (None, None), (None, None), '.'
+        # return: (pos, dest, abbrv), taken
         move, taken, val = None, '.', -1
         if perm == -1:
             perm = self.permutations
+        
+        if self.white.check:
+            # In check so look for move to get out of check
+            return self.escape_check()
         
         if perm & (1 << RandomMove.PERM_TAKE_BIT):
              res = self.take(val)
@@ -204,65 +304,88 @@ class RandomMove():
             if res[0] != None:
                 (move, taken, val) = res
         
-        log(f"move={move}, taken={taken}, val={val}", indent=self.nest_level)
-        return move, taken, val
+        LOG_FLAG and log(f"move={move}, taken={taken}", indent=self.nest_level)
+        return move, taken
 
-    def check(self):
+    def escape_check(self):
         # Try all moves and return one that changes check state
         # TODO: rework to find move to put other into check
+        # return: (pos, dest, abbrv), taken
+        global LOG_FLAG
+        log_flag = LOG_FLAG  # disable log in try_move
+        abbrv, pos, dest, taken = "", None, None, "." 
         move = None
         not_check = []
+        indent = self.nest_level + 1
+
+        if not self.white.check:
+            return (pos, dest, abbrv), taken
         
-        if self.white_king in self.white_moves:
-            for _move in [(pos, pm) for pos in self.white_moves \
-                                        for pm in self.white_moves[pos][1]]:
-                rm = self.try_move(_move)
-                if rm.check != self.check:
+        LOG_FLAG and log(f"started", indent=indent)
+
+        for pos in self.white.moves:
+            for dest in self.white.moves[pos]:
+                _move = (pos, dest)
+                LOG_FLAG and log(f"try {_move}", indent=indent)
+                LOG_FLAG = False # suppress log to avoid data overload
+                try:
+                    # RandomMove() as a result of _move
+                    rm = self.try_move(_move, self.nest_level+1)
+                except ChessExc as exc:
+                    LOG_FLAG = log_flag
+                    LOG_FLAG and log(f"dodgy {_move} {exc}, {exc.err}", indent=indent)
+                    continue
+            
+                if rm.white.check != self.white.check:
                     # Found a move to get out of check
-                    # Insert king move at start of list, else append
-                    not_check.insert(0 if _move[0] == self.white_king else len(not_check), _move)
-        
+                    not_check.append((_move, rm.white.total_value))
+                LOG_FLAG = log_flag
+        not_check.sort(key=lambda x: x[1], reverse=True) # sort on total_value
+
         if len(not_check):
-            move = not_check[0]
+            LOG_FLAG and log(dict_str("not_check", not_check, indent))
+            move = not_check[0][0] # best total_value
+        
+        if move == None:
+            self.white.check_mate = True
+            raise CheckMateExc
 
-        log( f"move={move}, not_check[{len(not_check)}]={not_check}", indent=self.nest_level)
-        return move
+        if move in self.white.take_moves:
+            (abbrv, value, taken, t_value) = self.white.take_moves[move]
+        else:
+            abbrv = self.game.get_piece_notation(pos).abbrv
+        move = (pos, dest, abbrv)
 
-    def try_move(self, move):
+        LOG_FLAG and log(f"{(move), taken}", indent=indent)
+        return move, taken
+
+    def try_move(self, move, nest_level):
+        # copy the game and make the move. Return summary of board positions
+        (pos, dest) = move
+        pos = Position.notation_pos(pos) 
+        dest = Position.notation_pos(dest)
         dupl_game = copy.deepcopy(self.game)
-        dupl_game.move(*move)
-        rm = RandomMove(dupl_game, self.permutations, nest_level=2)
+        dupl_game.move(pos, dest) # use row_col
+        rm = RandomMove(dupl_game, 0, nest_level=nest_level)
         return rm
 
 def random_auto_move(game, perm=-1):
-    # Return move to make, in: Headless_ChessGame(), out: from, to, taken or '.'
-    from_pos, to_pos, taken = (None, None), (None, None), '.'
+    # Return move to make, in: Headless_ChessGame(), out: abbrv, from, to, taken or '.'
+    abbrv, from_pos, to_pos, taken = '.', None, None, '.'
     colour = game.get_turn_colour()
     rm = RandomMove(game, perm)
-    checkmate = rm.white_checkmate    # king previously taken
-    if rm.white_check:
-        # In check so look for move to get out of check
-        move = rm.check()
-        if move != None:
-            if move in rm.white_take_moves:
-                (_a_v, taken, _val) = rm.white_take_moves[move]
-            log(f"escape check move={move}, taken={taken}", indent=rm.nest_level)
-            return move[0], move[1], taken
-        checkmate = True
-    if checkmate:
-        raise CheckMateExc
 
-    move, taken, val = rm.get_move(perm)
+    move, taken = rm.get_move(perm)
     if move:
-        from_pos, to_pos = move[0], move[1]
-        moved = f"{move[2]}{from_pos}:{to_pos}"
+        (from_pos, to_pos, abbrv) = move
+        moved = f"{abbrv}{from_pos}:{to_pos}"
 
         (ncommands, errs) = game.commands(moved)    # will toggle_turn
-        log(f"command={moved}, from_pos={from_pos}, to_pos={to_pos}, taken={taken}, ncommands={ncommands}, errs={errs}, {game.dump(True)}")
+        LOG_FLAG and log(f"{game.nturn} command={moved}, from_pos={from_pos}, to_pos={to_pos}, taken={taken}, ncommands={ncommands}, errs={errs}, {game.dump(True)}")
         if len(errs) > 0:
-            from_pos, to_pos, taken = (None, None), (None, None), '.'
+            abbrv, from_pos, to_pos, taken = '.', None, None, '.'
 
     if taken.lower() == 'k':
         print(f"Checkmate {colour} takes {taken}")
 
-    return from_pos, to_pos, taken   # moves and taken piece
+    return abbrv, from_pos, to_pos, taken   # moves and taken piece
