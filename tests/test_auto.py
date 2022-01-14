@@ -17,10 +17,6 @@ class RandomMove():
     PERM_DODGE_BIT = 2 # dodge()
     PERM_LOOKAHEAD_BIT = 3 # lookahead()
 '''
-PERM_ALL = (1 << RandomMove.PERM_SEMI_RANDOM_BIT) | \
-        (1 << RandomMove.PERM_TAKE_BIT) | \
-        (1 << RandomMove.PERM_DODGE_BIT)
-PERM_LOOKAHEAD = (1 << RandomMove.PERM_LOOKAHEAD_BIT)
 
 def test1(game=Headless_ChessGame(file=None)):
     setup1_white = "Qc1; Ke1; Pd2; Pe2"
@@ -53,7 +49,7 @@ def test1(game=Headless_ChessGame(file=None)):
             move, taken = rm.get_move(perm)
             print(f"test1 {colour} {game.nturn} {hex(perm)} : {move} {taken}")
 
-def test2(game=Headless_ChessGame(file=None), perm=PERM_ALL, testname='test2'):
+def test2(game=Headless_ChessGame(file=None), perm=RandomMove.perm_notlook, testname='test2'):
     # Anastasia’s Mate
     setup_white = "Kg1; Re3; Ne7"
     setup_black = "kh7; pg7; be8"

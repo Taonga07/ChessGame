@@ -1,22 +1,24 @@
 """
-Auto python tests using 'pytest' (`pip3 install pytest`) 
-To run all tests:       pytest test1.py
-To list avalable tests: pytest test1.py --collect-only  
-To run specific test:   pytest test1.py -k test2_moveto
+Auto python tests using 'pytest' (`pip3 install pytest`)
+https://docs.pytest.org/en/6.2.x/goodpractices.html
 
-If Chess2030 module not installed, add PYTHONPATH prefix e.g.:
-$ PYTHONPATH=$PWD/ChessGame/ pytest test1.py
+Tests are in subdir ChessGame/tests so ChessGame/.. directory needs to be on
+the PYTHONPATH to access the module i.e. PYTHONPATH=$PWD pytest tests/test_test1.py
+Instead, run from top dir via `python -m pytest`
+
+pytest descends subdirs and runs tests that are in file names that 
+start "test_" and functions that start with "test":
+- To run all tests from topdir:   python3 -m pytest
+- To list all avalable tests:     python3 -m pytest --collect-only
+- To run a specific test file:    python3 -m pytest -k test_test1
+- To run specific test:           python3 -m pytest -k test6_dodgy
 
 Generate report of test coverage (`pip3 install coverage`):
-$ PYTHONPATH=$PWD/ChessGame coverage run  -m pytest test1.py
+$ PYTHONPATH=$PWD coverage run  -m pytest -k test_test1.py
 $ coverage report # basic report
 $ coverage html && firefox htmlcov/index.html # html to zoom into source lines
 Note: a test objective is to visit all source lines, so use coverage report
 to identify tests to add.
-
-TODO: I want to move this file into a subdirectory but could not get the import
-to work, e.g. PYTHONPATH=$PWD/../ChessGame pytest test1.py 
-
 """
 # fmt: off
 import pytest

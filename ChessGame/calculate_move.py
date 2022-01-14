@@ -1,6 +1,6 @@
 import random, copy, inspect, logging
 from ChessGame.API import ChessExc, CheckMateExc, ChessAPI, Position
-import threading
+import threading, time, os
 
 '''
 Useful links:
@@ -9,8 +9,9 @@ Useful links:
 3. [Coding Adventure: Chess AI](https://youtu.be/U4ogK0MIzqk) **highly recommended**
 4. https://en.wikipedia.org/wiki/Chess_strategy
 '''
-
-LOG_FLAG = True # set false to disable logging
+LOG_FLAG = False
+if os.getenv('ChessGame_LOG'):
+    LOG_FLAG = True # set false to disable logging
 logger = logging
 if LOG_FLAG:
     # import logger in other modules to share same log config
@@ -147,6 +148,9 @@ class RandomMove():
     PERM_TAKE_BIT = 1 # take()
     PERM_DODGE_BIT = 2 # dodge()
     PERM_LOOKAHEAD_BIT = 3 # lookahead()
+    perm_all = -1
+    perm_lookahead = (1 << PERM_LOOKAHEAD_BIT)
+    perm_notlook = perm_all & ~perm_lookahead # all but lookahead, to slow at the moment
 
     class CheckMate(Exception):
         pass
@@ -290,10 +294,14 @@ class RandomMove():
     
     def get_move(self, perm=-1):
         # return: (pos, dest, abbrv), taken
+        colour = self.game.get_turn_colour()
         move, taken, val = None, '.', -1
         if perm == -1:
             perm = self.permutations
         
+        LOG_FLAG and log(16*"+" + f" start {self.game.nturn} {colour} perm={perm}")
+        start_time = time.perf_counter()
+
         if self.white.check:
             # In check so look for move to get out of check
             return self.escape_check()
@@ -319,7 +327,10 @@ class RandomMove():
                     LOG_FLAG and log(f"{res} differs from previous move={move}")
                 (move, taken) = res        
         
-        LOG_FLAG and log(f"move={move}, taken={taken}", indent=self.nest_level)
+        LOG_FLAG and log(16*"-" + f" move={move}, taken={taken}; " + 
+            f"{colour} : duration={time.perf_counter()-start_time:0.4f} " +
+            f"nwhite={len(self.white.pieces)}, nblack={len(self.black.pieces)}", 
+                indent=self.nest_level)
         return move, taken
 
     def escape_check(self):
@@ -410,7 +421,11 @@ class RandomMove():
             print(f"try {colour} {move}: {exc}, {exc.err} ")
         
         # 'white' before move is 'black' after auto
-        post_am = RandomMove(dupl_rm.game, 0, nest_level=nest_level)
+        try:
+            post_am = RandomMove(dupl_rm.game, 0, nest_level=nest_level)
+        except ChessExc as exc:
+            LOG_FLAG and log(f"{colour} {move}: {exc}, {exc.err}")
+
         return  (dupl_rm.black.total_value, dupl_rm.white.total_value)
 
     def lookahead(self):
@@ -427,7 +442,7 @@ class RandomMove():
         thread_flag = False
 
         LOG_FLAG and log(f"started", indent=indent)
-        #LOG_FLAG = False # suppress log to avoid info overload
+        LOG_FLAG = False # suppress log to avoid info overload
 
         for pos in self.white.moves:
             for dest in self.white.moves[pos]:
@@ -495,8 +510,10 @@ class myThread (threading.Thread):
         (self.white_total, self.black_total) = \
             self.rm.try_white(self.move, self.nest_level)
 
-def random_auto_move(game, perm=-1):
-    # Return move to make, in: Headless_ChessGame(), out: abbrv, from, to, taken or '.'
+def random_auto_move(game, perm=RandomMove.perm_notlook):
+    # Return move to make
+    # in: Headless_ChessGame(), perm=bit mask of move permutations e.g. take()
+    # out: abbrv, from, to, taken or '.'
     abbrv, from_pos, to_pos, taken = '.', None, None, '.'
     colour = game.get_turn_colour()
     rm = RandomMove(game, perm)
@@ -511,7 +528,7 @@ def random_auto_move(game, perm=-1):
         if len(errs) > 0:
             abbrv, from_pos, to_pos, taken = '.', None, None, '.'
 
-    if taken.lower() == 'k':
-        print(f"Checkmate {colour} takes {taken}")
+    if False and taken.lower() == 'k':
+        print(f"Checkmate {colour} takes king: {move}, {taken}")
 
     return abbrv, from_pos, to_pos, taken   # moves and taken piece
