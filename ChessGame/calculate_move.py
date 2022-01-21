@@ -9,9 +9,19 @@ Useful links:
 3. [Coding Adventure: Chess AI](https://youtu.be/U4ogK0MIzqk) **highly recommended**
 4. https://en.wikipedia.org/wiki/Chess_strategy
 '''
-LOG_FLAG = False
-if os.getenv('ChessGame_LOG'):
-    LOG_FLAG = True # set false to disable logging
+LOG_OFF=0
+LOG_LOW=1
+LOG_MED=2
+LOG_HIGH=3
+LOG_FLAG = LOG_OFF # set 0 to disable logging
+log_env = os.getenv('ChessGame_LOG')
+if log_env:
+    LOG_FLAG = LOG_LOW 
+    try:
+        LOG_FLAG = int(log_env)
+    except:
+        pass
+
 logger = logging
 if LOG_FLAG:
     # import logger in other modules to share same log config
@@ -114,9 +124,6 @@ class Pieces():
 
         self.move_vals.sort(key=lambda x: x[3], reverse=True) # sort on piece value, shuffle king to top
         self.check_mate = True if self.king == None else False # king taken so checkmate
-        if self.check_mate:
-            raise CheckMateExc
-        
         for pos in self.takes:
             # list of take moves (pos, dest) in take value order
             _p = self.pieces[pos]
@@ -139,8 +146,6 @@ class Pieces():
         str += f"{dict_str('take_vals', self.take_vals, indent)} "
         str += f"{dict_str('destinations', self.destinations, indent)} "
         str += f"{dict_str('kill_zone', self.kill_zone, indent)} "
-
-
         return str
 
 class RandomMove():
@@ -151,9 +156,6 @@ class RandomMove():
     perm_all = -1
     perm_lookahead = (1 << PERM_LOOKAHEAD_BIT)
     perm_notlook = perm_all & ~perm_lookahead # all but lookahead, to slow at the moment
-
-    class CheckMate(Exception):
-        pass
 
     def __init__(self, game, perm=-1, nest_level=1):
         self.game = game
@@ -178,20 +180,20 @@ class RandomMove():
                     for pos in self.white.moves
                         for dest in self.white.moves[pos] if dest in shared_dest}
         
-        LOG_FLAG and log(self.__repr__())
+        (LOG_FLAG >= LOG_HIGH) and log(self.__repr__())
 
     def __repr__(self):
         indent = self.nest_level
         str = ""
         str += f"RandomMove(): {self.game.get_turn_colour()} perm={hex(self.permutations)}"
-        str += "\n" + indent_spaces(indent) + f"white: check={self.white.check} pieces={self.white}"
-        str += "\n" + indent_spaces(indent) + f"black: check={self.black.check} pieces={self.black}"
+        str += "\n" + indent_spaces(indent) + f"'white': check={self.white.check} pieces={self.white}"
+        str += "\n" + indent_spaces(indent) + f"'black': check={self.black.check} pieces={self.black}"
         str += f"{dict_str('white_moves_black_take', self.white_moves_black_take, indent)} "
         return str
 
     def dest_then_black_take(self, dest):
         res = dest in self.black.kill_zone
-        LOG_FLAG and log(f"{res} dest={dest}", indent=self.nest_level+1)
+        (LOG_FLAG >= LOG_HIGH) and log(f"{res} dest={dest}", indent=self.nest_level+1)
         return res
 
     def take(self, val=-1):
@@ -229,7 +231,7 @@ class RandomMove():
                 # possible escape
                 froms.append(take_val[1])
         froms.sort(key=lambda x: x[2], reverse=True) # sort on value
-        LOG_FLAG and log(f"froms={froms}", indent=self.nest_level+1)
+        (LOG_FLAG >= LOG_HIGH) and log(f"froms={froms}", indent=self.nest_level+1)
         return froms
     
     def dodge(self, val):
@@ -258,14 +260,14 @@ class RandomMove():
 
         # sort takers on dest value, dodges already sorted on from value
         takers.sort(key=lambda x: x[2], reverse=True) 
-        LOG_FLAG and log(f"dodge takers [{len(takers)}]={takers}", indent=self.nest_level)
-        LOG_FLAG and log(f"dodges[{len(dodges)}]={dodges}", indent=self.nest_level)
+        (LOG_FLAG >= LOG_HIGH) and log(f"dodge takers [{len(takers)}]={takers}", indent=self.nest_level)
+        (LOG_FLAG >= LOG_HIGH) and log(f"dodges[{len(dodges)}]={dodges}", indent=self.nest_level)
 
         pval = 0
         if len(takers):
             # best value take move
             ((move, pval), taken, val) = takers[0] 
-            LOG_FLAG and log(f"takers move={move}, piece_value={pval}, taken={taken}, taken_val={val}, takers[{len(takers)}]={takers}", indent=self.nest_level)
+            (LOG_FLAG >= LOG_HIGH) and log(f"takers move={move}, piece_value={pval}, taken={taken}, taken_val={val}, takers[{len(takers)}]={takers}", indent=self.nest_level)
         
         # list of more valuable piece than taker
         better_dodges = [(_move, _pval) for (_move, _pval) in dodges if _pval > pval]
@@ -352,14 +354,12 @@ class RandomMove():
         for pos in self.white.moves:
             for dest in self.white.moves[pos]:
                 _move = (pos, dest)
-                LOG_FLAG and log(f"try {_move}", indent=indent)
+                (LOG_FLAG >= LOG_HIGH) and log(f"try {_move}", indent=indent)
                 LOG_FLAG = False # suppress log to avoid info overload
-                try:
-                    # RandomMove() as a result of _move
-                    rm = self.try_move(_move, self.permutations, self.nest_level+1, reset_turn=True)
-                except ChessExc as exc:
+                rm = self.try_move(_move, self.permutations, self.nest_level+1)
+                if rm == None:
                     LOG_FLAG = log_flag
-                    LOG_FLAG and log(f"dodgy {_move} {exc}, {exc.err}", indent=indent)
+                    LOG_FLAG and log(f"dodgy {_move}", indent=indent)
                     continue
             
                 if rm.white.check != self.white.check:
@@ -378,55 +378,63 @@ class RandomMove():
         
         if move == None:
             self.white.check_mate = True
-            raise CheckMateExc
-
-        (pos, dest) = move
-        if move in self.white.take_moves:
-            (abbrv, value, taken, t_value) = self.white.take_moves[move]
         else:
-            abbrv = self.game.get_piece_notation(pos).abbrv
-        move = (pos, dest, abbrv)
+            (pos, dest) = move
+            if move in self.white.take_moves:
+                (abbrv, value, taken, t_value) = self.white.take_moves[move]
+            else:
+                abbrv = self.game.get_piece_notation(pos).abbrv
+            move = (pos, dest, abbrv)
 
         LOG_FLAG and log(f"{(move), taken}", indent=indent)
         return move, taken
 
-    def try_move(self, move, perm, nest_level, reset_turn=False):
-        # copy the game and make the move. Return summary of board positions
+    def try_move(self, move, perm, nest_level):
+        # copy the game and make the move. Return summary of 'white' board positions
+        rm = None
         (pos, dest) = move
         _perm = perm & ~(1 << RandomMove.PERM_LOOKAHEAD_BIT) # dont lookahead
+        turn = self.game.turn
+        (LOG_FLAG >= LOG_MED) and log(f"'white' {self.game.get_turn_colour()} {_perm} {move}", nest_level)
 
-        colour = self.game.get_turn_colour()
-        pos = Position.notation_pos(pos) 
-        dest = Position.notation_pos(dest)
         dupl_game = copy.deepcopy(self.game)
-        dupl_game.move(pos, dest) # use row_col
-        if reset_turn:
-            # move has toggled turn so reset to original
-            dupl_game.turn = dupl_game.turn_dict[colour]
-        rm = RandomMove(dupl_game, _perm, nest_level=nest_level)
+        dupl_game.nturn = self.game.nturn*1000 # makes it easier to follow in trace
+        try:
+            dupl_game.move_pos(pos, dest)
+            dupl_game.turn = turn # move has toggled turn so reset to original
+            rm = RandomMove(dupl_game, _perm, nest_level=nest_level)
+        except ChessExc as exc:
+            assert False, f"internal error: try_move {move} raises exception: {exc} {exc.err}"
+
         return rm
 
     def try_white(self, move, nest_level):
         # 'white' move followed by 'black' auto reply
         # return (white.total, black.total) after auto.
         colour = self.game.get_turn_colour()
+        turn = self.game.turn # turn colour index
         perm = self.permutations & ~(1 << RandomMove.PERM_LOOKAHEAD_BIT) # dont lookahead
         dupl_rm = None
+        am = None # aut_move result
+        white_total = black_total = -1
         
-        try:
-            dupl_rm = self.try_move(move, perm, nest_level) # white
+        (LOG_FLAG >= LOG_MED) and log(f"'white' {colour} {move}", nest_level)
+        dupl_rm = self.try_move(move, perm, nest_level) # 'white'
+        if dupl_rm != None:
+            dupl_rm.game.toggle_turn() # 'black'
             am = random_auto_move(dupl_rm.game, perm) # black
-            LOG_FLAG and log(f"{colour} {move}: black {am}")
-        except ChessExc as exc:
-            print(f"try {colour} {move}: {exc}, {exc.err} ")
-        
-        # 'white' before move is 'black' after auto
-        try:
-            post_am = RandomMove(dupl_rm.game, 0, nest_level=nest_level)
-        except ChessExc as exc:
-            LOG_FLAG and log(f"{colour} {move}: {exc}, {exc.err}")
 
-        return  (dupl_rm.black.total_value, dupl_rm.white.total_value)
+        if am != None:
+            # 'white' before move is 'black' after auto
+            (totals, pieces) = dupl_rm.game.game_values()
+            white_total = totals[turn]
+            black_total = totals[int(not(turn))]
+        else:
+            (LOG_FLAG >= LOG_MED) and log(f"'black' no move so loses")
+            white_total = 999
+            black_total = -1
+
+        return  (white_total, black_total)
 
     def lookahead(self):
         # return: (pos, dest, abbrv), taken
@@ -480,10 +488,16 @@ class RandomMove():
                     break # stop looking
                 else:
                     best_totals.append(total)
-            LOG_FLAG and log(dict_str("totals", totals, indent))
-            LOG_FLAG and log(dict_str("best_totals", best_totals, indent))
+            (LOG_FLAG >= LOG_HIGH) and log(dict_str("totals", totals, indent))
+            (LOG_FLAG >= LOG_MED) and log(dict_str("best_totals", best_totals, indent))
 
-            pos_dest = totals[0][0] # best total_value delta
+            pos_dest = best_totals[0][0] # best total_value delta
+            for total in best_totals:
+                # avoid moving king
+                (pos, dest) = _move = total[0]
+                if pos != self.white.king:
+                    pos_dest = _move
+                    break
 
         if pos_dest:
             (pos, dest) = pos_dest
@@ -516,7 +530,9 @@ def random_auto_move(game, perm=RandomMove.perm_notlook):
     # out: abbrv, from, to, taken or '.'
     abbrv, from_pos, to_pos, taken = '.', None, None, '.'
     colour = game.get_turn_colour()
-    rm = RandomMove(game, perm)
+    rm = RandomMove(game, perm) # can throw ChessExc exception
+    if rm.white.check_mate or rm.black.check_mate:
+        return None
 
     move, taken = rm.get_move(perm)
     if move:
@@ -527,8 +543,8 @@ def random_auto_move(game, perm=RandomMove.perm_notlook):
         LOG_FLAG and log(f"{game.nturn} command={moved}, from_pos={from_pos}, to_pos={to_pos}, taken={taken}, ncommands={ncommands}, errs={errs}, {game.dump(True)}")
         if len(errs) > 0:
             abbrv, from_pos, to_pos, taken = '.', None, None, '.'
+        elif taken.lower() == 'k':
+            print(f"Checkmate {colour} takes king: {move}, {taken}")
+        move = (abbrv, from_pos, to_pos, taken)   # moves and taken piece
 
-    if False and taken.lower() == 'k':
-        print(f"Checkmate {colour} takes king: {move}, {taken}")
-
-    return abbrv, from_pos, to_pos, taken   # moves and taken piece
+    return move

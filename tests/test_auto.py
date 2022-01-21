@@ -66,35 +66,28 @@ def test2(game=Headless_ChessGame(file=None), perm=RandomMove.perm_notlook, test
     move, taken = rm.get_move(perm)
     print(f"{testname} get_move {colour} {game.nturn} {hex(perm)} : {move} {taken}")
     assert move == ('e8', 'h5', 'b') and taken == "."
+
     # second test auto_move which uses get_move() to make the move
-    try:
-        (abbrv, from_pos, to_pos, taken) = random_auto_move(game, perm) # black
-    except ChessExc as exc:
-        assert False, f"unexpected exception {exc}"
+    _move = random_auto_move(game, perm) # black
+    assert _move != None, f"unexpected no move"
+    (abbrv, from_pos, to_pos, taken) = _move
+
     move = (from_pos, to_pos, abbrv)
     print(f"{testname} auto_move {colour} {game.nturn} {hex(perm)} : {move} {taken} {game.dump(unicode=True)}")
     assert move == ('e8', 'h5', 'b') and taken == "."
 
     # white
-    try:
-        (abbrv, from_pos, to_pos, taken) = random_auto_move(game, perm) # black
-    except ChessExc as exc:
-        assert False, f"unexpected exception {exc}"
+    _move = random_auto_move(game, perm) # white
+    assert _move != None, f"unexpected no move"
+    (abbrv, from_pos, to_pos, taken) = _move
+
     move = (from_pos, to_pos, abbrv)
     print(f"{testname} auto_move {game.nturn} {hex(perm)} : {move} {taken} {game.dump(unicode=True)}")
     assert move == ('h3', 'h5', 'R') and taken == "b"
 
     # black check mate 
-    raised_exc = None
-    try:
-        (abbrv, from_pos, to_pos, taken) = random_auto_move(game, perm) # black
-    except ChessExc as exc:
-            raised_exc = exc
-            if isinstance(raised_exc, CheckMateExc):
-                print(f"{testname} Expected CheckMate : {exc}")
-            else:
-                assert False, f"unexpected exception {exc}"
-    assert isinstance(raised_exc, CheckMateExc)
+    _move = random_auto_move(game, perm) # black
+    assert _move == None, f"Expected CheckMate"
 
 def test3(perm=-1, testname='test3'):
     test2(game=Headless_ChessGame(file=None), perm=perm, testname=testname)

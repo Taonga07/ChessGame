@@ -76,6 +76,15 @@ class ChessTurn:
                 colour=k
                 break
         return colour
+    
+    @staticmethod
+    def get_turn(colour):
+        # Return colour turn index, 'white':0, 'black':1, else -1
+        res = -1
+        _colour = colour.lower()
+        if _colour in ChessTurn.turn_dict:
+            res = ChessTurn.turn_dict[_colour]
+        return res
 
 class Position():
 
@@ -234,10 +243,15 @@ class ChessAPI(ChessTurn, Position):
         return to_square
 
     def move(self, from_pos, to_pos):
-        """Move piece at from_pos to to_pos"""
+        """Move piece at from_pos to to_pos, can raise ChessExc exception"""
         from_piece = self.movefrom(*from_pos)
         to_piece = self.moveto(*to_pos)
         return to_piece
+    
+    def move_pos(self, pos, dest):
+        pos = Position.notation_pos(pos) 
+        dest = Position.notation_pos(dest)
+        self.move(pos, dest) # use row_col
 
     @staticmethod
     def new_board():
@@ -386,6 +400,28 @@ class ChessAPI(ChessTurn, Position):
         if unicode:
             str = f"{str}\n   a b c d e f g h \n"
         return str
+    
+    def game_values(self):
+        # Return: [white_val, black_val], [white_pieces[], black_pieces[]] 
+        # where _val is total piece values and _pieces is list of pieces sorted
+        # on piece value (so king value 10 is first)
+        pieces = [[],[]]
+        values = [-1, -1]
+        for row_number in range(0, 8):
+            for column_number in range(0, 8):
+                # visit all squares to find pieces
+                row_col = (row_number, column_number)
+                piece = self.get_piece_notation(row_col)
+                if piece != None:
+                    idx = self.get_turn(piece.colour)
+                    (abbrv, value) = (piece.abbrv, piece.value)
+                    pieces[idx].append((f"{abbrv}{self.pos_notation(row_col)}", value))
+                    values[idx] += value
+        for idx in range(len(pieces)):
+            if len(pieces[idx]):
+                pieces[idx].sort(key=lambda x: x[1], reverse=True) # sort on value, expect king first
+        
+        return values, pieces
 
     def __repr__(self):
         # string representation
