@@ -2,6 +2,13 @@ sudo snap install pypy3
 sudo snap install pypy3-pip
 /usr/local/bin/pypy3 -m ensurepip
 /usr/local/bin/pypy3 -m pip install --upgrade pip
-pypy3 -m pip install pytest requests
 
+#all tests
+pypy3 -m pip install pytest requests
 pypy3 -m pytest
+
+#profile test_perm.py to and use snakeviz gui to see where spending most of the time
+pypy3 -m pip install cProfile snakeviz
+cd tests
+pypy3 -m cProfile -o test_perm.prof test_perm.py
+snakeviz test_perm.prof

@@ -58,6 +58,7 @@ def test2(game=Headless_ChessGame(file=None), perm=RandomMove.perm_notlook, test
     command = f"{setup_white}; {setup_black}; {white_attack}"
     (ncommands, errs) = game.commands(command)
     print(f"{testname} dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}")
+    assert ncommands == 7 and len(errs) == 0, f"unexpected commands error in {command}"
 
     # sacrifice black bishop to escape check
     colour = game.get_turn_colour()
@@ -92,9 +93,38 @@ def test2(game=Headless_ChessGame(file=None), perm=RandomMove.perm_notlook, test
 def test3(perm=-1, testname='test3'):
     test2(game=Headless_ChessGame(file=None), perm=perm, testname=testname)
 
+def test4(game=Headless_ChessGame(file=None), perm=RandomMove.perm_notlook, testname='test4'):
+    setup_white = "Kc1; Qa7"
+    setup_black = "bc8; kd8"
+    white_attack = 'Qa7:a8'
+
+    command = f"{setup_white}; {setup_black}; {white_attack}"
+    (ncommands, errs) = game.commands(command)
+    print(f"{testname} dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}")
+    assert ncommands == 5 and len(errs) == 0, f"unexpected commands error in {command}"
+
+     # second test auto_move which uses get_move() to make the move
+    move = random_auto_move(game, perm) # black
+    assert move != None, f"unexpected no move"
+    (abbrv, from_pos, to_pos, taken) = move
+    print(f"{testname} auto_move {game.nturn} {hex(perm)} : {move} {taken} {game.dump(unicode=True)}")
+
+    if perm == RandomMove.perm_notlook:
+        # crude logic moves bishop as does not realise exposing king
+        assert abbrv == 'b', f"{perm} Expected 'b' to have been moved, but got {abbrv}"
+    else:
+        # lookahead will move king as better
+        assert abbrv == 'k', f"{perm} Expected 'k' to have been moved, but got {abbrv}"
+
+def test5(perm=RandomMove.perm_all, testname='test5'):
+    # use lookahead so move king and not bishop
+    test4(game=Headless_ChessGame(file=None), perm=perm, testname=testname)
+
 if __name__ == "__main__":
     # invoked by python and not pytest
     test1()
     test2()
     test3()
+    test4()
+    test5()
     pass

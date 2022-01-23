@@ -270,6 +270,7 @@ class RandomMove():
             (LOG_FLAG >= LOG_HIGH) and log(f"takers move={move}, piece_value={pval}, taken={taken}, taken_val={val}, takers[{len(takers)}]={takers}", indent=self.nest_level)
         
         # list of more valuable piece than taker
+        _move = None
         better_dodges = [(_move, _pval) for (_move, _pval) in dodges if _pval > pval]
         if len(better_dodges):
             move, taken, val = _move, '.', 0
@@ -544,7 +545,7 @@ def random_auto_move(game, perm=RandomMove.perm_notlook):
         if len(errs) > 0:
             abbrv, from_pos, to_pos, taken = '.', None, None, '.'
         elif taken.lower() == 'k':
-            print(f"Checkmate {colour} takes king: {move}, {taken}")
+            LOG_FLAG and log(f"Checkmate {colour} takes king: {move}, {taken}")
         move = (abbrv, from_pos, to_pos, taken)   # moves and taken piece
 
     return move

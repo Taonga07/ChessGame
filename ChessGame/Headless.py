@@ -31,6 +31,7 @@ class Headless_ChessGame(ChessAPI):
         self, Game_File, Game_Folder=abspath(join(dirname(__file__), "Games"))
     ):
         board = [[None] * 8 for row in range(8)]
+        turn = 0
         input_data = open(join(Game_Folder, Game_File), "r").readlines()
         for i, line in enumerate(input_data):
             if i == 0:

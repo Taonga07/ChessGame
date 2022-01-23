@@ -46,7 +46,8 @@ def test1(game=Headless_ChessGame(), testname="test1", max_index=5):
 if __name__ == "__main__":
     # invoked by python and not pytest
     res = []
-    for index in range(3):
+    index = 0
+    for index in range(1):
         res.append(test1(Headless_ChessGame(), max_index=100))
     print(f"res[{len(res)}] = {res}, sum = {sum([elem[0] for elem in res])}, " +
         f"average moves={sum([elem[1] for elem in res])/(index+1):0.1f}")
