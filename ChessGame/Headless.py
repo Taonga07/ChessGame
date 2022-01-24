@@ -125,6 +125,15 @@ class Headless_ChessGame(ChessAPI):
             else:
                 raise InvColourExc
         return False
+    
+    def move_board(self, piece, dest):
+        # move GameObject piece to dest (row, col)
+        (dest_row, dest_col) = dest
+        self.board[dest_row][dest_col] = piece
+
+        self.board[piece.row][piece.column] = None
+        (piece.row, piece.column) = (dest_row, dest_col)
+        self.nturn += 1
 
     def move_selected_piece(self, square_clicked):
         clicked_row, clicked_cloumn = square_clicked
@@ -137,12 +146,6 @@ class Headless_ChessGame(ChessAPI):
                 "Move Not Allowed",
                 "Your piece cannot move there!",
             )
-        self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][
-            piece_to_move.column
-        ]
-        self.board[piece_to_move.row][piece_to_move.column] = None
-        piece_to_move.row = clicked_row
-        piece_to_move.column = clicked_cloumn
-        self.nturn += 1
+        self.move_board(piece_to_move, square_clicked)
         self.toggle_turn()
         return ChessErrs.ErrNone, ("Move Allowed", "You can move here")

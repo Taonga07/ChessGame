@@ -95,10 +95,21 @@ class GameObject:
             else:
                 break
         return moves
-
-    def find_moves(self, board, path_to_king):
+    
+    def set_possible_moves(self, board):
         self.possible_moves = []
         self.find_possible_moves(board)
+        possible_moves = []
+        for move in self.possible_moves:
+            moving_piece = board[move[0]][move[1]]
+            if (
+                (moving_piece is not None) and (moving_piece.colour != self.colour)
+            ) or (moving_piece is None):
+                possible_moves.append(move)
+        self.possible_moves = possible_moves
+
+    def find_moves(self, board, path_to_king):
+        self.set_possible_moves(board)
         if len(path_to_king) > 0:  # if we are in check
             if self.piece == "King":  # king can move out of check
 
@@ -108,14 +119,6 @@ class GameObject:
             else:  # king can not block itelf from check
                 # remove piece in possible moves that is not your colour
                 self.possible_moves = list(set(self.possible_moves) & set(path_to_king))
-        possible_moves = []
-        for move in self.possible_moves:
-            moving_piece = board[move[0]][move[1]]
-            if (
-                (moving_piece is not None) and (moving_piece.colour != self.colour)
-            ) or (moving_piece is None):
-                possible_moves.append(move)
-        self.possible_moves = possible_moves
         self.remove_check_moves(board)
 
     def find_path_to_king(self, king_row, king_column):

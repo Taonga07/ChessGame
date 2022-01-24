@@ -145,30 +145,6 @@ def test6_dodgy(game=Headless_ChessGame(), testname="test6", max_index=5):
             break
         index = index+1
 
-def test7(game=Headless_ChessGame(), testname="test7", max_index=100):
-    index=0
-    checkmate_flag = False
-    perm_rand = (1 << RandomMove.PERM_SEMI_RANDOM_BIT)
-    while True:
-        colour = game.get_turn_colour()
-        perm = RandomMove.perm_notlook if colour == 'white' else perm_rand  # white take and dodge; black is random
-        _move = random_auto_move(game, perm)
-        if _move == None: 
-            assert checkmate_flag == True, f"no move only expected when checkmate_flag:{checkmate_flag} True"
-            break
-        else:
-            assert checkmate_flag == False, f"move expected when checkmate_flag:{checkmate_flag} False" 
-            abbrv, from_pos, to_pos, taken = _move
-
-        if taken.lower() == 'k':
-            print(f"{testname} checkmate move {index} {colour} takes {taken}")
-            checkmate_flag = True
-            # break # DBG allow to play next move to check exception raised
-
-        if index > max_index:
-            break
-        index = index+1
-
 if __name__ == "__main__":
     # invoked by python and not pytest
     if True:
@@ -177,9 +153,6 @@ if __name__ == "__main__":
         test4() # easier to sanity check
         test3()
         test5()
-        test7()
         test6_dodgy()
-    if False:
-        cProfile.run('test7()')
-    pass
+
 

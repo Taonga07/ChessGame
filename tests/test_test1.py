@@ -238,7 +238,7 @@ def test7_mate(game=Headless_ChessGame()):
     print(
         f"test7 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}"
     )
-    game.save_file("test7.txt")
+    #game.save_file("test7.txt")
 
     ntok = len(command.split(";"))
     assert (
@@ -246,7 +246,7 @@ def test7_mate(game=Headless_ChessGame()):
         and len(errs) == 1
         and errs[0][0] == ntok - 1
         and errs[0][1] == ChessErrs.ErrCheckMate
-    )
+    ), f"Expected CheckMate"
 
 
 def test8_check2(game=Headless_ChessGame()):
@@ -255,7 +255,7 @@ def test8_check2(game=Headless_ChessGame()):
     print(
         f"test8 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}"
     )
-    game.save_file("test8.txt")
+    #game.save_file("test8.txt")
 
     ntok = len(command.split(";"))
     assert (

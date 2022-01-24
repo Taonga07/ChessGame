@@ -10,7 +10,7 @@ BLACK_WIN = -1
 DRAW = 0
 
 #lookahead takes ages so reduce max_index if pytest
-def test1(game=Headless_ChessGame(), testname="test1", max_index=5):
+def test1(game=Headless_ChessGame(), testname="test1", max_index=30):
     index=0
     res = DRAW
     (abbrv, from_pos, to_pos, taken) = "", None, None, "."

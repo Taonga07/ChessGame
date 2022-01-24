@@ -64,6 +64,7 @@ class Pieces():
     # All the current turn pieces
     def __init__(self, game, nest_level=1):
         self.game = game
+        self.colour = game.get_turn_colour()
         self.nest_level = nest_level
         self.pieces = {} # dict of all pieces; key=(row, col), value=GameObject()
         self.moves = {} # pos (row,col) that can move; value=list of destinations 
@@ -86,8 +87,8 @@ class Pieces():
                 row_col = (row_number, column_number) # from position
                 piece = game.get_piece_notation(row_col)
                 if piece != None and game.test_turn(piece.colour):
-                    game.select_piece_to_move(row_col) # update possible moves
                     pos = game.pos_notation(row_col)
+                    piece.set_possible_moves(game.board) # game.select_piece_to_move(row_col) # update possible moves
                     self.pieces[pos] = piece
                     (abbrv, value) = (piece.abbrv, piece.value)
                     self.total_value += value
@@ -137,7 +138,7 @@ class Pieces():
     def __repr__(self):
         indent = self.nest_level + 1
         str = ""
-        str += f"Pieces() : {self.game.get_turn_colour()} total_value={self.total_value} king={self.king}"
+        str += f"Pieces() : {self.colour} total_value={self.total_value} king={self.king}"
         str += f"{dict_str('pieces', self.pieces, indent)} "
         str += f"{dict_str('moves', self.moves, indent)} "
         str += f"{dict_str('takes', self.takes, indent)} "
@@ -401,7 +402,9 @@ class RandomMove():
         dupl_game = copy.deepcopy(self.game)
         dupl_game.nturn = self.game.nturn*1000 # makes it easier to follow in trace
         try:
-            dupl_game.move_pos(pos, dest)
+            #dupl_game.move_pos(pos, dest)
+            piece = dupl_game.get_piece_notation(pos)
+            dupl_game.move_board(piece, Position.notation_pos(dest))
             dupl_game.turn = turn # move has toggled turn so reset to original
             rm = RandomMove(dupl_game, _perm, nest_level=nest_level)
         except ChessExc as exc:
@@ -542,9 +545,9 @@ def random_auto_move(game, perm=RandomMove.perm_notlook):
 
         (ncommands, errs) = game.commands(moved)    # will toggle_turn
         LOG_FLAG and log(f"{game.nturn} command={moved}, from_pos={from_pos}, to_pos={to_pos}, taken={taken}, ncommands={ncommands}, errs={errs}, {game.dump(True)}")
-        if len(errs) > 0:
-            abbrv, from_pos, to_pos, taken = '.', None, None, '.'
-        elif taken.lower() == 'k':
+        assert len(errs) == 0, \
+            f"Unexpected commands error turn={game.nturn} command={moved}, from_pos={from_pos}, to_pos={to_pos}, taken={taken}, ncommands={ncommands}, errs={errs}, {game.dump(True)}"
+        if taken.lower() == 'k':
             LOG_FLAG and log(f"Checkmate {colour} takes king: {move}, {taken}")
         move = (abbrv, from_pos, to_pos, taken)   # moves and taken piece
 
