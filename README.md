@@ -1,4 +1,12 @@
 # Chess2030 - Master
+[![Pylint](https://github.com/Taonga07/Chess2030/actions/workflows/pylint.yml/badge.svg)](https://github.com/Taonga07/Chess2030/actions/workflows/pylint.yml)
+[![Pytest](https://github.com/Taonga07/Chess2030/actions/workflows/pytest.yml/badge.svg)](https://github.com/Taonga07/Chess2030/actions/workflows/pytest.yml)
+[![Run on Repl.it](https://repl.it/badge/github/Taonga07/Chess2030)](https://repl.it/github/Taonga07/Chess2030)
+![open issues](https://img.shields.io/github/issues-raw/Taonga07/Chess2030)
+![closed issues](https://img.shields.io/github/issues-closed-raw/Taonga07/Chess2030)
+![open pull requets](https://img.shields.io/github/issues-pr/taonga07/Chess2030)
+![closed pullrequests](https://img.shields.io/github/issues-pr-closed-raw/taonga07/chess2030)
+![activity](https://img.shields.io/github/commit-activity/y/taonga07/Chess2030)
 
 ![image](https://i.ibb.co/DK14y3k/Screenshot-from-2021-09-23-19-17-35.png)
 
@@ -17,9 +25,6 @@ A list of jobs for this game can be found here.
 - [x] highlight possible moves
 - [x] all pieces on board
 - [x] all pieces can move
+- [x] tests
 - [ ] check / checkmate
 - [ ] ompasount
-
-[![button](https://user-images.githubusercontent.com/56770626/81318448-2f315100-9086-11ea-90e0-f983cff24e33.png)](https://repl.it/@Taonga07/Chess2030)
-
-Hope you enjoy!
