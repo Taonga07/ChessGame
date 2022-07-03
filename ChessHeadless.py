@@ -10,7 +10,7 @@ class CheckExc(ChessExc):
 
 class CheckMateExc(ChessExc):
     def __init__(self, msg="Check: you're in check"):
-        super(CheckMateExc, self).__init__(msg)
+        super().__init__(msg)
 
 class InvMoveExc(ChessExc):
     def __init__(self, msg='Invalid move'):
