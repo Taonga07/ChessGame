@@ -236,7 +236,7 @@ class ChessHeadless():
         pieces_that_cant_move, piece_on_board = 0, 0
         for row_number in range(0, 8):
             for column_number in range(0, 8):
-                if self.board[row_number][column_number] != None:
+                if self.board[row_number][column_number] is not None:
                     if clicked_piece.colour == self.board[row_number][column_number].colour:
                         if self.check_against_check(self.board[row_number][column_number]):
                             pieces_that_cant_move += 1
