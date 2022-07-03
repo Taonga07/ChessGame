@@ -4,7 +4,7 @@ from ChessHeadless import ChessHeadless, InvMoveExc, CheckExc, CheckMateExc
 
 class ChessGame(ChessHeadless):
     def __init__(self, window, square_colours=('White', 'Grey'), file='New_Game.txt'):
-        super(ChessGame, self).__init__(file)
+        super().__init__(file)
         self.square_colours = square_colours
         self.window = window
         self.layout_board()
