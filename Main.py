@@ -1,6 +1,5 @@
 # pylint: disable=wildcard-import, C0413
-from ChessGame.Headless import Headless_ChessGame
-from ChessGame.Gui import Gui_ChessGame
+# fmt: off
 from os.path import join, dirname
 import sys
 
@@ -14,7 +13,6 @@ class Game():
         self.create_menu_bar(self)
         filemenu = Menu(self.menubar, tearoff=0)
         editmenu = Menu(self.menubar, tearoff=0)
-
         filemenu.add_command(label="New", command=lambda: self.onNew())
         filemenu.add_command(label="Open", command=lambda: self.onOpen())
         filemenu.add_command(label="Save", command=lambda: self.onSave())

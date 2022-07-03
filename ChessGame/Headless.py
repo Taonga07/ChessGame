@@ -1,5 +1,6 @@
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
+from requests import get
 
 from ChessGame.Pieces import Pawn, Rook, Knight, Bishop, Queen, King
 from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
@@ -8,11 +9,9 @@ from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
 class Headless_ChessGame(ChessAPI):
     def __init__(self, file="New_Game.txt") -> None:
         super(ChessAPI, self).__init__()
-
-        self.create_game_save_folder()  # give user template game_files
         self.from_pos = (0, 0)  # previously 'first_click'
         if file:
-            self.board, self.turn = self.read_game_data(file)
+            self.board, self.turn = self.read_game_data()
         else:
             self.board = self.new_board()
         self.nturn = 0  # number of turns
