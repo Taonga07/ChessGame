@@ -222,7 +222,7 @@ class ChessHeadless():
                     self.board[row_number][column_number].find_moves(self.board, [])
                     for move in self.board[row_number][column_number].possible_moves:
                         square = self.board[move[0]][move[1]] # row, column
-                        if (square != None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
+                        if (square is not None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
                             atackers_pos.append((row_number, column_number))
                             paths_to_king += self.board[row_number][column_number].find_path_to_king(move[0], move[1])
                             # code above should add to the paths_to_king it values not the whole list
