@@ -186,7 +186,7 @@ class ChessHeadless():
                     errs.append((indext, err_mess))
             else:
                 np = None
-                if piece == None:
+                if piece is None:
                     # New piece only if square empty
                     np = self.notation_piece(token[0])
                 if np:
