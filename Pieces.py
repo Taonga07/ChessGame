@@ -106,8 +106,7 @@ class GameObject():
         # string representation
         #return f"({self.__class__}){self} : {vars(self)}"
         return f"{self.__class__} : {vars(self)}"
-
-
+   
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Pawn', colour, column, row, 1)

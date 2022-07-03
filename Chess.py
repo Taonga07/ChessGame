@@ -3,8 +3,8 @@ from tkinter import messagebox, PhotoImage, Tk, Label, N, S, W, E
 from ChessHeadless import ChessHeadless, InvMoveExc, CheckExc, CheckMateExc
 
 class ChessGame(ChessHeadless):
-    def __init__(self, window, square_colours=('White', 'Grey'), file='New_Game.txt'):
-        super().__init__(file)
+    def __init__(self, window, square_colours=('White', 'Grey'), savedir='Games', file='New_Game.txt'):
+        super().__init__(savedir, file)
         self.square_colours = square_colours
         self.window = window
         self.layout_board()
