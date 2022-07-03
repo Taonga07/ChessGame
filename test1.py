@@ -71,7 +71,7 @@ def test2_moveto(game=ChessHeadless.ChessHeadless()):
     to_pos = moves[0] # first possible move
     to_piece = game.get_piece(*to_pos)
     print(f"to piece at {to_pos}: {to_piece}")
-    assert to_piece == None
+    assert to_piece is None
 
     try:
         to_square = game.moveto(*to_pos)
