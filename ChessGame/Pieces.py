@@ -1,8 +1,9 @@
 from os.path import dirname, abspath, join
 import sys
 
-
 class GameObject:
+    uni_pieces = {'R':'♜', 'N':'♞', 'B':'♝', 'Q':'♛', 'K':'♚', 'P':'♟',
+                  'r':'♖', 'n':'♘', 'b':'♗', 'q':'♕', 'k':'♔', 'p':'♙', '.':'·'}
     def __init__(self, piece, colour, column, row, value):
         self.row, self.value, self.piece, self.InCheck = row, value, piece, False
         self.colour, self.column, self.possible_moves = colour, column, []
@@ -12,7 +13,9 @@ class GameObject:
         )
         # first char, e.g. 'P' for Pawn
         self.abbrv = "N" if self.piece == "Knight" else self.piece[0]
+        self.direction = -1
         if self.colour == "Black":
+            self.direction = 1
             self.abbrv = (
                 self.abbrv.lower()
             )  # e.g. 'p' for Pawn, or 'n' for black knight
@@ -92,10 +95,21 @@ class GameObject:
             else:
                 break
         return moves
-
-    def find_moves(self, board, path_to_king):
+    
+    def set_possible_moves(self, board):
         self.possible_moves = []
         self.find_possible_moves(board)
+        possible_moves = []
+        for move in self.possible_moves:
+            moving_piece = board[move[0]][move[1]]
+            if (
+                (moving_piece is not None) and (moving_piece.colour != self.colour)
+            ) or (moving_piece is None):
+                possible_moves.append(move)
+        self.possible_moves = possible_moves
+
+    def find_moves(self, board, path_to_king):
+        self.set_possible_moves(board)
         if len(path_to_king) > 0:  # if we are in check
             if self.piece == "King":  # king can move out of check
 
@@ -105,14 +119,6 @@ class GameObject:
             else:  # king can not block itelf from check
                 # remove piece in possible moves that is not your colour
                 self.possible_moves = list(set(self.possible_moves) & set(path_to_king))
-        possible_moves = []
-        for move in self.possible_moves:
-            moving_piece = board[move[0]][move[1]]
-            if (
-                (moving_piece is not None) and (moving_piece.colour != self.colour)
-            ) or (moving_piece is None):
-                possible_moves.append(move)
-        self.possible_moves = possible_moves
         self.remove_check_moves(board)
 
     def find_path_to_king(self, king_row, king_column):
@@ -148,19 +154,21 @@ class GameObject:
         else:
             return self.find_possible_moves(board)
 
+    def pos(self):
+        # (row, column) tuple
+        return (self.row, self.column)
+
     def __repr__(self):
         # string representation
-        # return f"({self.__class__}){self} : {vars(self)}"
-        return f"{self.__class__} : {vars(self)}"
-
+        #return f"{self.__class__} : {vars(self)}"
+        pos = (self.row, self.column)
+        return f"{self.colour}, {pos}, " + \
+            f"{self.abbrv}, value={self.value},  possible_move[{len(self.possible_moves)}] = " + \
+            f"{self.possible_moves}"
 
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
         super().__init__("Pawn", colour, column, row, 1)
-        if self.colour == "White":
-            self.direction = -1
-        else:
-            self.direction = 1
 
     def first_move(self):
         if ((self.row == 1) and (self.colour == "Black")) or (
@@ -170,26 +178,31 @@ class Pawn(GameObject):
         return False
 
     def find_possible_moves(self, board, pieces_to_jump=0):
-        if board[self.row + self.direction][self.column] is None:
-            self.possible_moves.append(((self.row + self.direction), self.column))
+        dest_row = self.row + self.direction
+        dest_row_first = dest_row + self.direction  # first move can move two rows
+        if not (dest_row >= 0 and (dest_row <= 7)):
+            # pawn cannot go further
+            # TODO: pawn promotion when it reaches other base line
+            return
+
+        if board[dest_row][self.column] is None:
+            self.possible_moves.append(((dest_row), self.column))
             if self.first_move():
-                if board[self.row + (self.direction * 2)][self.column] is None:
-                    self.possible_moves.append(
-                        ((self.row + (self.direction * 2)), self.column)
-                    )
+                if board[dest_row_first][self.column] is None:
+                    self.possible_moves.append((dest_row_first, self.column))
         if self.column > 1:
-            dest_square = board[self.row + self.direction][self.column - 1]
+            dest_square = board[dest_row][self.column - 1]
             if (dest_square is not None) and (dest_square.colour != self.colour):
                 # take left
                 self.possible_moves.append(
-                    ((self.row + self.direction), (self.column - 1))
+                    ((dest_row), (self.column - 1))
                 )
         if self.column < 7:
-            dest_square = board[self.row + self.direction][self.column + 1]
+            dest_square = board[dest_row][self.column + 1]
             if (dest_square is not None) and (dest_square.colour != self.colour):
                 # take right
                 self.possible_moves.append(
-                    ((self.row + self.direction), (self.column + 1))
+                    ((dest_row), (self.column + 1))
                 )
 
 
@@ -233,7 +246,7 @@ class Bishop(GameObject):
 
 class King(GameObject):
     def __init__(self, colour, column, row):
-        super().__init__("King", colour, column, row, 1)
+        super().__init__("King", colour, column, row, 10)
         self.check_moves = []
 
     def find_possible_moves(self, board, pieces_to_jump=0):

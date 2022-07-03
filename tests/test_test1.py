@@ -1,22 +1,24 @@
 """
-Auto python tests using 'pytest' (`pip3 install pytest`) 
-To run all tests:       pytest test1.py
-To list avalable tests: pytest test1.py --collect-only  
-To run specific test:   pytest test1.py -k test2_moveto
+Auto python tests using 'pytest' (`pip3 install pytest`)
+https://docs.pytest.org/en/6.2.x/goodpractices.html
 
-If Chess2030 module not installed, add PYTHONPATH prefix e.g.:
-$ PYTHONPATH=$PWD/ChessGame/ pytest test1.py
+Tests are in subdir ChessGame/tests so ChessGame/.. directory needs to be on
+the PYTHONPATH to access the module i.e. PYTHONPATH=$PWD pytest tests/test_test1.py
+Instead, run from top dir via `python -m pytest`
+
+pytest descends subdirs and runs tests that are in file names that 
+start "test_" and functions that start with "test":
+- To run all tests from topdir:   python3 -m pytest
+- To list all avalable tests:     python3 -m pytest --collect-only
+- To run a specific test file:    python3 -m pytest -k test_test1
+- To run specific test:           python3 -m pytest -k test6_dodgy
 
 Generate report of test coverage (`pip3 install coverage`):
-$ PYTHONPATH=$PWD/ChessGame coverage run  -m pytest test1.py
+$ PYTHONPATH=$PWD coverage run  -m pytest -k test_test1.py
 $ coverage report # basic report
 $ coverage html && firefox htmlcov/index.html # html to zoom into source lines
 Note: a test objective is to visit all source lines, so use coverage report
 to identify tests to add.
-
-TODO: I want to move this file into a subdirectory but could not get the import
-to work, e.g. PYTHONPATH=$PWD/../ChessGame pytest test1.py 
-
 """
 # fmt: off
 import pytest
@@ -62,7 +64,7 @@ def test1_layout(game=Headless_ChessGame()):
         assert isinstance(board[r][3], Queen)
         assert isinstance(board[r][4], King)
 
-        print(f"test1 dump: {game.dump()}")
+        print(f"test1 dump: {game.dump(unicode=True)}")
         return game
 
 
@@ -104,7 +106,7 @@ def test2_moveto(game=Headless_ChessGame()):
     print(f"to_square[{to_pos}]: {to_square}")
     assert game.get_piece(*from_pos) == None  # check from cleared
 
-    print(f"test2 dump: {game.dump()}")
+    print(f"test2 dump: {game.dump(unicode=True)}")
 
     ########################
     # test3_move(): 2nd move black pawn
@@ -121,7 +123,7 @@ def test2_moveto(game=Headless_ChessGame()):
     assert to_piece == from_piece
     assert len(to_piece.history) == 1 and to_piece.history[0] == (from_pos, to_pos)
 
-    print(f"test3 dump: {game.dump()}")
+    print(f"test3 dump: {game.dump(unicode=True)}")
     return game
 
 
@@ -190,7 +192,7 @@ def test6_check():
 
     # white king in check
     (ncommands, errs) = game.commands("ke8; Ke2; Ba3; Qc3; ra2")
-    print(f"test6 init {ncommands}: {errs}, {game.dump()}")
+    print(f"test6 init {ncommands}: {errs}, {game.dump(unicode=True)}")
     # game.save_file('test6.txt')
     assert errs == []
 
@@ -234,9 +236,9 @@ def test7_mate(game=Headless_ChessGame()):
     command = "Pe2:e4; pf7:f5; Pe4:f5; pg7:g5; Qd1:h5"
     (ncommands, errs) = game.commands(command)
     print(
-        f"test7 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump()}"
+        f"test7 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}"
     )
-    game.save_file("test7.txt")
+    #game.save_file("test7.txt")
 
     ntok = len(command.split(";"))
     assert (
@@ -244,16 +246,16 @@ def test7_mate(game=Headless_ChessGame()):
         and len(errs) == 1
         and errs[0][0] == ntok - 1
         and errs[0][1] == ChessErrs.ErrCheckMate
-    )
+    ), f"Expected CheckMate"
 
 
 def test8_check2(game=Headless_ChessGame()):
     command = "Pe2:e4; pd7:d5; Bf1:b5; ph7:h5"
     (ncommands, errs) = game.commands(command)
     print(
-        f"test8 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump()}"
+        f"test8 dump: command={command}, ncommands={ncommands}, errs={errs}, {game.dump(unicode=True)}"
     )
-    game.save_file("test8.txt")
+    #game.save_file("test8.txt")
 
     ntok = len(command.split(";"))
     assert (
