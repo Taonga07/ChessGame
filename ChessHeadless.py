@@ -14,7 +14,7 @@ class CheckMateExc(ChessExc):
 
 class InvMoveExc(ChessExc):
     def __init__(self, msg='Invalid move'):
-        super(InvMoveExc, self).__init__(msg)
+        super().__init__(msg)
 
 class ChessHeadless():
     def __init__(self, file='New_Game.txt'):
