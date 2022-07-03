@@ -203,7 +203,8 @@ class ChessHeadless():
         turn = 0
         board = self.new_board()
         if file:
-            input_data = open(f'Games/{file}', 'r').readlines()
+            with open(f'Games/{file}', 'r') as f:
+                input_data = f.readlines()
             for i, line in enumerate(input_data):
                 if i == 0: turn = int(line.rstrip())
                 else:
