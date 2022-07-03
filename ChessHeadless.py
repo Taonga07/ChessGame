@@ -252,7 +252,7 @@ class ChessHeadless():
             linebuff = '' 
             for column_number in range(0, 8):
                 piece = self.board[row_number][column_number]
-                c = '.' if piece == None else piece.abbrv
+                c = '.' if piece is None else piece.abbrv
                 linebuff = f"{linebuff}{c} "
             str = f"{str}\n{linebuff}"
         return str
