@@ -165,7 +165,7 @@ class ChessHeadless():
                 continue
 
             np = self.notation_piece(groups[0])
-            if np == None:
+            if np is None:
                 continue
             from_pos = self.notation_pos(groups[1])
             piece = self.get_piece(*from_pos)
