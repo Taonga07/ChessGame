@@ -6,7 +6,7 @@ class ChessExc(Exception):
 
 class CheckExc(ChessExc):
     def __init__(self, msg='Checkmate: end of game'):
-        super(CheckExc, self).__init__(msg)
+        super().__init__(msg)
 
 class CheckMateExc(ChessExc):
     def __init__(self, msg="Check: you're in check"):
