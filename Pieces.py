@@ -3,9 +3,9 @@ class GameObject():
         self.row, self.value, self.piece, self.InCheck = row, value, piece, False
         self.colour, self.column, self.possible_moves = colour, column, []
         self.icon = 'Chess_Resources/'+self.colour+'_'+self.piece+'.gif'
-        self.abbrv = 'N' if self.piece == 'Knight' else self.piece[0]  # first char, e.g. 'P' for Pawn
+        self.abbrv = self.piece[0]  # first char, e.g. 'P' for Pawn
         if self.colour == 'Black':
-            self.abbrv = self.abbrv.lower()  # e.g. 'p' for Pawn, or 'n' for black knight 
+            self.abbrv = self.abbrv.lower()  # e.g. 'p' for Pawn 
         self.history = []
 
     def highlight_moves(self, window, board):
@@ -26,12 +26,12 @@ class GameObject():
             for column in range(8):
                 if self.piece == 'king':
                     for move in self.possible_moves:
-                        #if it is not my own piece
-                        if board[row][column] != None and board[row][column] != board[self.row][self.column]:
-                            # generate moves from piece we are checking to edge of board as if we had moved
+                        #if fit is not my own piece
+                        if board[move[0]][move[1]] != None and board[move[0]][move[1]] != board[self.row][self.column]:
+                            # generate moves from piece we are checking to edge of board in direction of current possible move
                             if (self.row, self.column) in board[row][column].path_past_self(board, (move[0], move[1])):
                                 local_moves.append(move)
-                else: # if king not piece clicked clicked we check if the king is on our row
+                else: # if we are a king we check if the king is on our row
                     if board[row][column] != None and board[row][column].piece == 'King' and board[row][column].colour == self.colour:
                         if (row, column) in board[board[row][column].row][board[row][column].column].path_past_self(board, (self.row, self.column)):
                             self.possible_moves = []
@@ -65,7 +65,6 @@ class GameObject():
         self.find_possible_moves(board)
         if len(path_to_king) > 0: #if we are in check
             if self.piece == 'King': #king can move out of check
-                
                 self.possible_moves = [move for move in self.possible_moves if move not in path_to_king]
             else: #king can not block itelf from check
                 self.possible_moves = list(set(self.possible_moves) & set(path_to_king))        #remove piece in possible moves that is not your colour
@@ -107,7 +106,7 @@ class GameObject():
         # string representation
         #return f"({self.__class__}){self} : {vars(self)}"
         return f"{self.__class__} : {vars(self)}"
-
+   
 class Pawn(GameObject):
     def __init__(self, colour, column, row):
         super().__init__('Pawn', colour, column, row, 1)

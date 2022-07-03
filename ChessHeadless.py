@@ -1,6 +1,5 @@
 import re
 from Pieces import Pawn, Rook, Bishop, Queen, King, Knight
-
 class ChessErrs():
     ErrCheckMate = -1
     ErrCheck = -2
@@ -41,8 +40,7 @@ class ChessHeadless():
     
     def movefrom(self, row, col):
         from_square = self.get_piece(row, col)
-
-        if (from_square != None) and ( 
+        if (from_square is not None) and ( 
             ((self.turn == 0) and (from_square.colour == 'White')) or 
             ((self.turn == 1) and (from_square.colour == 'Black'))):
             if self.check_for_checkmate(from_square):
@@ -171,13 +169,13 @@ class ChessHeadless():
             m = re.match(f'({pieces_fmt})({pos_fmt})\:?({pos_fmt})?$', token)
             groups = m.groups() if m else None
             #print(f"DBG token {token} == {groups}")
-            if groups == None or (groups[0] == None and groups[-1] == None):
+            if groups is None or (groups[0] is None and groups[-1] is None):
                 err_mess = f"invalid command token index [{indext}]:{token}"
-                errs.append((indext, ChessErrs.ErrInvCommand, err_mess))
+                errs.append((indext, err_mess))
                 continue
 
             np = self.notation_piece(groups[0])
-            if np == None:
+            if np is None:
                 continue
             from_pos = self.notation_pos(groups[1])
             piece = self.get_piece(*from_pos)
@@ -198,7 +196,7 @@ class ChessHeadless():
                     errs.append((indext, ChessErrs.ErrInvCommandMove, err_mess))
             else:
                 np = None
-                if piece == None:
+                if piece is None:
                     # New piece only if square empty
                     np = self.notation_piece(token[0])
                 if np:
@@ -215,7 +213,8 @@ class ChessHeadless():
         turn = 0
         board = self.new_board()
         if filename:
-            input_data = open(f'{filename}', 'r').readlines()
+            with open(f'Games/{filename}', 'r') as f:
+                input_data = f.readlines()
             for i, line in enumerate(input_data):
                 if i == 0: turn = int(line.rstrip())
                 else:
@@ -240,16 +239,16 @@ class ChessHeadless():
         paths_to_king, atackers_pos = [], []
         for row_number in range(0, 8):
             for column_number in range(0, 8):
-                if self.board[row_number][column_number]!= None and self.board[row_number][column_number].colour != clicked_piece.colour:
+                if self.board[row_number][column_number] is not None and self.board[row_number][column_number].colour == clicked_piece.colour:
                     self.board[row_number][column_number].find_moves(self.board, [])
                     for move in self.board[row_number][column_number].possible_moves:
                         square = self.board[move[0]][move[1]] # row, column
-                        if (square != None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
+                        if (square is not None) and (square.piece == 'King') and (square.colour == clicked_piece.colour): #our king is in check
                             atackers_pos.append((row_number, column_number))
                             paths_to_king += self.board[row_number][column_number].find_path_to_king(move[0], move[1])
                             # code above should add to the paths_to_king it values not the whole list
-        clicked_piece.find_moves(self.board, paths_to_king)
         if len(paths_to_king) > 0: # you are in check
+            clicked_piece.find_moves(self.board, paths_to_king)
             if len(clicked_piece.possible_moves) == 0:
                 return True # we can't move
         return False
@@ -258,7 +257,7 @@ class ChessHeadless():
         pieces_that_cant_move, piece_on_board = 0, 0
         for row_number in range(0, 8):
             for column_number in range(0, 8):
-                if self.board[row_number][column_number] != None:
+                if self.board[row_number][column_number] is not None:
                     if clicked_piece.colour == self.board[row_number][column_number].colour:
                         if self.check_against_check(self.board[row_number][column_number]):
                             pieces_that_cant_move += 1
@@ -274,7 +273,7 @@ class ChessHeadless():
             linebuff = '' 
             for column_number in range(0, 8):
                 piece = self.board[row_number][column_number]
-                c = '.' if piece == None else piece.abbrv
+                c = '.' if piece is None else piece.abbrv
                 linebuff = f"{linebuff}{c} "
             str = f"{str}\n{linebuff}"
         return str

@@ -1,6 +1,8 @@
-from tkinter import filedialog, Menu, Tk, PhotoImage, colorchooser
-from Chess import ChessGame
-from os.path import split
+# pylint: disable=wildcard-import, C0413
+from ChessGame.Headless import Headless_ChessGame
+from ChessGame.Gui import Gui_ChessGame
+from os.path import join, dirname
+import sys
 
 class Game():
     def __init__(self, image) -> None:
@@ -10,10 +12,6 @@ class Game():
         self.root_window.iconphoto(True, PhotoImage(image))
         self.root_game = ChessGame(self.root_window, savedir=self.savedir)
         self.create_menu_bar(self)
-
-    def create_menu_bar(self, board):
-        self.menubar = Menu(self.root_window)
-
         filemenu = Menu(self.menubar, tearoff=0)
         editmenu = Menu(self.menubar, tearoff=0)
 

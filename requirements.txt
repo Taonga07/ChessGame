@@ -1,0 +1,4 @@
+pyinstaller
+pytest
+Tk
+requests

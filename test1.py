@@ -14,6 +14,7 @@ Sanity test board layout. Depends on implementation details which is
 fragile in a test as any change in code may break it. 
 Done first as later tests may depend on assumptions of layout
 '''
+
 def test1_layout(game=ChessHeadless()):
     # Check default initial board layout
     board = game.board
@@ -28,7 +29,6 @@ def test1_layout(game=ChessHeadless()):
     
     for r in (0, 7):
         colour = 'Black' if r == 0 else 'White'
-
         for sq in list(board[r][c] for c in (0, 7)):
             assert isinstance(sq, Pieces.Rook)
             assert sq.colour == colour
@@ -71,19 +71,17 @@ def test2_moveto(game=ChessHeadless()):
     to_pos = moves[0] # first possible move
     to_piece = game.get_piece(*to_pos)
     print(f"to piece at {to_pos}: {to_piece}")
-    assert to_piece == None
+    assert to_piece is None
 
     try:
         to_square = game.moveto(*to_pos)
-    except ChessExc as exc:
+    except ChessHeadless.ChessExc as exc:
         assert False, f"valid moveto {to_pos} raised an exception {exc}"
 
     print(f"to_square[{to_pos}]: {to_square}")
-    assert game.get_piece(*from_pos) == None    ## check from cleared
+    assert game.get_piece(*from_pos) is None    ## check from cleared
 
     print(f"test2 dump: {game.dump()}")
-
-    ########################
     # test3_move(): 2nd move black pawn
     from_pos = (1, 4)   # black pawn
     to_pos = (3, 4)
@@ -224,7 +222,6 @@ if __name__== "__main__":
         test6_check()
         test7_mate()
     test8_check2()
-    pass
 
 
 
