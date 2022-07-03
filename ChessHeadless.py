@@ -159,7 +159,7 @@ class ChessHeadless():
             m = re.match(f'({pieces_fmt})({pos_fmt})\:?({pos_fmt})?$', token)
             groups = m.groups() if m else None
             #print(f"DBG token {token} == {groups}")
-            if groups == None or (groups[0] == None and groups[-1] == None):
+            if groups is None or (groups[0] is None and groups[-1] is None):
                 err_mess = f"invalid command token index [{indext}]:{token}"
                 errs.append((indext, err_mess))
                 continue
