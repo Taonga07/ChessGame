@@ -48,7 +48,6 @@ def test1_layout(game=ChessHeadless()):
     
         assert isinstance(board[r][3], Queen)
         assert isinstance(board[r][4], King)
-
         print(f"test1 dump: {game.dump()}")
         return game
 
@@ -78,19 +77,17 @@ def test2_moveto(game=ChessHeadless()):
     to_pos = moves[0] # first possible move
     to_piece = game.get_piece(*to_pos)
     print(f"to piece at {to_pos}: {to_piece}")
-    assert to_piece == None
+    assert to_piece is None
 
     try:
         to_square = game.moveto(*to_pos)
-    except ChessExc as exc:
+    except ChessHeadless.ChessExc as exc:
         assert False, f"valid moveto {to_pos} raised an exception {exc}"
 
     print(f"to_square[{to_pos}]: {to_square}")
-    assert game.get_piece(*from_pos) == None    ## check from cleared
+    assert game.get_piece(*from_pos) is None    ## check from cleared
 
     print(f"test2 dump: {game.dump()}")
-
-    ########################
     # test3_move(): 2nd move black pawn
     from_pos = (1, 4)   # black pawn
     to_pos = (3, 4)
@@ -231,8 +228,3 @@ if __name__== "__main__":
         test6_check()
         test7_mate()
     test8_check2()
-    pass
-
-
-
-    
