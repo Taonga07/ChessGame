@@ -33,7 +33,7 @@ def test1_layout(game=ChessHeadless.ChessHeadless()):
             assert isinstance(sq, Pieces.Rook)
             assert sq.colour == colour
     
-        for sq in list(board[r][c] for c in (1, 6)):
+        for sq in [board[r][c] for c in (1, 6)]:
             assert isinstance(sq, Pieces.Knight)
 
         for sq in list(board[r][c] for c in (2, 5)):
