@@ -1,16 +1,9 @@
-from Pieces import (  # pylint: disable=W0611, import-error
-    Pawn,
-    Rook,
-    Bishop,
-    Queen,
-    King,
-    Knight,
-)  # pylint: enable=W0611, import-error
 from os.path import expanduser, isdir, join, abspath, dirname
 from shutil import copytree
 from requests import get
 
-from API import *
+from ChessGame.Pieces import Pawn, Rook, Knight, Bishop, Queen, King
+from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
 
 
 class Headless_ChessGame(ChessAPI):
@@ -20,15 +13,35 @@ class Headless_ChessGame(ChessAPI):
         if file:
             self.board, self.turn = self.read_game_data()
         else:
-            self.board, self.board, self.turn = self.new_board()
+            self.board = self.new_board()
+        self.nturn = 0  # number of turns
 
-    def read_game_data(self):
-        GameData = get(url="https://api.jsonbin.io/b/619d31d201558c731cc7cd18/1").json()
-        turn, board =  GameData["turn"], [[None] * 8 for row in range(8)]
-        for PieceData in GameData["board"]:
-            Piece, Colour, Row, Column = PieceData
-            piece = eval(Piece + "(Colour, Column, Row)")
-            board[int(piece.row)][int(piece.column)] = piece
+    def create_game_save_folder(self):
+        if not isdir(
+            join(expanduser("~"), ".Chess_Games")
+        ):  # check if homepath of user + folder exists
+            # if folder dosen't create and copy templates across
+            copytree(
+                abspath(join("ChessGame", "Games")),
+                join(expanduser("~"), ".Chess_Games"),
+            )
+
+    def read_game_data(
+        self, Game_File, Game_Folder=abspath(join(dirname(__file__), "Games"))
+    ):
+        board = [[None] * 8 for row in range(8)]
+        turn = 0
+        input_data = open(join(Game_Folder, Game_File), "r").readlines()
+        for i, line in enumerate(input_data):
+            if i == 0:
+                turn = int(line.rstrip())
+            else:
+                Piece, Colour, Row, Column = line.rstrip().split(
+                    " "
+                )  # pylint: disable=W0612
+                # pylint: enable=W0612
+                piece = eval(Piece + "(str(Colour), int(Column), int(Row))")
+                board[int(piece.row)][int(piece.column)] = piece
         return board, turn
 
     def save_game_data(self, Path_to_save_in):
@@ -111,6 +124,15 @@ class Headless_ChessGame(ChessAPI):
             else:
                 raise InvColourExc
         return False
+    
+    def move_board(self, piece, dest):
+        # move GameObject piece to dest (row, col)
+        (dest_row, dest_col) = dest
+        self.board[dest_row][dest_col] = piece
+
+        self.board[piece.row][piece.column] = None
+        (piece.row, piece.column) = (dest_row, dest_col)
+        self.nturn += 1
 
     def move_selected_piece(self, square_clicked):
         clicked_row, clicked_cloumn = square_clicked
@@ -123,11 +145,6 @@ class Headless_ChessGame(ChessAPI):
                 "Move Not Allowed",
                 "Your piece cannot move there!",
             )
-        self.board[clicked_row][clicked_cloumn] = self.board[piece_to_move.row][
-            piece_to_move.column
-        ]
-        self.board[piece_to_move.row][piece_to_move.column] = None
-        piece_to_move.row = clicked_row
-        piece_to_move.column = clicked_cloumn
+        self.move_board(piece_to_move, square_clicked)
         self.toggle_turn()
         return ChessErrs.ErrNone, ("Move Allowed", "You can move here")
