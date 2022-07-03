@@ -36,7 +36,7 @@ def test1_layout(game=ChessHeadless.ChessHeadless()):
         for sq in [board[r][c] for c in (1, 6)]:
             assert isinstance(sq, Pieces.Knight)
 
-        for sq in list(board[r][c] for c in (2, 5)):
+        for sq in [board[r][c] for c in (2, 5)]:
             assert isinstance(sq, Pieces.Bishop)
     
         assert isinstance(board[r][3], Pieces.Queen)
