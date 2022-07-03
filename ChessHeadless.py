@@ -30,7 +30,7 @@ class ChessHeadless():
     def movefrom(self, row, col):
         from_square = self.get_piece(row, col)
 
-        if (from_square != None) and ( 
+        if (from_square is not None) and ( 
             ((self.turn == 0) and (from_square.colour == 'White')) or 
             ((self.turn == 1) and (from_square.colour == 'Black'))):
             if self.check_for_checkmate(from_square):
