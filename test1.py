@@ -79,7 +79,7 @@ def test2_moveto(game=ChessHeadless.ChessHeadless()):
         assert False, f"valid moveto {to_pos} raised an exception {exc}"
 
     print(f"to_square[{to_pos}]: {to_square}")
-    assert game.get_piece(*from_pos) == None    ## check from cleared
+    assert game.get_piece(*from_pos) is None    ## check from cleared
 
     print(f"test2 dump: {game.dump()}")
 
