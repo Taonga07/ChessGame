@@ -1,53 +1,25 @@
-# pylint: disable=wildcard-import, C0413
-# fmt: off
-from os.path import join, dirname
-import sys
+from requests import get
+from io import BytesIO
+import pygame
 
-class Game():
-    def __init__(self, image) -> None:
-        self.savedir = 'Games'
-        self.root_window = Tk()
-        self.root_window.title('ChessGame')
-        self.root_window.iconphoto(True, PhotoImage(image))
-        self.root_game = ChessGame(self.root_window, savedir=self.savedir)
-        self.create_menu_bar(self)
-        filemenu = Menu(self.menubar, tearoff=0)
-        editmenu = Menu(self.menubar, tearoff=0)
-        filemenu.add_command(label="New", command=lambda: self.onNew())
-        filemenu.add_command(label="Open", command=lambda: self.onOpen())
-        filemenu.add_command(label="Save", command=lambda: self.onSave())
-        filemenu.add_separator() # adds line between objects in filemenu dropdown
-        filemenu.add_command(label="Exit", command=lambda: self.root_window.destroy())
-        editmenu.add_command(label="custormise board", command=lambda: self.onBoardCustormise())
-
-        self.menubar.add_cascade(label="File", menu=filemenu)
-        self.menubar.add_cascade(label="Edit", menu=editmenu)
-
-        self.root_window.config(menu=self.menubar)
-
-    def onNew(self):
-        board, turn = self.root_game.read_game_data()
-        self.root_game.board, self.root_game.turn = board, turn
-        self.root_game.layout_board()
-
-    def onOpen(self):
-        filename = filedialog.askopenfilename(initialdir=self.savedir, title='Open file',
-                            filetypes=(("main files","*txt*"),("All files","*.*")))
-        board, turn = self.root_game.read_game_data(filename)
-        self.root_game.board, self.root_game.turn = board, turn
-        self.root_game.layout_board()
-
-    def onSave(self):
-        filename = filedialog.asksaveasfilename(initialdir=self.savedir, title='Save as',
-                            filetypes=(("main files","*txt*"),("All files","*.*")))
-        self.save_file(filename)
-
-    def onBoardCustormise(self):
-        light_square_colour = colorchooser.askcolor(title ="Choose 1st color")
-        dark_square_colour = colorchooser.askcolor(title ="Choose 2nd color")
-        self.root_game.square_colours = (light_square_colour[1], dark_square_colour[1])
-        self.root_game.layout_board()
+class ChessGame():
+    def __init__(self) -> None:
+        self.board_colours = [(0,0,0), (255,255,255)]
+        self.board = eval(get("https://tinyurl.com/yck73c8x").content)
+        self.window = pygame.display.set_mode((160,160), pygame.RESIZABLE)
+        self.piece_images = pygame.image.load(BytesIO(get("https://tinyurl.com/4prmu6ws").content)).convert_alpha()
+    def __call__(self) -> None:
+        pygame.display.set_icon(pygame.image.load('resources/icon.png'))
+        self.main_loop()
+    def main_loop(self) -> None:
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:exit()
+            pygame.display.flip()
+    def update_board(self) -> None:
+        square_size, image_size = min(self.window.get_size())/8, (self.piece_images.get_width()/6, self.piece_images.get_height()/2)
+        squares = {(8*x)+y:{"coords": (x,y), "rect": pygame.draw.rect(self.window, self.board_colours[(x+y)%2], [square_size*y,square_size*x]+[square_size]*2)} for x in range(8) for y in range(8)}
+        pieces = {(8*x)+y: {"piece": str(self.board[x][y]), "coords": (x,y), "rect": self.window.blit(pygame.transform.scale(self.piece_images.subsurface([image_size[0]*self.board[x][y][1], image_size[1]*self.board[x][y][0]], image_size), [square_size]*2), [square_size*y,square_size*x])} for x in range(8) for y in range(8) if self.board[x][y] != None}	
 
 if __name__== "__main__":
-    current_game = Game('/Chess_Resorces/Icon.png')
-    current_game.root_window.mainloop()
+    ChessGame()()
