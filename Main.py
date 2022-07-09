@@ -40,3 +40,35 @@ URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
 if __name__== "__main__":
     pygame.init()
     ChessGUI()()
+
+#Plan
+
+## Headless.py
+#1. read board icons from text file (board.txt)
+#2. create class from icon
+#3  pass over board with pice positions in svg file (pieces.svg)
+
+## Gui.py
+#1. draw board recived form Headless.py
+#2. get first user input
+#3. lock user inputs
+#4. send input to Headless.py
+
+##Headless.py
+#1. recive input and return squares to highlight or error msg
+
+##Gui.py
+#1. highlight squares or display error msg
+#2. get second user input
+#3. lock user inputs
+#4. send input to Headless.py
+
+##Headless.py
+#1. recieve input
+#2. detect if move is valid
+#3. return error msg or confirmation to move
+
+##Gui.py
+#1. display error msg or confirmation to move
+#2. update board
+#3. repeat process until game is over
