@@ -1,11 +1,14 @@
 from pygame import QUIT, RESIZABLE, VIDEORESIZE, MOUSEBUTTONDOWN, KEYDOWN, K_ESCAPE, init
 from pygame.display import flip, set_caption, set_mode, set_icon
+# from ChessGame.sunfish_interface import sunfish_auto_move
+# from ChessGame.calculate_move import random_auto_move
 from pygame.mouse import get_pos as get_mouse_pos
 from pygame.image import load as load_image
 from pygame.event import get as get_events
 from pygame.draw import rect as draw_rect
-#from pygame._sdl2 import messagebox
+# from pygame._sdl2 import messagebox
 from pygame.transform import scale
+# from ChessGame.API import ChessExc
 from sys import exit as sys_exit
 from requests import get
 from io import BytesIO
