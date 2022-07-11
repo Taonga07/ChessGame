@@ -23,7 +23,7 @@ class ChessGUI():
         self.window = set_mode((400,400), RESIZABLE)
 
     def __call__(self) -> None:
-        set_icon(self.window_icon), set_caption("ChessGame"), self.window.fill([255]*3)
+        set_icon(self.window_icon), set_caption("ChessGame"), self.window.fill([178]*3)
         self.window.blit(scale(self.window_icon, self.window.get_size()), [0,0])
         flip(), sleep(0.75), self.window.fill([255]*3), flip()
         # awnser = messagebox("Roar!", "Double roar!", info=True, buttons=("Yes", "No", "Don't know"), return_button=0, escape_button=1)
