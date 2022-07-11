@@ -1,45 +1,53 @@
-from pygame._sdl2 import messagebox #pylint: disable=no-name-in-module
+from pygame import QUIT, RESIZABLE, VIDEORESIZE, MOUSEBUTTONDOWN, KEYDOWN, K_ESCAPE, init
+from pygame.display import flip, set_caption, set_mode, set_icon
+from pygame.mouse import get_pos as get_mouse_pos
+from pygame.image import load as load_image
+from pygame.event import get as get_events
+from pygame.draw import rect as draw_rect
+#from pygame._sdl2 import messagebox
+from pygame.transform import scale
+from sys import exit as sys_exit
 from requests import get
 from io import BytesIO
 from math import ceil
-import pygame
+
 
 class ChessGUI():
-    def __init__(self) -> None:
-        self.board_colours = [[50.2]*3, [255]*3]
-        self.board = eval(get(URL+"board.txt").content)
-        self.piece_images = pygame.image.load(BytesIO(get(URL+"pieces.svg").content))
-        self.window = pygame.display.set_mode((160,160), pygame.RESIZABLE)
+    def __init__(self, board) -> None:
+        self.window = set_mode((160,160), RESIZABLE)
+        self.board_colours, self.board = [[50.2]*3, [255]*3], board
+        self.piece_images = load_image(BytesIO(get(URL+"pieces.svg").content))
+
     def __call__(self) -> None:
-        pygame.display.set_icon(pygame.image.load(BytesIO(get(URL+"icon.png").content)))
+        set_icon(load_image(BytesIO(get(URL+"icon.png").content))), set_caption("ChessGame")
  #       awnser = messagebox("Roar!", "Double roar!", info=True, buttons=("Yes", "No", "Don't know"), return_button=0, escape_button=1)
-        pygame.display.set_caption("ChessGame")
+        
         squares, pieces = self.update_board()
-        highlighted_squares = {}
+        highlighted_squares = {}  
         while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
+            for event in get_events():
+                if (event.type == KEYDOWN and event.key == K_ESCAPE) or (event.type == QUIT): sys_exit()
+                if event.type == MOUSEBUTTONDOWN:
                     for piece_key in pieces:
-                        if pieces[piece_key]["rect"].collidepoint(pygame.mouse.get_pos()):
+                        if pieces[piece_key]["rect"].collidepoint(get_mouse_pos()):
                             highlighted_squares = {piece_key: (0,0,125)} # get possible move from headless.py instead of hardcoding
                             squares, pieces = self.update_board(highlighted_squares)
                             print(pieces[piece_key]["coords"])
-                if event.type==pygame.VIDEORESIZE:
+                if event.type == VIDEORESIZE:
                     squares, pieces = self.update_board(highlighted_squares)
-            pygame.display.flip()
+            flip()
 
     def update_board(self, highlighted_squares={}) -> None:
         square_size, image_size = ceil(min(self.window.get_size()))/8, (self.piece_images.get_width()/6, self.piece_images.get_height()/2)
-        squares = {(8*x)+y:{"coords": (x,y), "rect": pygame.draw.rect(self.window, (self.board_colours[(x+y)%2] if ((8*x)+y) not in highlighted_squares.keys() else highlighted_squares[(8*x)+y]), [square_size*y,square_size*x]+[square_size]*2)} for x in range(8) for y in range(8)}
-        pieces = {(8*x)+y: {"piece": str(self.board[x][y]), "coords": (x,y), "rect": self.window.blit(pygame.transform.scale(self.piece_images.subsurface([image_size[0]*self.board[x][y][1], image_size[1]*self.board[x][y][0]], image_size), [square_size]*2), [square_size*y,square_size*x])} for x in range(8) for y in range(8) if self.board[x][y] is not None}
+        squares = {(8*x)+y:{"coords": (x,y), "rect": draw_rect(self.window, (self.board_colours[(x+y)%2] if ((8*x)+y) not in highlighted_squares.keys() else highlighted_squares[(8*x)+y]), [square_size*y,square_size*x]+[square_size]*2)} for x in range(8) for y in range(8)}
+        pieces = {(8*x)+y: {"piece": str(self.board[x][y]), "coords": (x,y), "rect": self.window.blit(scale(self.piece_images.subsurface([image_size[0]*self.board[x][y][1], image_size[1]*self.board[x][y][0]], image_size), [square_size]*2), [square_size*y,square_size*x])} for x in range(8) for y in range(8) if self.board[x][y] is not None}
         return squares, pieces
 
 URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
 
 if __name__== "__main__":
-    pygame.init()
-    ChessGUI()()
+    init()
+    ChessGUI(eval(get(URL+"board.txt").content))()
 
 #Plan
 
