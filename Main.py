@@ -12,18 +12,21 @@ from pygame.transform import scale
 from sys import exit as sys_exit
 from requests import get
 from io import BytesIO
+from time import sleep
 from math import ceil
 
-
 class ChessGUI():
-    def __init__(self, board) -> None:
-        self.window = set_mode((160,160), RESIZABLE)
-        self.board_colours, self.board = [[50.2]*3, [255]*3], board
+    def __init__(self, board, colours=[[50.2]*3, [255]*3]) -> None:
         self.piece_images = load_image(BytesIO(get(URL+"pieces.svg").content))
+        self.window_icon = load_image(BytesIO(get(URL+"icon.png").content))
+        self.board_colours, self.board = colours, board
+        self.window = set_mode((400,400), RESIZABLE)
 
     def __call__(self) -> None:
-        set_icon(load_image(BytesIO(get(URL+"icon.png").content))), set_caption("ChessGame")
- #       awnser = messagebox("Roar!", "Double roar!", info=True, buttons=("Yes", "No", "Don't know"), return_button=0, escape_button=1)
+        set_icon(self.window_icon), set_caption("ChessGame"), self.window.fill([255]*3)
+        self.window.blit(scale(self.window_icon, self.window.get_size()), [0,0])
+        flip(), sleep(0.75), self.window.fill([255]*3), flip()
+        # awnser = messagebox("Roar!", "Double roar!", info=True, buttons=("Yes", "No", "Don't know"), return_button=0, escape_button=1)
         
         squares, pieces = self.update_board()
         highlighted_squares = {}  
