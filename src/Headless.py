@@ -1,11 +1,11 @@
-from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
+from API import ChessAPI, ChessErrs, InvColourExc
 from json import loads as json_loads
-import ChessGame.Pieces as Pieces
+import Pieces as Pieces
 from requests import get
 
 URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
 
-class Headless_ChessGame():
+class HeadlChess():
     def __init__(self, file=get(URL+"board.json").content) -> None:
         self.board, self.turn = self.read_game_data(file)
 
