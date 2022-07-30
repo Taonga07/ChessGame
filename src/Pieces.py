@@ -1,11 +1,11 @@
-PIECE_BISHOP, PIECE_KNIGHT, PIECE_PAWN = range(2,5)
+PIECE_BISHOP, PIECE_KNIGHT, PIECE_PAWN = range(3,6)
 PIECE_KING, PIECE_QUEEN, PIECE_ROOK = range(3)
 COLOUR_WHITE, COLOUR_BLACK = range(2)
 
 class GameObject:
     def __init__(self, piece, colour, pos, value, icons):
         self.piece, self.colour = piece, colour
-        self.icon = [self.colour, self.piece]
+        self.img_pos = [self.colour, self.piece]
         self.icon = icons[self.colour]
         self.row, self.column = pos
         self.possible_moves = []
