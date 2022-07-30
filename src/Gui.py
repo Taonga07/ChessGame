@@ -6,6 +6,7 @@ from pygame.mouse import get_pos as get_mouse_pos
 from pygame.image import load as load_image
 from pygame.event import get as get_events
 from pygame.draw import rect as draw_rect
+from Headless import HeadlessChess
 # from pygame._sdl2 import messagebox
 from pygame.transform import scale
 # from ChessGame.API import ChessExc
@@ -53,7 +54,8 @@ URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
 
 if __name__== "__main__":
     init()
-    ChessGUI(eval(get(URL+"board.txt").content))()
+    chessgame = HeadlessChess()
+    ChessGUI(chessgame.board)()
 
 #Plan
 

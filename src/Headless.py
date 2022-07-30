@@ -1,11 +1,10 @@
-from API import ChessAPI, ChessErrs, InvColourExc
 from json import loads as json_loads
 import Pieces as Pieces
 from requests import get
 
 URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
 
-class HeadlChess():
+class HeadlessChess():
     def __init__(self, file=get(URL+"board.json").content) -> None:
         self.board, self.turn = self.read_game_data(file)
 
@@ -14,20 +13,20 @@ class HeadlChess():
         board_data = json_loads(file)
         turn = board_data["turn"]
         for piece in board_data["pieces"]:
-            type, colour, position = piece
-            row, column = position
-            if type == Pieces.PIECE_PAWN:
-                board[row][column] = Pieces.Pawn(colour, position)
-            elif type == Pieces.PIECE_ROOK:
-                board[row][column] = Pieces.Rook(colour, position)
-            elif type == Pieces.PIECE_KNIGHT:
-                board[row][column] = Pieces.Knight(colour, position)
-            elif type == Pieces.PIECE_BISHOP:
-                board[row][column] = Pieces.Bishop(colour, position)
-            elif type == Pieces.PIECE_QUEEN:
-                board[row][column] = Pieces.Queen(colour, position)
-            elif type == Pieces.PIECE_KING:
-                board[row][column] = Pieces.King(colour, position)
+            piece_colour, piece_type, piece_pos = piece
+            row, column = piece_pos
+            if piece_type == Pieces.PIECE_PAWN:
+                board[row][column] = Pieces.Pawn(piece_colour, piece_pos)
+            elif piece_type == Pieces.PIECE_ROOK:
+                board[row][column] = Pieces.Rook(piece_colour, piece_pos)
+            elif piece_type == Pieces.PIECE_KNIGHT:
+                board[row][column] = Pieces.Knight(piece_colour, piece_pos)
+            elif piece_type == Pieces.PIECE_BISHOP:
+                board[row][column] = Pieces.Bishop(piece_colour, piece_pos)
+            elif piece_type == Pieces.PIECE_QUEEN:
+                board[row][column] = Pieces.Queen(piece_colour, piece_pos)
+            elif piece_type == Pieces.PIECE_KING:
+                board[row][column] = Pieces.King(piece_colour, piece_pos)
             else:
                 raise Exception("Invalid Piece Type")
         return board, turn

@@ -3,13 +3,14 @@ PIECE_KING, PIECE_QUEEN, PIECE_ROOK = range(3)
 COLOUR_WHITE, COLOUR_BLACK = range(2)
 
 class GameObject:
-    def __init__(self, piece, colour, pos, value):
+    def __init__(self, piece, colour, pos, value, icons):
         self.piece, self.colour = piece, colour
         self.icon = [self.colour, self.piece]
+        self.icon = icons[self.colour]
         self.row, self.column = pos
         self.possible_moves = []
         self.value = value
-
+        
     def highlight_moves(self, board):
         highlighted_squares = {"green":[], "red":[]}
         for row_number, column_number in self.possible_moves:
@@ -145,12 +146,12 @@ class GameObject:
         #return f"{self.__class__} : {vars(self)}"
         pos = (self.row, self.column)
         return f"{self.colour}, {pos}, " + \
-            f"{self.abbrv}, value={self.value},  possible_move[{len(self.possible_moves)}] = " + \
+            f"{self.icon}, value={self.value},  possible_move[{len(self.possible_moves)}] = " + \
             f"{self.possible_moves}"
 
 class Pawn(GameObject):
     def __init__(self, colour, pos):
-        super().__init__(PIECE_PAWN, colour, pos, 1)
+        super().__init__(PIECE_PAWN, colour, pos, 1, ["♙", "♟"])
         self.direction = 1 if self.colour == COLOUR_WHITE else -1
         self.first_move = self.check_first_move()
 
@@ -192,7 +193,7 @@ class Pawn(GameObject):
 
 class Rook(GameObject):
     def __init__(self, colour, pos):
-        super().__init__(PIECE_ROOK, colour, pos, 4)
+        super().__init__(PIECE_ROOK, colour, pos, 4, ["♖", "♜"])
 
     def find_possible_moves(self, board, pieces_to_jump=0):
         self.possible_moves.extend(
@@ -211,7 +212,7 @@ class Rook(GameObject):
 
 class Bishop(GameObject):
     def __init__(self, colour, pos):
-        super().__init__(PIECE_BISHOP, colour, pos, 3)
+        super().__init__(PIECE_BISHOP, colour, pos, 3, ["♗", "♝"])
 
     def find_possible_moves(self, board, pieces_to_jump=0):
         self.possible_moves.extend(
@@ -230,7 +231,7 @@ class Bishop(GameObject):
 
 class King(GameObject):
     def __init__(self, colour, pos):
-        super().__init__(PIECE_KING, colour, pos, 10)
+        super().__init__(PIECE_KING, colour, pos, 10, ["♔", "♚"])
         self.check_moves = []
 
     def find_possible_moves(self, board, pieces_to_jump=0):
@@ -254,7 +255,7 @@ class King(GameObject):
 
 class Queen(GameObject):
     def __init__(self, colour, pos):
-        super().__init__(PIECE_QUEEN, colour, pos, 9)
+        super().__init__(PIECE_QUEEN, colour, pos, 9, ["♕", "♛"])
 
     def find_possible_moves(self, board, pieces_to_jump=0):
         self.possible_moves.extend(
@@ -285,7 +286,7 @@ class Queen(GameObject):
 
 class Knight(GameObject):
     def __init__(self, colour, pos):
-        super().__init__(PIECE_KNIGHT, colour, pos, 5)
+        super().__init__(PIECE_KNIGHT, colour, pos, 5, ["♘", "♞"])
 
     def find_possible_moves(self, board, pieces_to_jump=0):
         if (self.row < 6) and (self.column > 0):
