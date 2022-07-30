@@ -1,59 +1,36 @@
-from os.path import expanduser, isdir, join, abspath, dirname
-from shutil import copytree
+from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
+from json import loads as json_loads
+import ChessGame.Pieces as Pieces
 from requests import get
 
-from ChessGame.Pieces import Pawn, Rook, Knight, Bishop, Queen, King
-from ChessGame.API import ChessAPI, ChessErrs, InvColourExc
+URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
 
+class Headless_ChessGame():
+    def __init__(self, file=get(URL+"board.json").content) -> None:
+        self.board, self.turn = self.read_game_data(file)
 
-class Headless_ChessGame(ChessAPI):
-    def __init__(self, file="New_Game.txt") -> None:
-        super(ChessAPI, self).__init__()
-        self.from_pos = (0, 0)  # previously 'first_click'
-        if file:
-            self.board, self.turn = self.read_game_data()
-        else:
-            self.board = self.new_board()
-        self.nturn = 0  # number of turns
-
-    def create_game_save_folder(self):
-        if not isdir(
-            join(expanduser("~"), ".Chess_Games")
-        ):  # check if homepath of user + folder exists
-            # if folder dosen't create and copy templates across
-            copytree(
-                abspath(join("ChessGame", "Games")),
-                join(expanduser("~"), ".Chess_Games"),
-            )
-
-    def read_game_data(
-        self, Game_File, Game_Folder=abspath(join(dirname(__file__), "Games"))
-    ):
+    def read_game_data(self, file):
         board = [[None] * 8 for row in range(8)]
-        turn = 0
-        input_data = open(join(Game_Folder, Game_File), "r").readlines()
-        for i, line in enumerate(input_data):
-            if i == 0:
-                turn = int(line.rstrip())
+        board_data = json_loads(file)
+        turn = board_data["turn"]
+        for piece in board_data["pieces"]:
+            type, colour, position = piece
+            row, column = position
+            if type == Pieces.PIECE_PAWN:
+                board[row][column] = Pieces.Pawn(colour, position)
+            elif type == Pieces.PIECE_ROOK:
+                board[row][column] = Pieces.Rook(colour, position)
+            elif type == Pieces.PIECE_KNIGHT:
+                board[row][column] = Pieces.Knight(colour, position)
+            elif type == Pieces.PIECE_BISHOP:
+                board[row][column] = Pieces.Bishop(colour, position)
+            elif type == Pieces.PIECE_QUEEN:
+                board[row][column] = Pieces.Queen(colour, position)
+            elif type == Pieces.PIECE_KING:
+                board[row][column] = Pieces.King(colour, position)
             else:
-                Piece, Colour, Row, Column = line.rstrip().split(
-                    " "
-                )  # pylint: disable=W0612
-                # pylint: enable=W0612
-                piece = eval(Piece + "(str(Colour), int(Column), int(Row))")
-                board[int(piece.row)][int(piece.column)] = piece
+                raise Exception("Invalid Piece Type")
         return board, turn
-
-    def save_game_data(self, Path_to_save_in):
-        with open(Path_to_save_in, "w") as filehandle:
-            filehandle.write(f"{str(self.turn)}\n")
-            for row_number in range(0, 8):
-                for column_number in range(0, 8):
-                    if self.board[row_number][column_number] is not None:
-                        _piece = self.board[row_number][column_number].piece
-                        _colour = self.board[row_number][column_number].colour
-                        _line = f"{_piece} {_colour} {row_number} {column_number}\n"
-                        filehandle.write(_line)
 
     def check_for_checkmate(self, clicked_piece):
         pieces_that_cant_move, piece_on_board = 0, 0
