@@ -1,4 +1,0 @@
-pyinstaller
-pytest
-Tk
-requests
