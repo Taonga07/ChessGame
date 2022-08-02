@@ -151,9 +151,10 @@ class HeadlessChess(ChessAPI):
     
     def highlight_moves(self, piece_id) -> dict:
         "returns dictionary of possible moves for a piece"
-        highlighted_squares = {piece_id: (0,0,125)}
+        highlighted_squares = {}
         piece = self.get_piece(piece_id)
         piece.find_possible_moves(self.board)
+        highlighted_squares[self.index_2d([piece.row, piece.column])] = (0,0,125)
         for move in piece.possible_moves:
             dest_square = self.board[move[0]][move[1]]
             if dest_square is None: # if empty square
