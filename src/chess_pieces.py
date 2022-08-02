@@ -150,8 +150,8 @@ class Pawn(Piece):
 
     def check_first_move(self):
         "check if pawn is on its starting row so is on its first move"
-        if ((self.row == 1) and (self.colour == "Black")) or (
-            (self.row == 6) and (self.colour == "White")):
+        if ((self.row == 1) and (self.colour == COLOUR_WHITE)) or (
+            (self.row == 6) and (self.colour == COLOUR_BLACK)):
             return True
         return False
 
