@@ -23,7 +23,7 @@ class ChessGUI():
         self.board_colours = colours#, self.chessgame.board = colours, board
         self.window = set_mode((400,400), RESIZABLE)
         self.pieces = self.squares = {}
-        self.game = HeadlessChess(file=open("resources/board.json", "r").read())
+        self.game = HeadlessChess()
 
     def __call__(self) -> None:
         "main game loop for the GUI"
