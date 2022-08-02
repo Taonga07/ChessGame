@@ -33,6 +33,8 @@ class HeadlessChess(ChessAPI):
                 board[row][column] = King(piece_colour, piece_pos, id)
             else:
                 raise Exception("Invalid Piece Type")
+        for row in board:
+            print([piece.icon if piece is not None else "_" for piece in row])
         return board, turn
 
     def check_for_checkmate(self, clicked_piece):
