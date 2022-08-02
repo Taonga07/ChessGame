@@ -1,5 +1,4 @@
-import re
-from ChessGame.Pieces import Pawn, Rook, Knight, Bishop, Queen, King
+from chess_pieces import Pawn, Rook, Knight, Bishop, Queen, King
 
 class ChessErrs:
     """ChessGame error values"""

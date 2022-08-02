@@ -45,4 +45,9 @@ pypy3 -m pip install cProfile snakeviz
 cd tests
 pypy3 -m cProfile -o test_perm.prof test_perm.py
 snakeviz test_perm.prof
+
+
+##working branch
+
+git checkout 0eecccf
 ```

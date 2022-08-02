@@ -1,32 +1,36 @@
+from chess_pieces import PIECE_BISHOP, PIECE_KING, PIECE_KNIGHT, PIECE_PAWN, PIECE_QUEEN, PIECE_ROOK
+from chess_pieces import Piece, Pawn, Rook, Knight, Bishop, Queen, King, COLOUR_WHITE, COLOUR_BLACK
 from json import loads as json_loads
-import Pieces as Pieces
+from chess_api import ChessAPI
 from requests import get
+from math import floor
 
-URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/fixes/resources/"
+URL = "https://raw.githubusercontent.com/Taonga07/ChessGame/master/resources/"
 
-class HeadlessChess():
+class HeadlessChess(ChessAPI):
     def __init__(self, file=get(URL+"board.json").content) -> None:
+        super().__init__()
         self.board, self.turn = self.read_game_data(file)
 
     def read_game_data(self, file):
         board = [[None] * 8 for row in range(8)]
         board_data = json_loads(file)
         turn = board_data["turn"]
-        for piece in board_data["pieces"]:
+        for id, piece in enumerate(board_data["pieces"]):
             piece_colour, piece_type, piece_pos = piece
             row, column = piece_pos
-            if piece_type == Pieces.PIECE_PAWN:
-                board[row][column] = Pieces.Pawn(piece_colour, piece_pos)
-            elif piece_type == Pieces.PIECE_ROOK:
-                board[row][column] = Pieces.Rook(piece_colour, piece_pos)
-            elif piece_type == Pieces.PIECE_KNIGHT:
-                board[row][column] = Pieces.Knight(piece_colour, piece_pos)
-            elif piece_type == Pieces.PIECE_BISHOP:
-                board[row][column] = Pieces.Bishop(piece_colour, piece_pos)
-            elif piece_type == Pieces.PIECE_QUEEN:
-                board[row][column] = Pieces.Queen(piece_colour, piece_pos)
-            elif piece_type == Pieces.PIECE_KING:
-                board[row][column] = Pieces.King(piece_colour, piece_pos)
+            if piece_type == PIECE_PAWN:
+                board[row][column] = Pawn(piece_colour, piece_pos, id)
+            elif piece_type == PIECE_ROOK:
+                board[row][column] = Rook(piece_colour, piece_pos, id)
+            elif piece_type == PIECE_KNIGHT:
+                board[row][column] = Knight(piece_colour, piece_pos, id)
+            elif piece_type == PIECE_BISHOP:
+                board[row][column] = Bishop(piece_colour, piece_pos, id)
+            elif piece_type == PIECE_QUEEN:
+                board[row][column] = Queen(piece_colour, piece_pos, id)
+            elif piece_type == PIECE_KING:
+                board[row][column] = King(piece_colour, piece_pos, id)
             else:
                 raise Exception("Invalid Piece Type")
         return board, turn
@@ -124,3 +128,45 @@ class HeadlessChess():
         self.move_board(piece_to_move, square_clicked)
         self.toggle_turn()
         return ChessErrs.ErrNone, ("Move Allowed", "You can move here")
+
+    def get_pieces(self) -> dict:
+        "Returns a dictionary of all the pieces on the board"
+        pieces = {}
+        for square in [y for x in self.board for y in x]:
+            if square is not None:
+                pieces[square.id] = {
+                    "piece": square.piece,
+                    "colour": square.colour,
+                    "pos": [square.column, square.row]
+                }
+        return pieces
+    
+    def get_piece(self, piece_id) -> Piece:
+        "Returns a piece from the board"
+        for row, column in self.board:
+            square = self.board[row][column]
+            if square is not None:
+                if square.id == piece_id:
+                    return square
+        return None
+    
+    def highlight_moves(self, piece_id) -> dict:
+        "returns dictionary of possible moves for a piece"
+        highlighted_squares = {(0,125,0):[], (125,0,0):[], (0,0,125):id}
+        piece = self.get_piece(piece_id)
+        piece.find_possible_moves(self.board)
+        for move in piece.possible_moves:
+            dest_square = self.board[move[0]][move[1]]
+            if dest_square is None: # if empty square
+                highlighted_squares["green"].append(self.index_2d(move))
+            else: # if square is occupied
+                highlighted_squares["red"].append(self.index_2d(move))
+        return highlighted_squares
+
+    def index_2d(self, index) -> int:
+        "convert index of an array to the index for a martix"
+        return (index[0] * 8) + index[1]
+
+    def index_1d(self, index) -> tuple:
+        "convert index of a matrix to the index of an array"
+        return (index%8, floor(index / 8))

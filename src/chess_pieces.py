@@ -2,24 +2,15 @@ PIECE_BISHOP, PIECE_KNIGHT, PIECE_PAWN = range(3,6)
 PIECE_KING, PIECE_QUEEN, PIECE_ROOK = range(3)
 COLOUR_WHITE, COLOUR_BLACK = range(2)
 
-class GameObject:
-    def __init__(self, piece, colour, pos, value, icons):
-        self.piece, self.colour = piece, colour
+class Piece:
+    "contains defult attrabutes and functions that every piece has"
+    def __init__(self, piece, colour, pos, value, icons, id):
+        self.piece, self.colour, self.id = piece, colour, id
         self.img_pos = [self.colour, self.piece]
         self.icon = icons[self.colour]
         self.row, self.column = pos
         self.possible_moves = []
         self.value = value
-        
-    def highlight_moves(self, board):
-        highlighted_squares = {"green":[], "red":[]}
-        for row_number, column_number in self.possible_moves:
-            dest_square = board[row_number][column_number]
-            if dest_square is None: # if empty square
-                highlighted_squares["green"].append([row_number, column_number])
-            else: # if square is occupied
-                highlighted_squares["red"].append([row_number, column_number])
-        return highlighted_squares
     
     def remove_check_moves(self, board):
         local_moves = []
@@ -51,6 +42,7 @@ class GameObject:
             self.possible_moves.remove(move)
 
     def explore_moves(self, direction, board, pieces_to_jump=0):
+        "returns a list of squares in the given direction until a piece is found"
         working_value = self.row, self.column
         moves = []
         while True:
@@ -149,19 +141,22 @@ class GameObject:
             f"{self.icon}, value={self.value},  possible_move[{len(self.possible_moves)}] = " + \
             f"{self.possible_moves}"
 
-class Pawn(GameObject):
-    def __init__(self, colour, pos):
-        super().__init__(PIECE_PAWN, colour, pos, 1, ["♙", "♟"])
+class Pawn(Piece):
+    "subclass of Piece with pawn specific attributes"
+    def __init__(self, colour, pos, id):
+        super().__init__(PIECE_PAWN, colour, pos, 1, ["♙", "♟"], id)
         self.direction = 1 if self.colour == COLOUR_WHITE else -1
         self.first_move = self.check_first_move()
 
     def check_first_move(self):
+        "check if pawn is on its starting row so is on its first move"
         if ((self.row == 1) and (self.colour == "Black")) or (
             (self.row == 6) and (self.colour == "White")):
             return True
         return False
 
     def find_possible_moves(self, board, pieces_to_jump=0):
+        "generate all the possible moves for the pawn"
         dest_row = self.row + self.direction
         dest_row_first = dest_row + self.direction  # first move can move two rows
         if not (dest_row >= 0 and (dest_row <= 7)):
@@ -191,11 +186,13 @@ class Pawn(GameObject):
                 )
 
 
-class Rook(GameObject):
-    def __init__(self, colour, pos):
-        super().__init__(PIECE_ROOK, colour, pos, 4, ["♖", "♜"])
+class Rook(Piece):
+    "subclass of Piece with a rooks attributes"
+    def __init__(self, colour, pos, id):
+        super().__init__(PIECE_ROOK, colour, pos, 4, ["♖", "♜"], id)
 
     def find_possible_moves(self, board, pieces_to_jump=0):
+        "find all possible moves for rook"
         self.possible_moves.extend(
             self.explore_moves((-1, 0), board, pieces_to_jump)
         )  # up
@@ -210,11 +207,13 @@ class Rook(GameObject):
         )  # down
 
 
-class Bishop(GameObject):
-    def __init__(self, colour, pos):
-        super().__init__(PIECE_BISHOP, colour, pos, 3, ["♗", "♝"])
+class Bishop(Piece):
+    "subclass of Piece with bishop specific attributes"
+    def __init__(self, colour, pos, id):
+        super().__init__(PIECE_BISHOP, colour, pos, 3, ["♗", "♝"], id)
 
     def find_possible_moves(self, board, pieces_to_jump=0):
+        "Generate all possible moves for a bishop"
         self.possible_moves.extend(
             self.explore_moves((-1, -1), board, pieces_to_jump)
         )  # up left
@@ -229,12 +228,14 @@ class Bishop(GameObject):
         )  # down right
 
 
-class King(GameObject):
-    def __init__(self, colour, pos):
-        super().__init__(PIECE_KING, colour, pos, 10, ["♔", "♚"])
+class King(Piece):
+    "Subclass of Piece with king attributes"
+    def __init__(self, colour, pos, id):
+        super().__init__(PIECE_KING, colour, pos, 10, ["♔", "♚"], id)
         self.check_moves = []
 
     def find_possible_moves(self, board, pieces_to_jump=0):
+        "Generate all possible moves for a king"
         if self.row > 0:
             self.possible_moves.append((self.row - 1, self.column))
             if self.column > 0:
@@ -253,11 +254,13 @@ class King(GameObject):
             self.possible_moves.append((self.row, self.column - 1))
 
 
-class Queen(GameObject):
-    def __init__(self, colour, pos):
-        super().__init__(PIECE_QUEEN, colour, pos, 9, ["♕", "♛"])
+class Queen(Piece):
+    "Sub class of game object with queen attributes"
+    def __init__(self, colour, pos, id):
+        super().__init__(PIECE_QUEEN, colour, pos, 9, ["♕", "♛"], id)
 
     def find_possible_moves(self, board, pieces_to_jump=0):
+        "The queen's possible moves is a combination of the rook and bishop"
         self.possible_moves.extend(
             self.explore_moves((-1, -1), board, pieces_to_jump)
         )  # up left
@@ -284,13 +287,15 @@ class Queen(GameObject):
         )  # down
 
 
-class Knight(GameObject):
-    def __init__(self, colour, pos):
-        super().__init__(PIECE_KNIGHT, colour, pos, 5, ["♘", "♞"])
+class Knight(Piece):
+    "subclass of Piece with knight attributes"
+    def __init__(self, colour, pos, id):
+        super().__init__(PIECE_KNIGHT, colour, pos, 5, ["♘", "♞"], id)
 
     def find_possible_moves(self, board, pieces_to_jump=0):
+        "finds all possible moves for the knight"
         if (self.row < 6) and (self.column > 0):
-            self.possible_moves.append((self.row + 2, self.column - 1))
+            self.possible_moves.append((self.row + 2, self.column - 1)) 
         if (self.row < 6) and (self.column < 7):
             self.possible_moves.append((self.row + 2, self.column + 1))
         if (self.row > 1) and (self.column > 0):
