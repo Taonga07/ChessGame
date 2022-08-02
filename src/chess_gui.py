@@ -31,25 +31,25 @@ class ChessGUI():
         self.window.blit(scale(self.window_icon, self.window.get_size()), [0,0])
         flip(), sleep(0.75), self.window.fill([255]*3), flip()
         # awnser = messagebox("Roar!", "Double roar!", info=True, buttons=("Yes", "No", "Don't know"), return_button=0, escape_button=1)
-        
-        self.update_board(self.game.get_pieces())  
+        highlighted_squares = {}
+        board = self.game.get_pieces()
+        self.update_board(board, highlighted_squares)  
         while True:
             for event in get_events():
                 if (event.type == KEYDOWN and event.key == K_ESCAPE) or (event.type == QUIT): sys_exit()
-                # if event.type == MOUSEBUTTONDOWN:
-                #     for piece_key in self.pieces:
-                #         if self.pieces[piece_key]["rect"].collidepoint(get_mouse_pos()):
-                #             highlighted_squares = {piece_key: (0,0,125)} # get possible move from headless.py instead of hardcoding
-                #             self.update_board(highlighted_squares)
-                #             print(pieces[piece_key]["coords"])
+                if event.type == MOUSEBUTTONDOWN:
+                    for piece_key in self.pieces:
+                        if self.pieces[piece_key].collidepoint(get_mouse_pos()):
+                            highlighted_squares = self.game.highlight_moves(piece_key)
+                            self.update_board(board, highlighted_squares)
                 if event.type == VIDEORESIZE:
-                    self.update_board(self.game.get_pieces())
+                    self.update_board(board, highlighted_squares)
             flip()
 
     def update_board(self, pieces, highlighted_squares={}) -> None:
         "Draws the board and pieces while updating the their dictionaries to match the new board"
         square_size, image_size = ceil(min(self.window.get_size()))/8, (self.piece_images.get_width()/6, self.piece_images.get_height()/2)
-        self.squares = [draw_rect(self.window, (self.board_colours[(x+y)%2] if ((8*x)+y) not in highlighted_squares.keys() else highlighted_squares[(8*x)+y]), [square_size*y,square_size*x]+[square_size]*2) for x in range(8) for y in range(8)]
+        self.squares = [draw_rect(self.window, (self.board_colours[(x+y)%2] if (8*x)+y not in highlighted_squares.keys() else highlighted_squares[(8*x)+y]), [square_size*y,square_size*x]+[square_size]*2) for x in range(8) for y in range(8)]
         self.pieces = {x: self.window.blit(scale(self.piece_images.subsurface([image_size[0]*pieces[x]["piece"], image_size[1]*pieces[x]["colour"]], image_size), [square_size]*2), [square_size*x for x in pieces[x]["pos"]]) for x in pieces}
         
 

@@ -143,8 +143,7 @@ class HeadlessChess(ChessAPI):
     
     def get_piece(self, piece_id) -> Piece:
         "Returns a piece from the board"
-        for row, column in self.board:
-            square = self.board[row][column]
+        for square in [y for x in self.board for y in x]:
             if square is not None:
                 if square.id == piece_id:
                     return square
@@ -152,15 +151,15 @@ class HeadlessChess(ChessAPI):
     
     def highlight_moves(self, piece_id) -> dict:
         "returns dictionary of possible moves for a piece"
-        highlighted_squares = {(0,125,0):[], (125,0,0):[], (0,0,125):id}
+        highlighted_squares = {piece_id: (0,0,125)}
         piece = self.get_piece(piece_id)
         piece.find_possible_moves(self.board)
         for move in piece.possible_moves:
             dest_square = self.board[move[0]][move[1]]
             if dest_square is None: # if empty square
-                highlighted_squares["green"].append(self.index_2d(move))
+                highlighted_squares[self.index_2d(move)] = (0,125,0)
             else: # if square is occupied
-                highlighted_squares["red"].append(self.index_2d(move))
+                highlighted_squares[self.index_2d(move)] = (255,0,0)
         return highlighted_squares
 
     def index_2d(self, index) -> int:
