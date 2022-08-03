@@ -50,4 +50,5 @@ snakeviz test_perm.prof
 ##working branch
 
 git checkout 0eecccf
+git difftool --gui 0eecccf:ChessGame/Pieces.py master:src/chess_pieces.py
 ```
