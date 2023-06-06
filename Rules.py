@@ -1,6 +1,5 @@
 import os
 
-
 class GameObject():
     def __init__(self, piece, icon, colour, column, row, value):
         self.icon = icon
